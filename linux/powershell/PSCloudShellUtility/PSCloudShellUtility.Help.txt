@@ -1,0 +1,42 @@
+TOPIC
+    Getting started with Powershell in Azure Cloud Shell.
+
+SHORT DESCRIPTION
+    Explains new concepts of PowerShell in Azure Cloud Shell.
+
+LONG DESCRIPTION
+    PowerShell in Azure Cloud Shell brings the familiar Powershell experience 
+    along with the following set of new capabilities:
+
+  AZURE DRIVE
+    The Azure drive (Azure:) enables easy navigation of Azure resources such
+    as Compute, Network, Storage etc. similar to filesystem navigation.
+
+  MODULES
+    In addition to the built-in Powershell modules, Powershell in Azure Cloud Shell
+    comes with all Az modules pre-installed.
+  
+  TOOLS
+    PowerShell in Azure Cloud Shell comes pre-installed with tools such as Vim, Nano,
+    Git, Python, and SQLCMD. For a complete list visit https://aka.ms/cloudshell/powershell-tools
+
+  ONLINE HELP
+    You can find help for PowerShell in Azure Cloud Shell online at https://aka.ms/cloudshell/powershell-docs
+
+  EXAMPLES:
+      Get-CloudDrive            : List information of the Azure File storage share that is mounted as 'CloudDrive'
+      Dismount-CloudDrive       : Dismounts Azure File storage share from the current session
+      Get-AzCommand             : Gets all the context specific Azure commands when invoked from Azure PowerShell drive
+      Enter-AzVM                : Starts an interactive remote session with Azure VM
+      Invoke-AzVMCommand        : Runs commands on Azure VMs
+      Enable-AzVMPSRemoting     : Enable all aspects of PowerShell remoting on the given target (NSG Rules, Target WinRM/SSH configs)
+      Disable-AzVMPSRemoting    : Disable all aspects of PowerShell remoting on the given target (NSG Rules, Target WinRM/SSH configs)
+
+  SEE ALSO:
+      Get-CloudDrive
+      Dismount-CloudDrive
+      Get-AzCommand
+      Enter-AzVM
+      Invoke-AzVMCommand
+      Enable-AzVMPSRemoting
+      Disable-AzVMPSRemoting
