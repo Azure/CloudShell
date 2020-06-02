@@ -1,0 +1,10 @@
+{
+    "PSCloudShellVersion": "0-49-0",
+    "ExoConnectorFileHash": "56db648f33ed324b7e29b6e8b5d022cde24dd06ea0dff890b6b9348fb0a502fc",
+    "AzMaxVersion": "4.999.999",
+    "AzureADMaxVersion": "2.9999.9999.9999",
+    "AzureADStandardMaxVersion": "0.0.9999.9999",
+    "SQLServerModuleMaxVersion": "21.9999.99999",
+    "PowerBIMaxVersion": "1.9999.9999",
+    "AzGuestConfigurationMaxVersion": "0.9999.9999"
+}
