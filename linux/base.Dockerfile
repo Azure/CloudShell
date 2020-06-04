@@ -32,10 +32,10 @@ RUN set -ex \
    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
    FD3A5288F042B6850C66B31F09FE44734EB7990E \
   ; do \
-    gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
+    timeout 1 gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
+    timeout 1 gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+    timeout 1 gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
+    timeout 1 gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
