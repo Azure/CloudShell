@@ -19,4 +19,4 @@ package:
       context_folder: '.'
       dockerfile_name: 'linux/base.Dockerfile'
       repository_name: 'azure/cloudshell'
-      export_to_artifact_path: 'images\cloudshell.tar.zip'
+      export_to_artifact_path: 'images\cloudshell.tar.gz'
