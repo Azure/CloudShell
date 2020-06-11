@@ -11,3 +11,11 @@ version:
   major: 0
   minor: 1
   system: 'patch'
+
+package:
+  commands:
+    - !!dockerbuildcommand
+      name: 'Base Docker image for Cloudshell'
+      context_folder: '.'
+      dockerfile_name: 'linux/base.Dockerfile'
+      repository_name: 'azure/cloudshell'
