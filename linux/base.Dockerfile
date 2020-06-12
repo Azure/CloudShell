@@ -32,18 +32,15 @@ RUN set -ex \
    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
    FD3A5288F042B6850C66B31F09FE44734EB7990E \
   ; do \
-    timeout 1 gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
-    timeout 1 gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
-    timeout 1 gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    timeout 1 gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
+    gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
+    gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 8.16.0
 ENV NODE_ENV production
-
-# curl -SLO "https://nodejs.org/dist/v8.16.0/SHASUMS256.txt.asc"
-#
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -56,16 +53,13 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 
 # Azure CLI keys
 RUN echo "deb https://apt-mo.trafficmanager.net/repos/azure-cli/ xenial main" | tee /etc/apt/sources.list.d/azure-cli.list
-# RUN apt-key adv --keyserver apt-mo.trafficmanager.net:80 --recv-keys 417A0893
-#https://github.com/dotnet/sdk/issues/5537
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B02C46DF417A0893
 
 # Sql server tools keys
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
-# --allow-unauthenticated
-# RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
-RUN apt-get update && ACCEPT_EULA=Y apt-get install -y --allow-unauthenticated \
+
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
     autoconf \
     azure-functions-core-tools \
     build-essential \
@@ -132,18 +126,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361
 RUN locale-gen en_US en_US.UTF-8
 ENV LANG="en_US.utf8"
 
-# # Redirect python3 as default and path pip2
-# RUN ln -s -f /usr/bin/python3 /usr/bin/python && sed -i 's/usr\/bin\/python/usr\/bin\/python2/' /usr/bin/pip2
-
-# # Update pip
-# RUN pip2 install --upgrade pip && pip3 install --upgrade pip
-
-# # Install Service Fabric CLI
-# RUN pip3 install --upgrade sfctl
-
-# # Install mssql-scripter
-# RUN pip install mssql-scripter
-
+# Redirect python3 as default and path pip2
 # Update pip and Install Service Fabric CLI
 # Install mssql-scripter
 RUN ln -s -f /usr/bin/python3 /usr/bin/python \
@@ -266,10 +249,8 @@ RUN wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 
 # Install PowerShell
 # Register the Microsoft repository GPG keys and Install PowerShell Core
-# newly added line here!!!: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB02C46DF417A0893 
 RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
   && dpkg -i packages-microsoft-prod.deb \
-  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB02C46DF417A0893 \ 
   && apt update \
   && apt-get -y install powershell 
 
