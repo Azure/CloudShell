@@ -8,7 +8,7 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master, tools-for-testing ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -26,4 +26,4 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Build the base.Dockerfile
-      run: docker build -t base_cloudshell -f linux/base.Dockerfile .
+      run: docker build -t base_cloudshell -f linux/base.Dockerfile . && docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 

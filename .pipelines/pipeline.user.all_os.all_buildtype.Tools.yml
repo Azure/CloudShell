@@ -1,0 +1,11 @@
+package:
+    commands:
+      - !!dockerbuildcommand
+        name: 'Tools Docker image for Cloudshell'
+        context_folder: '.'
+        dockerfile_name: 'linux/tools.Dockerfile'
+        repository_name: 'azure/cloudshell'
+        export_to_artifact_path: 'images\cloudshell.tar.gz'
+        publish_build_tag: 'true'
+        publish_unique_tag: 'true'
+        publish_fixed_tag: 'true'
