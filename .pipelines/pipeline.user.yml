@@ -18,10 +18,4 @@ versioning:
       name: 'Generate Version'
       command: '.pipelines/versioning.sh'
 
-build:
-  commands:
-    - !!defaultcommand
-      name: 'Modify the tools.Dockerfile'
-      command: '.pipelines/build.sh'
-
       
