@@ -26,4 +26,7 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Build the base.Dockerfile
-      run: docker build -t base_cloudshell -f linux/base.Dockerfile . && docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
+      run: docker build -t base_cloudshell -f linux/base.Dockerfile . &&
+    
+    - name: Build the tools.Dockerfile
+      run: docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
