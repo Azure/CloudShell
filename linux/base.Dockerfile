@@ -1,10 +1,20 @@
+# base.Dockerfile contains components which are large and change less frequently. 
+# tools.Dockerfile contains the smaller, more frequently-updated components. 
+
+# Within Azure, the image layers
+# built from this file are cached in a number of locations to speed up container startup time. A manual
+# step needs to be performed to refresh these locations when the image changes. For this reason, we explicitly
+# split the base and the tools docker files into separate files and base the tools file from a version
+# of the base docker file stored in a container registry. This avoids accidentally introducing a change in
+# the base image
+
 FROM ubuntu:16.04 as azconsole-agentbase
 
 RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    curl \
-    xz-utils \
-    git
+  apt-transport-https \
+  curl \
+  xz-utils \
+  git
 
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
   && mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg \
@@ -20,22 +30,22 @@ RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > po
 # gpg keys listed at https://github.com/nodejs/node
 RUN set -ex \
   && for key in \
-   4ED778F539E3634C779C87C6D7062848A1AB005C \
-   71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-   77984A986EBC2AA786BC0F66B01FBB92821C587A \
-   8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-   94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-   A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
-   B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-   B9E2F5981AA6E0CD28160D9FF13993A75599653C \
-   C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-   DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-   FD3A5288F042B6850C66B31F09FE44734EB7990E \
+  4ED778F539E3634C779C87C6D7062848A1AB005C \
+  71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+  77984A986EBC2AA786BC0F66B01FBB92821C587A \
+  8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+  94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+  A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
+  B9AE9905FFD7803F25714661B63B535A4C206CA9 \
+  B9E2F5981AA6E0CD28160D9FF13993A75599653C \
+  C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+  DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+  FD3A5288F042B6850C66B31F09FE44734EB7990E \
   ; do \
-    gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
+  gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
+  gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+  gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
+  gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
@@ -60,48 +70,48 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
 
 RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
-    autoconf \
-    azure-functions-core-tools \
-    build-essential \
-    cifs-utils \
-    dnsutils \
-    dos2unix \
-    dotnet-dev-1.0.1 \
-    dotnet-sdk-2.2 \
-    emacs \
-    iptables \
-    iputils-ping \
-    jq \
-    less \
-    libffi-dev \
-    libssl-dev \
-    man-db \
-    maven \
-    moby-cli \
-    moby-engine \
-    msodbcsql \
-    mssql-tools \
-    mysql-client \
-    nano \
-    parallel \
-    postgresql-contrib \
-    postgresql-client \
-    python-dev \
-    python \
-    python-pip \
-    python3 \
-    python3-pip \
-    python3-venv \
-    puppet \
-    software-properties-common \
-    tmux \
-    unixodbc-dev \
-    unzip \
-    vim \
-    wget \
-    zip \
-    zsh \
-    bash-completion    
+  autoconf \
+  azure-functions-core-tools \
+  build-essential \
+  cifs-utils \
+  dnsutils \
+  dos2unix \
+  dotnet-dev-1.0.1 \
+  dotnet-sdk-2.2 \
+  emacs \
+  iptables \
+  iputils-ping \
+  jq \
+  less \
+  libffi-dev \
+  libssl-dev \
+  man-db \
+  maven \
+  moby-cli \
+  moby-engine \
+  msodbcsql \
+  mssql-tools \
+  mysql-client \
+  nano \
+  parallel \
+  postgresql-contrib \
+  postgresql-client \
+  python-dev \
+  python \
+  python-pip \
+  python3 \
+  python3-pip \
+  python3-venv \
+  puppet \
+  software-properties-common \
+  tmux \
+  unixodbc-dev \
+  unzip \
+  vim \
+  wget \
+  zip \
+  zsh \
+  bash-completion    
 
 # Install Jenkins X client
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/v1.3.107/jx-linux-amd64.tar.gz > jx.tar.gz \
@@ -175,10 +185,10 @@ ENV PATH $PATH:$LINKERD_ROOT/bin:$PATH:$ISTIO_ROOT/bin
 
 # Begin: Install Puppet-Bolt
 RUN wget -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-xenial.deb \
-&& dpkg -i puppet-tools.deb \
-&& apt-get update \
-&& apt-get install puppet-bolt \
-&& rm -f puppet-tools.deb
+  && dpkg -i puppet-tools.deb \
+  && apt-get update \
+  && apt-get install puppet-bolt \
+  && rm -f puppet-tools.deb
 # End: Install Puppet-Bolt
 
 # BEGIN: install go
@@ -188,10 +198,10 @@ RUN wget -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
   && mv go /usr/local \
   && rm -f go.tar.gz
 
-  ENV GOROOT="/usr/local/go"
-  ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
+ENV GOROOT="/usr/local/go"
+ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
 
-  RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
+RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
   && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
   && unset INSTALL_DIRECTORY
 # END: install go
@@ -217,9 +227,9 @@ RUN wget -O ruby.tar.gz https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.
   && gem install rspec --version 3.7.0 --no-document --force \
   && rm -r /root/.gem/
 
-  ENV GEM_HOME=~/bundle
-  ENV BUNDLE_PATH=~/bundle
-  ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
+ENV GEM_HOME=~/bundle
+ENV BUNDLE_PATH=~/bundle
+ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 # END: Install ruby environment
 
 # Begin: Download and Install the latest packer (AMD64)

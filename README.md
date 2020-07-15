@@ -1,4 +1,14 @@
 
+
+## Building
+
+From the root of the repository, run
+
+```
+docker build -t base_cloudshell -f linux/base.Dockerfile .
+docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
+```
+
 # Contributing
 
 Cloudshell
