@@ -50,7 +50,7 @@ docker run -it tools_cloudshell //bin//bash
 ## Types of issues
 
 | Issue Type        | Action           |
-| ---|---|---|
+| ---|---|
 | Package is out of date      | Create a Pull Request |
 | New desired package     | Create a Pull Request |
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo |
