@@ -189,30 +189,7 @@ Describe "PowerShell Modules" {
         $module | Should -Not -BeNullOrEmpty
 
     }
-<#
-    # Cannot load AzurePSDrive without authenticating to Azure Service first. By design
-    It "AzureRM module load and AzurePSDrive drive creation" {
 
-        # Cleanup any SHiPS related drives
-        Get-PSDrive -PSProvider SHiPS -ErrorAction SilentlyContinue | Remove-PSDrive -ErrorAction SilentlyContinue
-
-        # AzureRM module can be successfully imported
-        Import-Module -Name AzureRM.NetCore -Verbose -ErrorVariable azureeVar -WarningVariable azurewVar
-        $azureeVar | Should BeNullOrEmpty
-        $azurewVar | Should BeNullOrEmpty
-
-        # AzurePSDrive and SHiPS module can be successfully imported
-        Import-Module -Name AzurePSDrive -Verbose -ErrorVariable shipseVar -WarningVariable shipswVar
-        $shipseVar | Should BeNullOrEmpty
-        $shipswVar | Should BeNullOrEmpty
-
-        $driveName = 'Azure'
-        $drive = New-PSDrive -Name $driveName -PSProvider SHiPS -Root AzurePSDrive#Azure
-        $drive | Should Not BeNullOrEmpty
-        $drive.Name | Should Be $driveName
-
-    }
-#>
     $importModuleTestCases = @(
         @{ ModuleName = "Microsoft.PowerShell.Management" }
         @{ ModuleName = "PSCloudShellUtility" }

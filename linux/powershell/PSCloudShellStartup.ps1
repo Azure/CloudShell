@@ -282,134 +282,135 @@ function prompt
 }
 #endregion
 
-if ($env:ACC_CLOUD) {
-
-    #region Initialization
-
-    # show MOTD
-    & ($script:PSCloudShellUtilityModuleInfo){Get-CloudShellTip -ErrorAction SilentlyContinue}
-
-    # Set the user profile path to clouddrive
-    Microsoft.PowerShell.Utility\Set-Variable -Name PROFILE -Value $script:CurrentHostProfilePath -Scope Global
-    $PROFILE = $PROFILE | Microsoft.PowerShell.Utility\Add-Member -MemberType NoteProperty -Name CurrentUserAllHosts -Value $script:AllHostsProfilePath -PassThru
-    $PROFILE = $PROFILE | Microsoft.PowerShell.Utility\Add-Member -MemberType NoteProperty -Name CurrentUserCurrentHost -Value $script:CurrentHostProfilePath -PassThru
-
-    # Dogfood initialization script
-    if ($env:ACC_CLOUD -eq 'dogfood')
-    {
-        Microsoft.PowerShell.Utility\Write-Warning -Message "You are running in a dogfood environment. Please supply a URI for Azure dogfood environment initialization script."
-        $dfEnvInitScriptURI = Microsoft.PowerShell.Utility\Read-Host -Prompt "Supply the URI"
-        $dfEnvInitScript = Microsoft.PowerShell.Utility\Invoke-WebRequest -Uri $dfEnvInitScriptURI -UseBasicParsing | ForEach-Object Content
-        $null = [ScriptBlock]::Create($dfEnvInitScript).Invoke()
-    }
-
-    if($script:SkipMSIAuth -eq $true)
-    {
-        Microsoft.PowerShell.Utility\Write-Debug -Message "Skip authenticating with MSI, instead test scripts will take care of Auth."
-    }
-    else 
-    {
-        Microsoft.PowerShell.Utility\Write-Debug -Message "Authenticating with MSI ..."
-
-        $AuthStartTime = [System.DateTime]::Now
-        try
-        {
-            # Authenticate to Azure services
-            # Use the default subscriptionId from Storage Profile to optimize authenticating to Azure Services using Connect-AzAccount
-            Microsoft.PowerShell.Utility\Write-Verbose -Verbose -Message 'Authenticating to Azure ...'
-
-            if (-not (Connect-AzService -currentSubscriptionId (Get-SubscriptionIdFromStorageProfile)))
-            {
-                Microsoft.PowerShell.Utility\Write-Warning -Message 'Azure Authentication failed.'
-                . Invoke-PSCloudShellUserProfile
-                return
-            }
-        }
-        finally
-        {
-            # Measure the time spent on the Azure authentication
-            Invoke-CloudShellTelemetry -LogLabel "AZUREAUTHENTICATION" -StartTime $AuthStartTime
-        }
-    }
-
-    #endregion
-
-    #region AzureAD
-
-    # Import AzureAD module so cmdlets are visible, they are not currently being auto-discovered
-    $azureADLoadStartTime = [System.DateTime]::Now
-    try 
-    {
-        Microsoft.PowerShell.Core\Import-Module -Name $script:AzureADModuleName    
-    }
-    finally
-    {
-        Invoke-CloudShellTelemetry -LogLabel "AZUREADLOAD" -StartTime $azureADLoadStartTime
-    }
-
-    #endregion
-
-    #region User Specific
-
-    . Invoke-PSCloudShellUserProfile
-
-    # Set PSDefaultParameterValues for cmdlets
-    $PSDefaultParameterValues = @{'Install-Module:Scope' = 'CurrentUser'; 'Install-Script:Scope' = 'CurrentUser'}
-
-    #Initialize Microsoft.PowerShell.UnixCompleters module
-
-    $startLoadingMicrosoftPowerShellUnixCompleters = [System.DateTime]::Now
-    try
-    {
-        Microsoft.PowerShell.Core\Import-Module -Name Microsoft.PowerShell.UnixCompleters -ErrorAction SilentlyContinue
-    }
-    finally
-    {
-        Invoke-CloudShellTelemetry -LogLabel "LOADMicrosoftPowerShellUnixCompleters" -StartTime $startLoadingMicrosoftPowerShellUnixCompleters
-    }
-    #endregion
-
-    #region Initialize AzurePSDrive
-
-    $startLoadingModules = [System.DateTime]::Now
-    try
-    {
-        Microsoft.PowerShell.Core\Import-Module -Name AzurePSDrive
-        Microsoft.PowerShell.Utility\Write-Verbose -Verbose -Message 'Building your Azure drive ...'
-    }
-    finally
-    {
-        Invoke-CloudShellTelemetry -LogLabel "LOADCLOUDSHELLMODULES" -StartTime $startLoadingModules
-    }
-
-    $startBuildingShips = [System.DateTime]::Now
-    try
-    {
-        $null = Microsoft.PowerShell.Management\New-PSDrive -Name Azure -PSProvider SHiPS -Root "AzurePSDrive#Azure" -Scope Global
-        if(-not $?)
-        {
-            Microsoft.PowerShell.Utility\Write-Warning -Message 'Something went wrong while creating Azure drive. You can still use this shell to run Azure PowerShell commands.'
-        }
-    }
-    finally
-    {
-        Invoke-CloudShellTelemetry -LogLabel "BUILDSHIPS" -StartTime $startBuildingShips
-    }
-
-    # Set the PSReadline key handler for CloudShell key bindings and telemetry.
-    # Note: Set-CloudShellPSReadLineKeyHandler has to be after loading user profiles
-    & ($script:PSCloudShellUtilityModuleInfo){Set-CloudShellPSReadLineKeyHandler}
-
-    Invoke-CloudShellTelemetry -LogLabel "STARTUPTIME" -StartTime $Startuptime
-
-    #endregion
-
-    #region Clean up temp Variables
-
-    # Clean up variables since this startup script runs at global scope
-    Microsoft.PowerShell.Utility\Remove-Variable -Name AllHostsProfilePath, CurrentHostProfilePath, Startuptime, elapsed, UserDefaultPath, startBuildingShips, startLoadingModules, AuthStartTime -ErrorAction Ignore
-    Microsoft.PowerShell.Management\Remove-Item -Path env:ACC_CLUSTER -ErrorAction Ignore
-
-    #endregion
-
+if (! $env:ACC_CLOUD) {
+    # we are running locally, not in azure - skip setup steps
+    return
 }
+
+#region Initialization
+
+# show MOTD
+& ($script:PSCloudShellUtilityModuleInfo){Get-CloudShellTip -ErrorAction SilentlyContinue}
+
+# Set the user profile path to clouddrive
+Microsoft.PowerShell.Utility\Set-Variable -Name PROFILE -Value $script:CurrentHostProfilePath -Scope Global
+$PROFILE = $PROFILE | Microsoft.PowerShell.Utility\Add-Member -MemberType NoteProperty -Name CurrentUserAllHosts -Value $script:AllHostsProfilePath -PassThru
+$PROFILE = $PROFILE | Microsoft.PowerShell.Utility\Add-Member -MemberType NoteProperty -Name CurrentUserCurrentHost -Value $script:CurrentHostProfilePath -PassThru
+
+# Dogfood initialization script
+if ($env:ACC_CLOUD -eq 'dogfood')
+{
+    Microsoft.PowerShell.Utility\Write-Warning -Message "You are running in a dogfood environment. Please supply a URI for Azure dogfood environment initialization script."
+    $dfEnvInitScriptURI = Microsoft.PowerShell.Utility\Read-Host -Prompt "Supply the URI"
+    $dfEnvInitScript = Microsoft.PowerShell.Utility\Invoke-WebRequest -Uri $dfEnvInitScriptURI -UseBasicParsing | ForEach-Object Content
+    $null = [ScriptBlock]::Create($dfEnvInitScript).Invoke()
+}
+
+if($script:SkipMSIAuth -eq $true)
+{
+    Microsoft.PowerShell.Utility\Write-Debug -Message "Skip authenticating with MSI, instead test scripts will take care of Auth."
+}
+else 
+{
+    Microsoft.PowerShell.Utility\Write-Debug -Message "Authenticating with MSI ..."
+
+    $AuthStartTime = [System.DateTime]::Now
+    try
+    {
+        # Authenticate to Azure services
+        # Use the default subscriptionId from Storage Profile to optimize authenticating to Azure Services using Connect-AzAccount
+        Microsoft.PowerShell.Utility\Write-Verbose -Verbose -Message 'Authenticating to Azure ...'
+
+        if (-not (Connect-AzService -currentSubscriptionId (Get-SubscriptionIdFromStorageProfile)))
+        {
+            Microsoft.PowerShell.Utility\Write-Warning -Message 'Azure Authentication failed.'
+            . Invoke-PSCloudShellUserProfile
+            return
+        }
+    }
+    finally
+    {
+        # Measure the time spent on the Azure authentication
+        Invoke-CloudShellTelemetry -LogLabel "AZUREAUTHENTICATION" -StartTime $AuthStartTime
+    }
+}
+
+#endregion
+
+#region AzureAD
+
+# Import AzureAD module so cmdlets are visible, they are not currently being auto-discovered
+$azureADLoadStartTime = [System.DateTime]::Now
+try 
+{
+    Microsoft.PowerShell.Core\Import-Module -Name $script:AzureADModuleName    
+}
+finally
+{
+    Invoke-CloudShellTelemetry -LogLabel "AZUREADLOAD" -StartTime $azureADLoadStartTime
+}
+
+#endregion
+
+#region User Specific
+
+. Invoke-PSCloudShellUserProfile
+
+# Set PSDefaultParameterValues for cmdlets
+$PSDefaultParameterValues = @{'Install-Module:Scope' = 'CurrentUser'; 'Install-Script:Scope' = 'CurrentUser'}
+
+#Initialize Microsoft.PowerShell.UnixCompleters module
+
+$startLoadingMicrosoftPowerShellUnixCompleters = [System.DateTime]::Now
+try
+{
+    Microsoft.PowerShell.Core\Import-Module -Name Microsoft.PowerShell.UnixCompleters -ErrorAction SilentlyContinue
+}
+finally
+{
+    Invoke-CloudShellTelemetry -LogLabel "LOADMicrosoftPowerShellUnixCompleters" -StartTime $startLoadingMicrosoftPowerShellUnixCompleters
+}
+#endregion
+
+#region Initialize AzurePSDrive
+
+$startLoadingModules = [System.DateTime]::Now
+try
+{
+    Microsoft.PowerShell.Core\Import-Module -Name AzurePSDrive
+    Microsoft.PowerShell.Utility\Write-Verbose -Verbose -Message 'Building your Azure drive ...'
+}
+finally
+{
+    Invoke-CloudShellTelemetry -LogLabel "LOADCLOUDSHELLMODULES" -StartTime $startLoadingModules
+}
+
+$startBuildingShips = [System.DateTime]::Now
+try
+{
+    $null = Microsoft.PowerShell.Management\New-PSDrive -Name Azure -PSProvider SHiPS -Root "AzurePSDrive#Azure" -Scope Global
+    if(-not $?)
+    {
+        Microsoft.PowerShell.Utility\Write-Warning -Message 'Something went wrong while creating Azure drive. You can still use this shell to run Azure PowerShell commands.'
+    }
+}
+finally
+{
+    Invoke-CloudShellTelemetry -LogLabel "BUILDSHIPS" -StartTime $startBuildingShips
+}
+
+# Set the PSReadline key handler for CloudShell key bindings and telemetry.
+# Note: Set-CloudShellPSReadLineKeyHandler has to be after loading user profiles
+& ($script:PSCloudShellUtilityModuleInfo){Set-CloudShellPSReadLineKeyHandler}
+
+Invoke-CloudShellTelemetry -LogLabel "STARTUPTIME" -StartTime $Startuptime
+
+#endregion
+
+#region Clean up temp Variables
+
+# Clean up variables since this startup script runs at global scope
+Microsoft.PowerShell.Utility\Remove-Variable -Name AllHostsProfilePath, CurrentHostProfilePath, Startuptime, elapsed, UserDefaultPath, startBuildingShips, startLoadingModules, AuthStartTime -ErrorAction Ignore
+Microsoft.PowerShell.Management\Remove-Item -Path env:ACC_CLUSTER -ErrorAction Ignore
+
+#endregion
