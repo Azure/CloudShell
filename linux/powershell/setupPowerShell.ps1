@@ -22,8 +22,13 @@ $shareModulePath = ([System.Management.Automation.Platform]::SelectProductNameFo
 $modulePath = if ($shareModulePath) {$shareModulePath}else {Microsoft.PowerShell.Management\Join-Path $PSHOME 'Modules'}
 $script:dockerfileDataObject = $null                        # json object holding data from dockerfile.data.json file
 
+
+# In almost all cases, Cloud Shell pulls modules from the regular PowerShell Gallery or preview gallery at build time.
+# In a few legacy cases, we include modules which are not intended for broader use. These are pulled from an Azure storage
+# account using the code below.
+
 # PSCloudShell depends on files under Azure blob storage. The name of 'folder' (Azure container) is the version number.
-# Read the version info from the ..\..\Windows\Dockerfile.Data.json. In such way, only the Dockerfile.Data.json to be updated if there is
+# Read the version info from the Dockerfile.Data.json. In such way, only the Dockerfile.Data.json to be updated if there is
 # any version changes.
 function Get-DockerfileData {
     $dockerFileData = Microsoft.PowerShell.Management\Join-Path $PSScriptRoot -ChildPath 'Dockerfile.Data.json'
@@ -95,7 +100,7 @@ try {
         if (Microsoft.PowerShell.Management\Test-Path $tempDirectory) {
             Write-Output ('Temp Directory: {0}' -f $tempDirectory)
 
-            # Install the PSCloudShellUtility, Exchange modules from the Azure storage
+            # Install the Exchange modules from the Azure storage
             Install-PSCloudShellFile -Source $tempDirectory -FileName 'EXOPSSessionConnector.zip' -Destination $modulePath -FileHash $script:dockerfileDataObject.ExoConnectorFileHash
             Write-Output "Installed Exchange Package."
         }
