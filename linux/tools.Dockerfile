@@ -31,7 +31,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D8734
   && unset TF_VERSION
 
 COPY ./linux/terraform/terraform*  /usr/local/bin/
-RUN chmod 755 /usr/local/bin/terraform*
+RUN chmod 755 /usr/local/bin/terraform* && dos2unix /usr/local/bin/terraform*
 
 # Copy and run script to Install powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/PSCloudShellUtility/ /usr/local/share/powershell/Modules/PSCloudShellUtility/
@@ -49,4 +49,3 @@ RUN npm install -q -g @pnp/office365-cli
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
-

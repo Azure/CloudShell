@@ -282,6 +282,11 @@ function prompt
 }
 #endregion
 
+if (! $env:ACC_CLOUD) {
+    # we are running locally, not in azure - skip setup steps
+    return
+}
+
 #region Initialization
 
 # show MOTD
