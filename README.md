@@ -1,5 +1,5 @@
 
-# Microsoft Azure Cloud Shell
+# Microsoft Azure Cloud Shell Image
 
 Azure Cloud Shell is a browser-based shell environment which enables Azure customers to manage and configure their Azure services. It provides a [host of tools](https://docs.microsoft.com/en-us/azure/cloud-shell/features), including Azure CLI, Azure PowerShell, Ansible, Terraform, Chef, Puppet Bolt, kubectl, and many more.
 
@@ -57,7 +57,7 @@ docker run -it tools_cloudshell //bin//bash
 | Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
 
 \* For example, if you have an issue within Azure CLI, don't open up an issue with the Cloud Shell repo, open an issue within the Azure CLI repo. 
-Azure PowerShell is [here](https://github.com/Azure/powershell/issues) and Azure CLI is [here](https://github.com/Azure/azure-cli/issues) 
+Azure PowerShell is [here](https://github.com/Azure/azure-powershell/issues) and Azure CLI is [here](https://github.com/Azure/azure-cli/issues) 
 
 ## Legal
 
