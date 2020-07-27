@@ -1,13 +1,11 @@
 
 # Microsoft Azure Cloud Shell
 
-:confetti_ball: Yes, Cloud Shell is finally open-sourced :stuck_out_tongue_winking_eye: :tada: :confetti_ball:
-
 Azure Cloud Shell is a browser-based shell environment which enables Azure customers to manage and configure their Azure services. It provides a [host of tools](https://docs.microsoft.com/en-us/azure/cloud-shell/features), including Azure CLI, Azure PowerShell, Ansible, Terraform, Chef, Puppet Bolt, kubectl, and many more.
 
 For more details, check out [Overview of Azure Cloud Shell](https://docs.microsoft.com/en-us/azure/cloud-shell/overview#:~:text=Features%201%20Browser-based%20shell%20experience.%20...%202%20Choice,7%20Connect%20your%20Microsoft%20Azure%20Files%20storage.%20).
 
-Check out Cloudshell from clicking the button below.
+Try out Cloudshell by clicking the button below.
 
 [![](https://shell.azure.com/images/launchcloudshell.png "Launch Azure Cloud Shell")](https://shell.azure.com)
 
