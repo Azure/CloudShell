@@ -53,12 +53,13 @@ docker run -it tools_cloudshell //bin//bash
 | ---|---|
 | Package is out of date      | Create a Pull Request |
 | New desired package     | Create a Pull Request |
-| Issue with one of the packages*     | Talk to package owner & create a PR on their repo |
+| Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
-| Security bug | Create a GitHub Issue |
-| Issue with Cloud Shell in Azure Portal | Open a [support ticket](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
+| Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
+| Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
 
 \* For example, if you have an issue within Azure CLI, don't open up an issue with the Cloud Shell repo, open an issue within the Azure CLI repo. 
+Azure PowerShell is [here](https://github.com/Azure/powershell/issues) and Azure CLI is [here](https://github.com/Azure/azure-cli/issues) 
 
 ## Legal
 
