@@ -21,6 +21,14 @@ This repository has several uses:
 
 2. If you want a curated set of up-to-date command-line tools suitable for managing an Azure environment, but you want to run the tools locally on your own computer instead of in Cloud Shell, you can pull the container image and run it yourself.
 
+## Understanding the core service
+
+The core of Cloud Shell is built on top of Docker images (a.k.a layers). Specifically, Cloud Shell use two layers (Base and Tools). The Tools layer builds on top of the Base layer. Both Base and Tools contain packages that are used within Cloud Shell.
+
+| Layer        | Job           |
+| ---|---|
+| Base      | Contains non-frequent changing packages. Changes every 3-4 months. |
+| Tools      | Contains frequent changing packages. Changes every 1-2 weeks |
 
 # Building / Installation
 
@@ -28,6 +36,7 @@ This repository has several uses:
 
 * Docker
 * Bash terminal / Powershell
+
 
 
 ## For building base.Dockerfile image 
@@ -44,6 +53,13 @@ docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f l
 ```
 docker run -it tools_cloudshell //bin//bash
 ```
+
+## For testing the Cloud Shell image
+```
+docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell pwsh -c "cd /tests; Install-Module -Name Pester -Force; Invoke-Pester -EnableExit" 
+```
+
+For more information about bind mounts, please go onto the [Docker documentation](https://docs.docker.com/storage/bind-mounts/). We do expect all the test cases to pass if you would like your changes to be merged. 
 
 # Contributing
 
