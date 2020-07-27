@@ -40,17 +40,18 @@ docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f l
 
 ## For running the tools.Dockerfile image 
 ```
-docker run -it tools_cloudshell //bin//bash
+docker run -it tools_cloudshell /bin/bash
 ```
 
 # Contributing
 
-## Types of issues
+## Types of issues 
 
 | Issue Type        | Action           |
 | ---|---|
-| Package is out of date      | Create a Pull Request |
-| New desired package     | Create a Pull Request |
+| Package is out of date      | Create a Pull Request or Issue |
+| New desired package     | Create a Pull Request or Issue |
+| New desired Cloud Shell feature | Create an Issue |
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
 | Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
@@ -58,6 +59,27 @@ docker run -it tools_cloudshell //bin//bash
 
 \* For example, if you have an issue within Azure CLI, don't open up an issue with the Cloud Shell repo, open an issue within the Azure CLI repo. 
 Azure PowerShell is [here](https://github.com/Azure/azure-powershell/issues) and Azure CLI is [here](https://github.com/Azure/azure-cli/issues) 
+
+## Types of tools 
+
+Cloud Shell aims to provide a core set of tools for Azure and Microsoft 365 devops scenarios, but we can't include everything. 
+If you just want to use a tool yourself, you can install most utilities into your own home directory inside Cloud Shell. 
+You only need to update the image if you want _every_ Cloud Shell admin to have the tool available.
+
+For a tool to be included in Cloud Shell, it has to be:
+
+- widely useful to Azure administrators
+- well-maintained and supported,  
+- released under a license which permits us to include it
+- lightweight in terms of CPU requirements, size on disk, and memory
+
+Please:
+- support fetching tokens from Managed Identity if a tool authenticates to Azure services
+- add basic tests to the test suite run by GitHub Actions
+
+In general we avoid:
+- alpha, beta, preview or unstable versions of software. 
+- tools primarily useful for extensive software development, as opposed to DevOps. Consider [Visual Studio Codespaces](https://visualstudio.microsoft.com/services/visual-studio-codespaces/) for that.
 
 ## Legal
 
