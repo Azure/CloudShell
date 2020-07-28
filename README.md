@@ -1,13 +1,11 @@
 
-# Microsoft Azure Cloud Shell
-
-:confetti_ball: Yes, Cloud Shell is finally open-sourced :stuck_out_tongue_winking_eye: :tada: :confetti_ball:
+# Microsoft Azure Cloud Shell Image
 
 Azure Cloud Shell is a browser-based shell environment which enables Azure customers to manage and configure their Azure services. It provides a [host of tools](https://docs.microsoft.com/en-us/azure/cloud-shell/features), including Azure CLI, Azure PowerShell, Ansible, Terraform, Chef, Puppet Bolt, kubectl, and many more.
 
 For more details, check out [Overview of Azure Cloud Shell](https://docs.microsoft.com/en-us/azure/cloud-shell/overview#:~:text=Features%201%20Browser-based%20shell%20experience.%20...%202%20Choice,7%20Connect%20your%20Microsoft%20Azure%20Files%20storage.%20).
 
-Check out Cloudshell from clicking the button below.
+Try out Cloudshell by clicking the button below.
 
 [![](https://shell.azure.com/images/launchcloudshell.png "Launch Azure Cloud Shell")](https://shell.azure.com)
 
@@ -51,7 +49,7 @@ docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f l
 
 ## For running the tools.Dockerfile image 
 ```
-docker run -it tools_cloudshell //bin//bash
+docker run -it tools_cloudshell /bin/bash
 ```
 
 ## For testing the Cloud Shell image
@@ -63,18 +61,41 @@ For more information about bind mounts, please go onto the [Docker documentation
 
 # Contributing
 
-## Types of issues
+## Types of issues 
 
 | Issue Type        | Action           |
 | ---|---|
-| Package is out of date      | Create a Pull Request |
-| New desired package     | Create a Pull Request |
-| Issue with one of the packages*     | Talk to package owner & create a PR on their repo |
+| Package is out of date      | Create a Pull Request or Issue |
+| New desired package     | Create a Pull Request or Issue |
+| New desired Cloud Shell feature | Create an Issue |
+| Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
-| Security bug | Create a GitHub Issue |
-| Issue with Cloud Shell in Azure Portal | Open a [support ticket](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
+| Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
+| Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
 
 \* For example, if you have an issue within Azure CLI, don't open up an issue with the Cloud Shell repo, open an issue within the Azure CLI repo. 
+Azure PowerShell is [here](https://github.com/Azure/azure-powershell/issues) and Azure CLI is [here](https://github.com/Azure/azure-cli/issues) 
+
+## Types of tools 
+
+Cloud Shell aims to provide a core set of tools for Azure and Microsoft 365 devops scenarios, but we can't include everything. 
+If you just want to use a tool yourself, you can install most utilities into your own home directory inside Cloud Shell. 
+You only need to update the image if you want _every_ Cloud Shell admin to have the tool available.
+
+For a tool to be included in Cloud Shell, it has to be:
+
+- widely useful to Azure administrators
+- well-maintained and supported,  
+- released under a license which permits us to include it
+- lightweight in terms of CPU requirements, size on disk, and memory
+
+Please:
+- support fetching tokens from Managed Identity if a tool authenticates to Azure services
+- add basic tests to the test suite run by GitHub Actions
+
+In general we avoid:
+- alpha, beta, preview or unstable versions of software. 
+- tools primarily useful for extensive software development, as opposed to DevOps. Consider [Visual Studio Codespaces](https://visualstudio.microsoft.com/services/visual-studio-codespaces/) for that.
 
 ## Legal
 
