@@ -17,16 +17,18 @@ This repository has several uses:
 
 1. If you would like to propose a new tool for inclusion in Cloud Shell, you can create an issue or submit a Pull Request to request the tool be added. Please ensure that the PR actually builds within GitHub Actions.
 
-2. If you want a curated set of up-to-date command-line tools suitable for managing an Azure environment, but you want to run the tools locally on your own computer instead of in Cloud Shell, you can pull the container image and run it yourself.
+2. If you want a curated set of up-to-date command-line tools suitable for managing an Azure environment, but you want to run the tools locally on your own computer instead of in Cloud Shell, you can build the image and run it yourself.
 
-## Understanding the core service
 
-The core of Cloud Shell is built on top of Docker images (a.k.a layers). Specifically, Cloud Shell use two layers (Base and Tools). The Tools layer builds on top of the Base layer. Both Base and Tools contain packages that are used within Cloud Shell.
+## Understanding the base.Dockerfile and tools.Dockerfile
+
+The core of Cloud Shell is built on top of Docker images. Specifically, Cloud Shell uses two images (Base and Tools). The Tools image builds on top of the Base image. Both Base and Tools contain packages that are used within Cloud Shell.
 
 | Layer        | Job           |
 | ---|---|
 | Base      | Contains non-frequent changing packages. Changes every 3-4 months. |
-| Tools      | Contains frequent changing packages. Changes every 1-2 weeks |
+| Tools      | Contains frequent changing packages. Changes every 2-3 weeks |
+
 
 # Building / Installation
 
