@@ -159,7 +159,7 @@ RUN chmod 755 /usr/local/bin/blobxfer \
   && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
   && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard
 
-# BEGIN: Install Ansible in isolated Virtual Environment
+# Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
   && pip2 install virtualenv \
@@ -167,31 +167,27 @@ RUN chmod 755 /usr/local/bin/ansible* \
   && python2 -m virtualenv ansible \
   && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
   && ansible-galaxy collection install azure.azcollection
-# END: Install Ansible
 
-# Begin: Install latest version of Istio
+# Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest
 RUN curl -L https://git.io/getLatestIstio | sh - \
   && mv $PWD/istio* $ISTIO_ROOT \
   && chmod -R 755 $ISTIO_ROOT
-# End: Install latest version of Istio
 
-# Begin: Install latest version of Linkerd
+# Install latest version of Linkerd
 ENV LINKERD_ROOT /usr/local/linkerd
 RUN curl -sL https://run.linkerd.io/install | sh - \
   && mv $HOME/.linkerd*/ $LINKERD_ROOT
 ENV PATH $PATH:$LINKERD_ROOT/bin:$PATH:$ISTIO_ROOT/bin
-# End: Install latest version of Linkerd
 
-# Begin: Install Puppet-Bolt
+# Install Puppet-Bolt
 RUN wget -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-xenial.deb \
   && dpkg -i puppet-tools.deb \
   && apt-get update \
   && apt-get install puppet-bolt \
   && rm -f puppet-tools.deb
-# End: Install Puppet-Bolt
 
-# BEGIN: install go
+# install go
 RUN wget -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
   && echo b3dd4bd781a0271b33168e627f7f43886b4c5d1c794a4015abf34e99c6526ca3 go.tar.gz | sha256sum -c \
   && tar -xf go.tar.gz \
@@ -204,9 +200,8 @@ ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
 RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
   && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
   && unset INSTALL_DIRECTORY
-# END: install go
 
-# BEGIN: Install ruby environment - Logic from official ruby docker image: https://github.com/docker-library/ruby
+# Install ruby environment - Logic from official ruby docker image: https://github.com/docker-library/ruby
 RUN wget -O ruby.tar.gz https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz \
   && echo 241408c8c555b258846368830a06146e4849a1d58dcaf6b14a3b6a73058115b7 ruby.tar.gz | sha256sum -c \
   && mkdir -p /usr/src/ruby \
@@ -230,9 +225,8 @@ RUN wget -O ruby.tar.gz https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.
 ENV GEM_HOME=~/bundle
 ENV BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
-# END: Install ruby environment
 
-# Begin: Download and Install the latest packer (AMD64)
+# Download and Install the latest packer (AMD64)
 RUN PACKER_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
   && wget -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
   && wget -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
@@ -245,13 +239,14 @@ RUN PACKER_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packe
   && chmod a+x /usr/local/bin/packer \
   && rm -f packer packer.zip packer.sha256 packer.sha256.sig \
   && unset PACKER_VERSION
-# End: Download and Install the latest packer (AMD64)
 
+# Install dcos
 RUN wget -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dcos \
   && echo 07f77da8a664ad8312fc6318c633a3cd350cdbeb2b483604363922d94a55089e dcos | sha256sum -c \
   && mv dcos /usr/local/bin \
   && chmod +x /usr/local/bin/dcos
 
+# Install kubectl
 RUN wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl \
   && echo 4fc8a7024ef17b907820890f11ba7e59a6a578fa91ea593ce8e58b3260f7fb88 kubectl | sha256sum -c \
   && mv kubectl /usr/local/bin \
@@ -296,10 +291,9 @@ RUN bash ./helmInstall.sh && rm -f ./helmInstall.sh
 COPY ./linux/draftInstall.sh .
 RUN bash ./draftInstall.sh && rm -f ./draftInstall.sh
 
-# BEGIN: Install Yeoman Generator and predefined templates
+# Install Yeoman Generator and predefined templates
 RUN npm install -g yo \
   && npm install -g generator-az-terra-module
-# END: Install Yeoman Generator and predefined templates
 
 # Download and install AzCopy SCD of linux-x64
 # downloadazcopycloudshell pointing to a latest azcopy download

@@ -17,7 +17,23 @@ This repository has several uses:
 
 1. If you would like to propose a new tool for inclusion in Cloud Shell, you can create an issue or submit a Pull Request to request the tool be added. Please ensure that the PR actually builds within GitHub Actions.
 
-2. If you want a curated set of up-to-date command-line tools suitable for managing an Azure environment, but you want to run the tools locally on your own computer instead of in Cloud Shell, you can pull the container image and run it yourself.
+2. If you want a curated set of up-to-date command-line tools suitable for managing an Azure environment, but you want to run the tools locally on your own computer instead of in Cloud Shell, you can build the image and run it yourself.
+
+
+## Understanding the base.Dockerfile and tools.Dockerfile
+
+The repository contains two Dockerfile, 'base' and 'tools'. Tools is built on top of the base file, so normally you would
+just have one Dockerfile and rely on the container registry to cache all the layers that haven't changed. However we need 
+to cache the base image explicitly to ensure fast startup time. So the image is split into these two files, and the tools
+layer starts FROM an internal repository where the base image is cached, so that we know when we need to update the base.
+
+When building or using the image locally, you don't need to worry about that. Just build using the instructions below, and be
+aware that changes the the base layer will take longer to release than changes to the tools.
+
+| Layer        | Job           |
+| ---|---|
+| Base      | Contains large, infrequently changing packages. Changes every 3-4 months. |
+| Tools      | Contains frequently changing packages. Changes every 2-3 weeks |
 
 
 # Building / Installation
@@ -26,6 +42,7 @@ This repository has several uses:
 
 * Docker
 * Bash terminal / Powershell
+
 
 
 ## For building base.Dockerfile image 
@@ -42,6 +59,13 @@ docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f l
 ```
 docker run -it tools_cloudshell /bin/bash
 ```
+
+## For testing the Cloud Shell image
+```
+docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell pwsh -c "cd /tests; Install-Module -Name Pester -Force; Invoke-Pester -EnableExit" 
+```
+
+For more information about bind mounts, please go onto the [Docker documentation](https://docs.docker.com/storage/bind-mounts/). We do expect all the test cases to pass if you would like your changes to be merged. 
 
 # Contributing
 

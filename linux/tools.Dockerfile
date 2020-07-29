@@ -43,9 +43,8 @@ WORKDIR /usr/cloudshell
 
 RUN npm install -q 
 
-# BEGIN: Install Office 365 CLI templates
+# Install Office 365 CLI templates
 RUN npm install -q -g @pnp/office365-cli
-# END: Install Office 365 CLI templates
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
