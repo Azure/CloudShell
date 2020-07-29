@@ -22,12 +22,18 @@ This repository has several uses:
 
 ## Understanding the base.Dockerfile and tools.Dockerfile
 
-The core of Cloud Shell is built on top of Docker images. Specifically, Cloud Shell uses two images (Base and Tools). The Tools image builds on top of the Base image. Both Base and Tools contain packages that are used within Cloud Shell.
+The repository contains two Dockerfile, 'base' and 'tools'. Tools is built on top of the base file, so normally you would
+just have one Dockerfile and rely on the container registry to cache all the layers that haven't changed. However we need 
+to cache the base image explicitly to ensure fast startup time. So the image is split into these two files, and the tools
+layer starts FROM an internal repository where the base image is cached, so that we know when we need to update the base.
+
+When building or using the image locally, you don't need to worry about that. Just build using the instructions below, and be
+aware that changes the the base layer will take longer to release than changes to the tools.
 
 | Layer        | Job           |
 | ---|---|
-| Base      | Contains non-frequent changing packages. Changes every 3-4 months. |
-| Tools      | Contains frequent changing packages. Changes every 2-3 weeks |
+| Base      | Contains large, infrequently changing packages. Changes every 3-4 months. |
+| Tools      | Contains frequently changing packages. Changes every 2-3 weeks |
 
 
 # Building / Installation
