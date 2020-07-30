@@ -1,9 +1,9 @@
 
 # Microsoft Azure Cloud Shell Image
 
-Azure Cloud Shell is a browser-based shell environment which enables Azure customers to manage and configure their Azure services. It provides a [host of tools](https://docs.microsoft.com/en-us/azure/cloud-shell/features), including Azure CLI, Azure PowerShell, Ansible, Terraform, Chef, Puppet Bolt, kubectl, and many more.
+Azure Cloud Shell is a browser-based shell environment which enables Azure customers to manage and configure their Azure services. It provides a [host of tools](https://docs.microsoft.com/azure/cloud-shell/features), including Azure CLI, Azure PowerShell, Ansible, Terraform, Chef, Puppet Bolt, kubectl, and many more.
 
-For more details, check out [Overview of Azure Cloud Shell](https://docs.microsoft.com/en-us/azure/cloud-shell/overview#:~:text=Features%201%20Browser-based%20shell%20experience.%20...%202%20Choice,7%20Connect%20your%20Microsoft%20Azure%20Files%20storage.%20).
+For more details, check out [Overview of Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/overview#:~:text=Features%201%20Browser-based%20shell%20experience.%20...%202%20Choice,7%20Connect%20your%20Microsoft%20Azure%20Files%20storage.%20).
 
 Try out Cloudshell by clicking the button below.
 
@@ -79,7 +79,7 @@ For more information about bind mounts, please go onto the [Docker documentation
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
 | Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
-| Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
+| Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://docs.microsoft.com/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
 
 \* For example, if you have an issue within Azure CLI, don't open up an issue with the Cloud Shell repo, open an issue within the Azure CLI repo. 
 Azure PowerShell is [here](https://github.com/Azure/azure-powershell/issues) and Azure CLI is [here](https://github.com/Azure/azure-cli/issues) 
@@ -105,7 +105,12 @@ In general we avoid:
 - alpha, beta, preview or unstable versions of software. 
 - tools primarily useful for extensive software development, as opposed to DevOps. Consider [Visual Studio Codespaces](https://visualstudio.microsoft.com/services/visual-studio-codespaces/) for that.
 
-## Legal
+## Cloud Shell Documentation
+
+Please see the [Microsoft Azure Documentation](https://github.com/MicrosoftDocs/azure-docs) for a guide to add to the Azure docs repo.
+The Cloud Shell documentation can be found [here](https://github.com/MicrosoftDocs/azure-docs/tree/master/articles/cloud-shell).
+
+# Legal
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
