@@ -7,32 +7,30 @@ assignees: edyoung, BellaLi
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## To Reproduce
 
-**Priority**
-High - needs to be addressed ASAP (within a 48 hour period)
-Medium - can be addressed within a 7 day period
-Low - can be addressed after a 7 day period
+```
+Commands you ran
+```
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Type '....'
-3. See error
+## Observed Behavior
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+```
+Include error output here
+```
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## Expected behavior
 
-**host OS information
-Which Operating System are you using? (ex. Windows 10, Mac OS Safari)
+A clear description of what you expected to happen instead.
 
-**host command line interface (CLI)
-Which CLI are you using? 
- (ex. Window's PowerShell, Linux terminal, etc.)
+## Is this specific to Cloud Shell?
+Please verify if the same issue can be reproduced by running the same tool **outside Cloud Shell** - for example,
+by installing it on your own computer. If so, it is likely to be a bug in that tool or in the Azure service it communicates with, 
+not in Cloud Shell. Please file the issue with the appropriate project.
 
-**Additional context**
+## Interface information
+How are you accessing Cloud Shell - https://shell.azure.com, https://portal.azure.com, via Windows Terminal, or some other method?
+If a browser, which Operating System and browser are you using? (ex. Edge on Windows 10)
+
+## Additional context
 Add any other context about the problem here.
