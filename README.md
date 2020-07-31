@@ -5,9 +5,13 @@ Azure Cloud Shell is a browser-based shell environment which enables Azure custo
 
 For more details, check out [Overview of Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/overview#:~:text=Features%201%20Browser-based%20shell%20experience.%20...%202%20Choice,7%20Connect%20your%20Microsoft%20Azure%20Files%20storage.%20).
 
-Try out Cloudshell by clicking the button below.
+Try out Cloud Shell by clicking the button below.
 
 [![](https://shell.azure.com/images/launchcloudshell.png "Launch Azure Cloud Shell")](https://shell.azure.com)
+
+Try out Cloud Shell locally by simply pulling from the Microsoft Container Registry: mcr.microsoft.com/azure-cloudshell:latest
+
+*Please note that the image from the Azure portal or the Microsoft Container Registry may not directly reflect what is in this GitHub repository.
 
 # About this repository
 
@@ -43,7 +47,12 @@ aware that changes the the base layer will take longer to release than changes t
 * Docker
 * Bash terminal / Powershell
 
-
+## Pulling from Microsoft container registry
+From the root repository
+```bash
+docker pull mcr.microsoft.com/azure-cloudshell:latest
+```
+This gives you the option of just running the image instead of building it yourself.
 
 ## Building base.Dockerfile image 
 From the root repository
