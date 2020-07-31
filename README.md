@@ -45,22 +45,27 @@ aware that changes the the base layer will take longer to release than changes t
 
 
 
-## For building base.Dockerfile image 
+## Building base.Dockerfile image 
 From the root repository
-```
+```bash
 docker build -t base_cloudshell -f linux/base.Dockerfile .
 ```
-## For building tools.Dockerfile image 
-```
+## Building tools.Dockerfile image 
+```bash
 docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
 ```
 
-## For running the tools.Dockerfile image 
-```
+## Running bash in the tools.Dockerfile image 
+```bash
 docker run -it tools_cloudshell /bin/bash
 ```
 
-## For testing the Cloud Shell image
+## Running pwsh in the tools.Dockerfile image
+```bash
+docker run -it tools_cloudshell /usr/bin/pwsh
+```
+
+## Testing the Cloud Shell image
 ```
 docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell pwsh -c "cd /tests; Install-Module -Name Pester -Force; Invoke-Pester -EnableExit" 
 ```
