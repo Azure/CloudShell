@@ -78,6 +78,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   dos2unix \
   dotnet-dev-1.0.1 \
   dotnet-sdk-2.2 \
+  dotnet-sdk-3.1 \
   emacs \
   iptables \
   iputils-ping \
