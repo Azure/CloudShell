@@ -24,7 +24,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         $cfVersion | Where-Object {$_ -like 'cf version 6.51.0+*' } | Should -Be $true
     }
 
-    It "blobxfer" 
+    It "blobxfer" {
         $blobxferVersion = blobxfer --version 
         $blobxferVersion.Contains('blobxfer, version 1.9.4') | Should -Be $true
     }
@@ -120,9 +120,6 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         # Match only major version. Any change in major version is considered potentially breaking
         $terraformVersion | Where-Object {$_ -like "Terraform v0.*.*"} | Should -Be $true
     }
-
-   
-
 }
 
 Describe "PowerShell Modules" {
