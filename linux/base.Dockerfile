@@ -8,44 +8,45 @@
 # of the base docker file stored in a container registry. This avoids accidentally introducing a change in
 # the base image
 
-FROM ubuntu:16.04 as azconsole-agentbase
+#This quinault is a version of CBL-D. CBL-D is an Microsoft compliant OS based off of Debian 10.
+FROM sbidprod.azurecr.io/quinault as azconsole-agentbase
 
 RUN apt-get update && apt-get install -y \
-  apt-transport-https \
-  curl \
-  xz-utils \
-  git
+    apt-transport-https \
+    curl \
+    xz-utils \
+    git \
+    gpg
 
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
   && mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg \
-  && sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ xenial main" > /etc/apt/sources.list.d/dotnetdev.list' \
-  && sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" >> /etc/apt/sources.list.d/dotnetdev.list'
+  && sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-buster-prod buster main" >> /etc/apt/sources.list.d/microsoft-debian-buster-prod.list'
 
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > postgresql.gpg \
   && mv postgresql.gpg /etc/apt/trusted.gpg.d/postgresql.gpg \
-  && sh -c 'echo "deb [arch=amd64] https://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/postgresql.list'
+  && sh -c 'echo "deb [arch=amd64] https://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" >> /etc/apt/sources.list.d/postgresql.list'
 
 # BEGIN: provision nodejs
 
 # gpg keys listed at https://github.com/nodejs/node
 RUN set -ex \
   && for key in \
-  4ED778F539E3634C779C87C6D7062848A1AB005C \
-  71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-  77984A986EBC2AA786BC0F66B01FBB92821C587A \
-  8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-  94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-  A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
-  B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-  B9E2F5981AA6E0CD28160D9FF13993A75599653C \
-  C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-  DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-  FD3A5288F042B6850C66B31F09FE44734EB7990E \
+   4ED778F539E3634C779C87C6D7062848A1AB005C \
+   71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+   77984A986EBC2AA786BC0F66B01FBB92821C587A \
+   8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+   94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+   A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
+   B9AE9905FFD7803F25714661B63B535A4C206CA9 \
+   B9E2F5981AA6E0CD28160D9FF13993A75599653C \
+   C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+   DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+   FD3A5288F042B6850C66B31F09FE44734EB7990E \
   ; do \
-  gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
-  gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
-  gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-  gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
+    gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
+    gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
@@ -62,56 +63,53 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # END: provision nodejs
 
 # Azure CLI keys
-RUN echo "deb https://apt-mo.trafficmanager.net/repos/azure-cli/ xenial main" | tee /etc/apt/sources.list.d/azure-cli.list
+RUN echo "deb https://apt-mo.trafficmanager.net/repos/azure-cli/ buster main" | tee /etc/apt/sources.list.d/azure-cli.list
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B02C46DF417A0893
 
-# Sql server tools keys
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
 
 RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
-  autoconf \
-  azure-functions-core-tools \
-  build-essential \
-  cifs-utils \
-  dnsutils \
-  dos2unix \
-  dotnet-dev-1.0.1 \
-  dotnet-sdk-2.2 \
-  emacs \
-  iptables \
-  iputils-ping \
-  jq \
-  less \
-  libffi-dev \
-  libssl-dev \
-  man-db \
-  maven \
-  moby-cli \
-  moby-engine \
-  msodbcsql \
-  mssql-tools \
-  mysql-client \
-  nano \
-  parallel \
-  postgresql-contrib \
-  postgresql-client \
-  python-dev \
-  python \
-  python-pip \
-  python3 \
-  python3-pip \
-  python3-venv \
-  puppet \
-  software-properties-common \
-  tmux \
-  unixodbc-dev \
-  unzip \
-  vim \
-  wget \
-  zip \
-  zsh \
-  bash-completion    
+    autoconf \
+    azure-functions-core-tools \
+    build-essential \
+    cifs-utils \
+    dnsutils \
+    dos2unix \
+    dotnet-runtime-3.1 \
+    dotnet-sdk-3.1 \
+    emacs \
+    iptables \
+    iputils-ping \
+    jq \
+    less \
+    libffi-dev \
+    libssl-dev \
+    man-db \
+    moby-cli \
+    moby-engine \
+    msodbcsql17 \ 
+    mssql-tools \
+    default-mysql-client \
+    nano \
+    parallel \
+    postgresql-contrib \
+    postgresql-client \
+    python-dev \
+    python \
+    python-pip \
+    python3 \
+    python3-pip \
+    python3-venv \
+    puppet \
+    software-properties-common \
+    tmux \
+    unixodbc-dev \
+    unzip \
+    vim \
+    wget \
+    zip \
+    zsh \
+    bash-completion
 
 # Install Jenkins X client
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/v1.3.107/jx-linux-amd64.tar.gz > jx.tar.gz \
@@ -126,11 +124,9 @@ RUN wget -O cf-cli_install.deb https://cli.run.pivotal.io/stable?release=debian6
   && apt-get install -f \
   && rm -f cf-cli_install.deb
 
-# Install Java for Azure and Azure Stack
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9 \
-  && apt-add-repository "deb http://repos.azul.com/azure-only/zulu/apt stable main" \
-  && apt-get -q update \
-  && apt-get -y install zulu-8-azure-jdk
+RUN wget -O zulu-14.deb https://repos.azul.com/azure-only/zulu/packages/zulu-14/14/zulu-14-azure-jdk_14.27.1-14-linux_amd64.deb \
+  && apt install java-common && dpkg -i zulu-14.deb \
+  && apt -y install zulu-14-azure-jdk
 
 # Setup locale to en_US.utf8
 RUN locale-gen en_US en_US.UTF-8
@@ -142,8 +138,8 @@ ENV LANG="en_US.utf8"
 RUN ln -s -f /usr/bin/python3 /usr/bin/python \
   && sed -i 's/usr\/bin\/python/usr\/bin\/python2/' /usr/bin/pip2 \
   && pip2 install --upgrade pip && pip3 install --upgrade pip \
-  && pip3 install --upgrade sfctl \
   && pip install mssql-scripter
+RUN pip3 install --upgrade sfctl
 
 # Install Blobxfer and Batch-Shipyard in isolated virtualenvs
 COPY ./linux/blobxfer /usr/local/bin
@@ -151,22 +147,24 @@ RUN chmod 755 /usr/local/bin/blobxfer \
   && pip3 install virtualenv \
   && cd /opt \
   && virtualenv -p python3 blobxfer \
-  && /bin/bash -c "source blobxfer/bin/activate && pip3 install blobxfer && deactivate" \
-  && curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/releases/latest | grep tarball_url | cut -d'"' -f4` | tar -zxvpf - \
-  && mv Azure-batch-shipyard-* batch-shipyard \
-  && cd /opt/batch-shipyard \
-  && ./install.sh -c \
-  && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
-  && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard
+  && /bin/bash -c "source blobxfer/bin/activate && pip3 install blobxfer && deactivate"
+  # CAN'T INSTALL BATCH-SHIPYARD DUE TO CBL-D not being recognized 
+  # && curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/releases/latest | grep tarball_url | cut -d'"' -f4` | tar -zxvpf - \
+  # && mv Azure-batch-shipyard-* batch-shipyard \
+  # && cd /opt/batch-shipyard \
+  # && ./install.sh -c \
+  # && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
+  # && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard
 
-# Install Ansible in isolated Virtual Environment
+
+# # BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
   && pip2 install virtualenv \
   && cd /opt \
   && python2 -m virtualenv ansible \
   && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
-  && ansible-galaxy collection install azure.azcollection
+  && ansible-galaxy collection install azure.azcollection 
 
 # Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest
@@ -182,10 +180,10 @@ ENV PATH $PATH:$LINKERD_ROOT/bin:$PATH:$ISTIO_ROOT/bin
 
 # Install Puppet-Bolt
 RUN wget -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-xenial.deb \
-  && dpkg -i puppet-tools.deb \
-  && apt-get update \
-  && apt-get install puppet-bolt \
-  && rm -f puppet-tools.deb
+&& dpkg -i puppet-tools.deb \
+&& apt-get update \
+&& apt-get install puppet-bolt \
+&& rm -f puppet-tools.deb
 
 # install go
 RUN wget -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
@@ -198,33 +196,19 @@ ENV GOROOT="/usr/local/go"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
 
 RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
-  && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-  && unset INSTALL_DIRECTORY
+&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+&& unset INSTALL_DIRECTORY
 
-# Install ruby environment - Logic from official ruby docker image: https://github.com/docker-library/ruby
-RUN wget -O ruby.tar.gz https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz \
-  && echo 241408c8c555b258846368830a06146e4849a1d58dcaf6b14a3b6a73058115b7 ruby.tar.gz | sha256sum -c \
-  && mkdir -p /usr/src/ruby \
-  && tar -xf ruby.tar.gz -C /usr/src/ruby --strip-components=1 \
-  && rm -f ruby.tar.gz \
-  && cd /usr/src/ruby \
-  && autoconf \
-  && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
-  && ./configure --build="$gnuArch" --disable-install-doc --enable-shared \
-  && make -j "$(nproc)" \
-  && make install \
-  && cd / \
-  && rm -r /usr/src/ruby \
-  && gem update --system 2.7.7 \
+RUN gem update --system 2.7.7 \
   && gem install bundler --version 1.16.4 --force \
   && gem install rake --version 12.3.0 --no-document --force \
   && gem install colorize --version 0.8.1 --no-document --force \
   && gem install rspec --version 3.7.0 --no-document --force \
   && rm -r /root/.gem/
 
-ENV GEM_HOME=~/bundle
-ENV BUNDLE_PATH=~/bundle
-ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
+  ENV GEM_HOME=~/bundle
+  ENV BUNDLE_PATH=~/bundle
+  ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Download and Install the latest packer (AMD64)
 RUN PACKER_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
@@ -254,10 +238,11 @@ RUN wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 
 # Install PowerShell
 # Register the Microsoft repository GPG keys and Install PowerShell Core
-RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
+RUN wget -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
   && dpkg -i packages-microsoft-prod.deb \
   && apt update \
-  && apt-get -y install powershell 
+  && apt-get -y install powershell
+
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
@@ -265,8 +250,8 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 ENV POWERSHELL_UPDATECHECK Off
 
 # Install Chef Workstation
-RUN wget -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/0.16.33/ubuntu/16.04/chef-workstation_0.16.33-1_amd64.deb \
-  && echo c447bdc246312dd8883cd61894da60c28405efb2904240eca4a3fd9c4122fb3a chef-workstation_amd64.deb | sha256sum -c \
+RUN wget -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/20.6.62/debian/10/chef-workstation_20.6.62-1_amd64.deb \
+  && echo 737bcf19236e63732871f2fdf7f7d71a02b91dabebc80e5f14d5cdece4ca3cf3 chef-workstation_amd64.deb | sha256sum -c \
   && dpkg -i chef-workstation_amd64.deb \
   && rm -f chef-workstation_amd64.deb
 
