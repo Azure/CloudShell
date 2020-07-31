@@ -16,6 +16,9 @@ RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure
   && dpkg -i azure-cli-latest.deb \
   && rm -f azure-cli-latest.deb
 
+# Install any Azure CLI extensions that should be included by default.
+RUN az extension add --name ai-examples -y
+
 # Download the latest terraform (AMD64), install to global environment.
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D87348FFC4C \
   && TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
