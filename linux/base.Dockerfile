@@ -9,7 +9,10 @@
 # the base image
 
 #This quinault is a version of CBL-D. CBL-D is an Microsoft compliant OS based off of Debian 10.
-FROM sbidprod.azurecr.io/quinault as azconsole-agentbase
+FROM sbidprod.azurecr.io/quinault
+
+#TEMPORARY CHANGE! Need to install the deprecated Python2 packages. Please remove once python 2 is no longer necessary in Cloud Shell
+RUN echo "deb https://packages.microsoft.com/repos/cbl-d quinault-universe main" >> /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
@@ -17,10 +20,6 @@ RUN apt-get update && apt-get install -y \
     xz-utils \
     git \
     gpg
-
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
-  && mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg \
-  && sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-buster-prod buster main" >> /etc/apt/sources.list.d/microsoft-debian-buster-prod.list'
 
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > postgresql.gpg \
   && mv postgresql.gpg /etc/apt/trusted.gpg.d/postgresql.gpg \
@@ -139,7 +138,7 @@ RUN ln -s -f /usr/bin/python3 /usr/bin/python \
   && sed -i 's/usr\/bin\/python/usr\/bin\/python2/' /usr/bin/pip2 \
   && pip2 install --upgrade pip && pip3 install --upgrade pip \
   && pip install mssql-scripter
-RUN pip3 install --upgrade sfctl
+# RUN pip3 install --upgrade sfctl
 
 # Install Blobxfer and Batch-Shipyard in isolated virtualenvs
 COPY ./linux/blobxfer /usr/local/bin
@@ -159,12 +158,12 @@ RUN chmod 755 /usr/local/bin/blobxfer \
 
 # # BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
-RUN chmod 755 /usr/local/bin/ansible* \
-  && pip2 install virtualenv \
-  && cd /opt \
-  && python2 -m virtualenv ansible \
-  && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
-  && ansible-galaxy collection install azure.azcollection 
+# RUN chmod 755 /usr/local/bin/ansible* \
+#   && pip2 install virtualenv \
+#   && cd /opt \
+#   && python2 -m virtualenv ansible \
+#   && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
+#   && ansible-galaxy collection install azure.azcollection 
 
 # Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest

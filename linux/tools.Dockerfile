@@ -12,9 +12,9 @@ FROM ${IMAGE_LOCATION}
 
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
-RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest.deb \
-  && dpkg -i azure-cli-latest.deb \
-  && rm -f azure-cli-latest.deb
+RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-buster.deb \
+  && dpkg -i azure-cli-latest-buster.deb \
+  && rm -f azure-cli-latest-buster.deb
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --name ai-examples -y
