@@ -30,17 +30,17 @@ RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > po
 # gpg keys listed at https://github.com/nodejs/node
 RUN set -ex \
   && for key in \
-   4ED778F539E3634C779C87C6D7062848A1AB005C \
-   71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-   77984A986EBC2AA786BC0F66B01FBB92821C587A \
-   8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-   94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-   A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
-   B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-   B9E2F5981AA6E0CD28160D9FF13993A75599653C \
-   C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-   DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-   FD3A5288F042B6850C66B31F09FE44734EB7990E \
+    4ED778F539E3634C779C87C6D7062848A1AB005C \
+    71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+    77984A986EBC2AA786BC0F66B01FBB92821C587A \
+    8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+    A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
+    B9AE9905FFD7803F25714661B63B535A4C206CA9 \
+    B9E2F5981AA6E0CD28160D9FF13993A75599653C \
+    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+    FD3A5288F042B6850C66B31F09FE44734EB7990E \
   ; do \
     gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
     gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
@@ -68,48 +68,49 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B02C46DF41
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
-    autoconf \
-    azure-functions-core-tools \
-    build-essential \
-    cifs-utils \
-    dnsutils \
-    dos2unix \
-    dotnet-runtime-3.1 \
-    dotnet-sdk-3.1 \
-    emacs \
-    iptables \
-    iputils-ping \
-    jq \
-    less \
-    libffi-dev \
-    libssl-dev \
-    man-db \
-    moby-cli \
-    moby-engine \
-    msodbcsql17 \ 
-    mssql-tools \
-    default-mysql-client \
-    nano \
-    parallel \
-    postgresql-contrib \
-    postgresql-client \
-    python-dev \
-    python \
-    python-pip \
-    python3 \
-    python3-pip \
-    python3-venv \
-    python3.7-dev \
-    puppet \
-    software-properties-common \
-    tmux \
-    unixodbc-dev \
-    unzip \
-    vim \
-    wget \
-    zip \
-    zsh \
-    bash-completion
+  autoconf \
+  azure-functions-core-tools \
+  build-essential \
+  cifs-utils \
+  dnsutils \
+  dos2unix \
+  dotnet-runtime-3.1 \
+  dotnet-sdk-3.1 \
+  emacs \
+  iptables \
+  iputils-ping \
+  java-common \
+  jq \
+  less \
+  libffi-dev \
+  libssl-dev \
+  man-db \
+  moby-cli \
+  moby-engine \
+  msodbcsql17 \ 
+  mssql-tools \
+  default-mysql-client \
+  nano \
+  parallel \
+  postgresql-contrib \
+  postgresql-client \
+  python-dev \
+  python \
+  python-pip \
+  python3 \
+  python3-pip \
+  python3-venv \
+  python3.7-dev \
+  puppet \
+  software-properties-common \
+  tmux \
+  unixodbc-dev \
+  unzip \
+  vim \
+  wget \
+  zip \
+  zsh \
+  bash-completion
 
 # Install Jenkins X client
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/v1.3.107/jx-linux-amd64.tar.gz > jx.tar.gz \
@@ -125,7 +126,7 @@ RUN wget -O cf-cli_install.deb https://cli.run.pivotal.io/stable?release=debian6
   && rm -f cf-cli_install.deb
 
 RUN wget -O zulu-14.deb https://repos.azul.com/azure-only/zulu/packages/zulu-14/14/zulu-14-azure-jdk_14.27.1-14-linux_amd64.deb \
-  && apt install java-common && dpkg -i zulu-14.deb \
+  && dpkg -i zulu-14.deb \
   && apt -y install zulu-14-azure-jdk
 
 # Setup locale to en_US.utf8
@@ -138,8 +139,8 @@ ENV LANG="en_US.utf8"
 RUN ln -s -f /usr/bin/python3 /usr/bin/python \
   && sed -i 's/usr\/bin\/python/usr\/bin\/python2/' /usr/bin/pip2 \
   && pip2 install --upgrade pip && pip3 install --upgrade pip \
-  && pip install mssql-scripter \
-  && pip3 install --upgrade sfctl
+  && pip3 install --upgrade sfctl \
+  && pip install mssql-scripter
 
 # Install Blobxfer and Batch-Shipyard in isolated virtualenvs
 COPY ./linux/blobxfer /usr/local/bin
@@ -164,7 +165,7 @@ RUN chmod 755 /usr/local/bin/ansible* \
   && cd /opt \
   && python2 -m virtualenv ansible \
   && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
-  && ansible-galaxy collection install azure.azcollection 
+  && ansible-galaxy collection install azure.azcollection
 
 # Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest
