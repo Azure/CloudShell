@@ -4,8 +4,8 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
         [System.Environment]::OSVersion.Platform | Should -Be 'Unix'
         $osDetails = Get-Content /etc/*release
-        $osDetails | Where-Object {$_.Contains('VERSION_ID="16.04"')} | Should -Not -BeNullOrEmpty
-        $osDetails | Where-Object {$_.Contains('NAME="Ubuntu"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('VERSION_ID="10"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('NAME="Common Base Linux Delridge"')} | Should -Not -BeNullOrEmpty
     }
 
     It "nodejs" {

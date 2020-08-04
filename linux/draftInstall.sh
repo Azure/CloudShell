@@ -89,7 +89,7 @@ downloadFile() {
 # installs it.
 installFile() {
   TEMP="/tmp/$PROJECT_NAME"
-  local sum=$(openssl sha -sha256 ${TEMP_FILE} | awk '{print $2}')
+  local sum=$(openssl sha1 -sha256 ${TEMP_FILE} | awk '{print $2}')
   local expected_sum=$(cat ${CHECKSUM_FILE})
   if [ "$sum" != "$expected_sum" ]; then
     echo "SHA sum of $TEMP does not match. Aborting."
