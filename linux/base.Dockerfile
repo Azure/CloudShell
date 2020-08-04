@@ -99,6 +99,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    python3.7-dev \
     puppet \
     software-properties-common \
     tmux \
@@ -137,8 +138,8 @@ ENV LANG="en_US.utf8"
 RUN ln -s -f /usr/bin/python3 /usr/bin/python \
   && sed -i 's/usr\/bin\/python/usr\/bin\/python2/' /usr/bin/pip2 \
   && pip2 install --upgrade pip && pip3 install --upgrade pip \
-  && pip install mssql-scripter
-# RUN pip3 install --upgrade sfctl
+  && pip install mssql-scripter \
+  && pip3 install --upgrade sfctl
 
 # Install Blobxfer and Batch-Shipyard in isolated virtualenvs
 COPY ./linux/blobxfer /usr/local/bin
