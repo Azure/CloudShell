@@ -42,6 +42,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "puppet bolt" {
         $boltVersion = bolt --version
+        Write-Host "boltVersion: $boltVersion"
         # Match version since we reference the exact same version in the Docker file 
         $boltVersion.Contains('2.18.0') | Should -Be $true
     }
@@ -60,6 +61,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "Packer" {
         $packerVersion = packer --version
+        Write-Host "packerVersion: $packerVersion"
         # Match version since we reference the exact same version in the Docker file 
         $packerVersion.Contains('1.6.0') | Should -Be $true
     }
@@ -81,6 +83,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "helm" {
         $helmVersion = helm version 
+        Write-Host "helmVersion: $helmVersion"
         $helmVersion | Where-Object {$_ -like 'version.BuildInfo{Version:"v3.3.0-rc.1"*' } | Should -Be $true
     }
 
