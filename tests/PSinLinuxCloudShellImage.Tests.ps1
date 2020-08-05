@@ -21,17 +21,17 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "CloudFoundry CLI" {
         $cfVersion = cf --version
-        $cfVersion | Where-Object {$_ -like 'cf version 6.51.0+*' } | Should -Be $true
+        $cfVersion | Where-Object {$_ -like 'cf version 6.*' } | Should -Be $true
     }
 
     It "blobxfer" {
         $blobxferVersion = blobxfer --version 
-        $blobxferVersion.Contains('blobxfer, version 1.9.4') | Should -Be $true
+        $blobxferVersion | Where-Object {$_ -like 'blobxfer, version 1.*' } | Should -Be $true
     }
 
      It "shipyard" {
         $shipyardVersion = shipyard --version 
-        $shipyardVersion.Contains('shipyard.py, version 3.9.1') | Should -Be $true
+        $shipyardVersion | Where-Object {$_ -like "shipyard.py, version 3.*"} | Should -Be $true
     }
 
      It "ansible" {
@@ -42,33 +42,27 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "puppet bolt" {
         $boltVersion = bolt --version
-        Write-Host "boltVersion: $boltVersion"
-        # Match version since we reference the exact same version in the Docker file 
-        $boltVersion.Contains('2.18.0') | Should -Be $true
+        $boltVersion | Where-Object {$_ -like "2.*"} | Should -Be $true
     }
 
     It "Go lang" {
         $goVersion = go version
-        # Match version since we reference the exact same version in the Docker file 
         $goVersion | Where-Object {$_ -like '*go1.13.7*' } | Should -Be $true
     }
 
     It "Ruby" {
-        $rubyVersion = ruby --version
-        # Match version since we reference the exact same version in the Docker file 
-        $rubyVersion | Where-Object {$_ -like 'ruby 2.3.3p222*' } | Should -Be $true
+        $rubyVersion = ruby --version 
+        $rubyVersion | Where-Object {$_ -like 'ruby 2.3.3*' } | Should -Be $true
     }
 
     It "Packer" {
         $packerVersion = packer --version
-        Write-Host "packerVersion: $packerVersion"
-        # Match version since we reference the exact same version in the Docker file 
-        $packerVersion.Contains('1.6.0') | Should -Be $true
+        $packerVersion | Where-Object {$_ -like '1.*' } | Should -Be $true
     }
 
     It "dcos" {
         $dcosVersion = dcos --version 
-        $dcosVersion.Contains('dcoscli.version=0.4.15') | Should -Be $true
+        $dcosVersion | Where-Object {$_ -like 'dcoscli.version=0.*' } | Should -Be $true
     }
 
      It "kubectl" {
@@ -82,14 +76,13 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     }
 
     It "helm" {
-        $helmVersion = helm version 
-        Write-Host "helmVersion: $helmVersion"
-        $helmVersion | Where-Object {$_ -like 'version.BuildInfo{Version:"v3.3.0-rc.1"*' } | Should -Be $true
+        $helmVersion = helm version
+        $helmVersion | Where-Object {$_ -like 'version.BuildInfo{Version:"v3*' } | Should -Be $true
     }
 
     It "draft" {
         $draftVersion = draft version 
-        $draftVersion | Where-Object {$_ -like '&version.Version{SemVer:"v0.16.0"*' } | Should -Be $true
+        $draftVersion | Where-Object {$_ -like '&version.Version{SemVer:"v0*' } | Should -Be $true
     }
 
     It "startupscript" {
