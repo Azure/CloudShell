@@ -163,7 +163,7 @@ COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
   && pip2 install virtualenv \
   && cd /opt \
-  && python2 -m virtualenv ansible \
+  && virtualenv -p python3 ansible \
   && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
   && ansible-galaxy collection install azure.azcollection
 
