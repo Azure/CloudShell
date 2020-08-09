@@ -52,5 +52,5 @@ jobs:
         --header 'content-type: application/json' \
         --header 'Accept: application/vnd.github.v3+json' \
         --data "{
-          \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $((TOOLS_SIZE / 1048576))MB. \"
+          \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB. \"
           }"
