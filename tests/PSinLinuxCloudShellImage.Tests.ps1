@@ -9,16 +9,83 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     }
 
     It "nodejs" {
-            
         Test-Path -Path '/usr/local/bin/nodejs'| Should -Be $true
-
-        $nodeVersion = nodejs --version
-        # Match version since we reference the exact same version in the Docker file 
+        $nodeVersion = nodejs --version 
         $nodeVersion.Contains('v8.16.0') | Should -Be $true
     }
 
-    It "startupscript" {
+    It "Jenkins client" {
+        $jxVersion = jx --version 
+        $jxVersion.Contains('1.3.107') | Should -Be $true
+    }
 
+    It "CloudFoundry CLI" {
+        $cfVersion = cf --version
+        $cfVersion | Where-Object {$_ -like 'cf version 6.*' } | Should -Be $true
+    }
+
+    It "blobxfer" {
+        $blobxferVersion = blobxfer --version 
+        $blobxferVersion | Where-Object {$_ -like 'blobxfer, version 1.*' } | Should -Be $true
+    }
+
+     It "shipyard" {
+        $shipyardVersion = shipyard --version 
+        $shipyardVersion | Where-Object {$_ -like "shipyard.py, version 3.*"} | Should -Be $true
+    }
+
+     It "ansible" {
+        $ansibleVersion = ansible --version
+        # Match only major version. Any change in major version is considered potentially breaking
+        $ansibleVersion | Where-Object {$_ -like "ansible 2.*.*"} | Should -Be $true
+    }
+
+    It "puppet bolt" {
+        $boltVersion = bolt --version
+        $boltVersion | Where-Object {$_ -like "2.*"} | Should -Be $true
+    }
+
+    It "Go lang" {
+        $goVersion = go version
+        $goVersion | Where-Object {$_ -like '*go1.13.7*' } | Should -Be $true
+    }
+
+    It "Ruby" {
+        $rubyVersion = ruby --version 
+        $rubyVersion | Where-Object {$_ -like 'ruby 2.3.3*' } | Should -Be $true
+    }
+
+    It "Packer" {
+        $packerVersion = packer --version
+        $packerVersion | Where-Object {$_ -like '1.*' } | Should -Be $true
+    }
+
+    It "dcos" {
+        $dcosVersion = dcos --version 
+        $dcosVersion | Where-Object {$_ -like 'dcoscli.version=0.*' } | Should -Be $true
+    }
+
+     It "kubectl" {
+        $kubectlVersion = kubectl version --client=true 
+        $kubectlVersion | Where-Object {$_ -like '*go1.12.9*' } | Should -Be $true
+    }
+
+    It "rg" {
+        $rgVersion = rg --version 
+        $rgVersion | Where-Object {$_ -like 'ripgrep 0.8.1*' } | Should -Be $true
+    }
+
+    It "helm" {
+        $helmVersion = helm version
+        $helmVersion | Where-Object {$_ -like 'version.BuildInfo{Version:"v3*' } | Should -Be $true
+    }
+
+    It "draft" {
+        $draftVersion = draft version 
+        $draftVersion | Where-Object {$_ -like '&version.Version{SemVer:"v0*' } | Should -Be $true
+    }
+
+    It "startupscript" {
         $pwshPath = which pwsh
         $startupScriptPath = Join-Path (Split-Path $pwshPath) 'PSCloudShellStartup.ps1'
         Test-Path $startupScriptPath | Should -Be $true
@@ -27,7 +94,6 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     It "azcli" {
 
         $azCliVersion = az --version
-
         # Match only major version. Any change in major version is considered potentially breaking
         # Output example: azure-cli                         2.0.58
         $azCliVersion | Where-Object {$_ -like "azure-cli*2.*.*"} | Should -Be $true
@@ -50,15 +116,6 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         # Match only major version. Any change in major version is considered potentially breaking
         $terraformVersion | Where-Object {$_ -like "Terraform v0.*.*"} | Should -Be $true
     }
-
-    It "ansible" {
-
-        $ansibleVersion = ansible --version
-
-        # Match only major version. Any change in major version is considered potentially breaking
-        $ansibleVersion | Where-Object {$_ -like "ansible 2.*.*"} | Should -Be $true
-    }
-
 }
 
 Describe "PowerShell Modules" {
