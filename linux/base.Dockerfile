@@ -246,10 +246,6 @@ RUN wget -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dc
   && mv dcos /usr/local/bin \
   && chmod +x /usr/local/bin/dcos
 
-# Install kubectl
-RUN az aks install-cli \
-  && chmod +x /usr/local/bin/kubectl
-
 # Install PowerShell
 # Register the Microsoft repository GPG keys and Install PowerShell Core
 RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
