@@ -8,20 +8,24 @@
 # of the base docker file stored in a container registry. This avoids accidentally introducing a change in
 # the base image
 
-#This quinault is a version of CBL-D. CBL-D is an Microsoft compliant OS based off of Debian 10.
+# CBL-D (Common Base Linux - Delridge) is not a standalone Linux distribution, but tracks Debian very closely. 
+# The primary difference between Debian and CBL-D is that Microsoft compiles all the packages 
+# included in the CBL-D repository internally. 
+# This helps guard against supply chain attacks (https://en.wikipedia.org/wiki/Supply_chain_attack). 
+# 'Quinault' is almost identical to Debian 10 (Buster) 
 FROM sbidprod.azurecr.io/quinault
 
-#TEMPORARY CHANGE! Need to install the deprecated Python2 packages. Please remove once python 2 is no longer necessary in Cloud Shell
+# The universe repository is only currently required for Python2
 RUN echo "deb https://packages.microsoft.com/repos/cbl-d quinault-universe main" >> /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    curl \
-    xz-utils \
-    git \
-    gpg
+  apt-transport-https \
+  curl \
+  xz-utils \
+  git \
+  gpg
 
-RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > postgresql.gpg \
+RUN curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > postgresql.gpg \
   && mv postgresql.gpg /etc/apt/trusted.gpg.d/postgresql.gpg \
   && sh -c 'echo "deb [arch=amd64] https://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" >> /etc/apt/sources.list.d/postgresql.list'
 
@@ -30,30 +34,30 @@ RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > po
 # gpg keys listed at https://github.com/nodejs/node
 RUN set -ex \
   && for key in \
-    4ED778F539E3634C779C87C6D7062848A1AB005C \
-    71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-    77984A986EBC2AA786BC0F66B01FBB92821C587A \
-    8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-    A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
-    B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-    B9E2F5981AA6E0CD28160D9FF13993A75599653C \
-    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-    FD3A5288F042B6850C66B31F09FE44734EB7990E \
+  4ED778F539E3634C779C87C6D7062848A1AB005C \
+  71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+  77984A986EBC2AA786BC0F66B01FBB92821C587A \
+  8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+  94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+  A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
+  B9AE9905FFD7803F25714661B63B535A4C206CA9 \
+  B9E2F5981AA6E0CD28160D9FF13993A75599653C \
+  C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+  DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+  FD3A5288F042B6850C66B31F09FE44734EB7990E \
   ; do \
-    gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
+  gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
+  gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+  gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
+  gpg --keyserver keyserver.pgp.com --recv-keys "$key"; \
   done
 
-ENV NPM_CONFIG_LOGLEVEL info
+ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_VERSION 8.16.0
 ENV NODE_ENV production
 
-RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-  && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+RUN curl -sSLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
+  && curl -sSLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
   && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
   && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
@@ -65,7 +69,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 RUN echo "deb https://apt-mo.trafficmanager.net/repos/azure-cli/ buster main" | tee /etc/apt/sources.list.d/azure-cli.list
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B02C46DF417A0893
 
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   autoconf \
@@ -94,9 +98,6 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   parallel \
   postgresql-contrib \
   postgresql-client \
-  python-dev \
-  python \
-  python-pip \
   python3 \
   python3-pip \
   python3-venv \
@@ -112,20 +113,26 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   zsh \
   bash-completion
 
+# Install the deprecated Python2 packages. Will be removed in a future update
+RUN apt-get install -y \
+  python-dev \
+  python \
+  python-pip
+
 # Install Jenkins X client
-RUN curl -L https://github.com/jenkins-x/jx/releases/download/v1.3.107/jx-linux-amd64.tar.gz > jx.tar.gz \
+RUN curl -sSL https://github.com/jenkins-x/jx/releases/download/v1.3.107/jx-linux-amd64.tar.gz > jx.tar.gz \
   && echo f3e31816a310911c7b79a90281182a77d1ea1c9710b4e0bb29783b78cc99a961 jx.tar.gz | sha256sum -c \
   && tar -xf jx.tar.gz \
   && mv jx /usr/local/bin \
   && rm -rf jx.tar.gz
 
 # Install CloudFoundry CLI
-RUN wget -O cf-cli_install.deb https://cli.run.pivotal.io/stable?release=debian64 \
+RUN wget -nv -O cf-cli_install.deb https://cli.run.pivotal.io/stable?release=debian64 \
   && dpkg -i cf-cli_install.deb \
   && apt-get install -f \
   && rm -f cf-cli_install.deb
 
-RUN wget -O zulu-14.deb https://repos.azul.com/azure-only/zulu/packages/zulu-14/14/zulu-14-azure-jdk_14.27.1-14-linux_amd64.deb \
+RUN wget -nv  -O zulu-14.deb https://repos.azul.com/azure-only/zulu/packages/zulu-14/14/zulu-14-azure-jdk_14.27.1-14-linux_amd64.deb \
   && dpkg -i zulu-14.deb \
   && apt -y install zulu-14-azure-jdk
 
@@ -149,13 +156,14 @@ RUN chmod 755 /usr/local/bin/blobxfer \
   && cd /opt \
   && virtualenv -p python3 blobxfer \
   && /bin/bash -c "source blobxfer/bin/activate && pip3 install blobxfer && deactivate"
-  # CAN'T INSTALL BATCH-SHIPYARD DUE TO CBL-D not being recognized 
-  # && curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/releases/latest | grep tarball_url | cut -d'"' -f4` | tar -zxvpf - \
-  # && mv Azure-batch-shipyard-* batch-shipyard \
-  # && cd /opt/batch-shipyard \
-  # && ./install.sh -c \
-  # && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
-  # && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard
+
+# CAN'T INSTALL BATCH-SHIPYARD DUE TO CBL-D not being recognized 
+# && curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/releases/latest | grep tarball_url | cut -d'"' -f4` | tar -zxvpf - \
+# && mv Azure-batch-shipyard-* batch-shipyard \
+# && cd /opt/batch-shipyard \
+# && ./install.sh -c \
+# && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
+# && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard
 
 
 # # BEGIN: Install Ansible in isolated Virtual Environment
@@ -169,25 +177,25 @@ RUN chmod 755 /usr/local/bin/ansible* \
 
 # Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest
-RUN curl -L https://git.io/getLatestIstio | sh - \
+RUN curl -sSL https://git.io/getLatestIstio | sh - \
   && mv $PWD/istio* $ISTIO_ROOT \
   && chmod -R 755 $ISTIO_ROOT
 
 # Install latest version of Linkerd
 ENV LINKERD_ROOT /usr/local/linkerd
-RUN curl -sL https://run.linkerd.io/install | sh - \
+RUN curl -sSL https://run.linkerd.io/install | sh - \
   && mv $HOME/.linkerd*/ $LINKERD_ROOT
 ENV PATH $PATH:$LINKERD_ROOT/bin:$PATH:$ISTIO_ROOT/bin
 
 # Install Puppet-Bolt
-RUN wget -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-xenial.deb \
-&& dpkg -i puppet-tools.deb \
-&& apt-get update \
-&& apt-get install puppet-bolt \
-&& rm -f puppet-tools.deb
+RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-xenial.deb \
+  && dpkg -i puppet-tools.deb \
+  && apt-get update \
+  && apt-get install puppet-bolt \
+  && rm -f puppet-tools.deb
 
 # install go
-RUN wget -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
+RUN wget -nv -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
   && echo b3dd4bd781a0271b33168e627f7f43886b4c5d1c794a4015abf34e99c6526ca3 go.tar.gz | sha256sum -c \
   && tar -xf go.tar.gz \
   && mv go /usr/local \
@@ -197,8 +205,8 @@ ENV GOROOT="/usr/local/go"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
 
 RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
-&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-&& unset INSTALL_DIRECTORY
+  && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+  && unset INSTALL_DIRECTORY
 
 RUN gem update --system 2.7.7 \
   && gem install bundler --version 1.16.4 --force \
@@ -207,15 +215,15 @@ RUN gem update --system 2.7.7 \
   && gem install rspec --version 3.7.0 --no-document --force \
   && rm -r /root/.gem/
 
-  ENV GEM_HOME=~/bundle
-  ENV BUNDLE_PATH=~/bundle
-  ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
+ENV GEM_HOME=~/bundle
+ENV BUNDLE_PATH=~/bundle
+ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Download and Install the latest packer (AMD64)
-RUN PACKER_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
-  && wget -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
-  && wget -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
-  && wget -O packer.sha256.sig https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS.sig \
+RUN PACKER_VERSION=$(curl -sSL https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
+  && wget -nv -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+  && wget -nv -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
+  && wget -nv -O packer.sha256.sig https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS.sig \
   && curl -s https://keybase.io/hashicorp/pgp_keys.asc | gpg --import \
   && gpg --verify packer.sha256.sig packer.sha256 \
   && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+packer_${PACKER_VERSION}_linux_amd64.zip)" packer.sha256) packer.zip | sha256sum -c \
@@ -226,20 +234,20 @@ RUN PACKER_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/packe
   && unset PACKER_VERSION
 
 # Install dcos
-RUN wget -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dcos \
+RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dcos \
   && echo 07f77da8a664ad8312fc6318c633a3cd350cdbeb2b483604363922d94a55089e dcos | sha256sum -c \
   && mv dcos /usr/local/bin \
   && chmod +x /usr/local/bin/dcos
 
 # Install kubectl
-RUN wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl \
+RUN wget -nv -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl \
   && echo 4fc8a7024ef17b907820890f11ba7e59a6a578fa91ea593ce8e58b3260f7fb88 kubectl | sha256sum -c \
   && mv kubectl /usr/local/bin \
   && chmod +x /usr/local/bin/kubectl
 
 # Install PowerShell
 # Register the Microsoft repository GPG keys and Install PowerShell Core
-RUN wget -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
+RUN wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
   && dpkg -i packages-microsoft-prod.deb \
   && apt update \
   && apt-get -y install powershell
@@ -251,19 +259,19 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 ENV POWERSHELL_UPDATECHECK Off
 
 # Install Chef Workstation
-RUN wget -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/20.6.62/debian/10/chef-workstation_20.6.62-1_amd64.deb \
+RUN wget -nv -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/20.6.62/debian/10/chef-workstation_20.6.62-1_amd64.deb \
   && echo 737bcf19236e63732871f2fdf7f7d71a02b91dabebc80e5f14d5cdece4ca3cf3 chef-workstation_amd64.deb | sha256sum -c \
   && dpkg -i chef-workstation_amd64.deb \
   && rm -f chef-workstation_amd64.deb
 
 # Install ripgrep
-RUN curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep_0.8.1_amd64.deb \
+RUN curl -sSLO https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep_0.8.1_amd64.deb \
   && echo 4d39d6362b109e97ae95eb13a9bc5833cbe612202f1e05b3ac016c5a9c3ff665 ripgrep_0.8.1_amd64.deb | sha256sum -c \
   && dpkg -i ripgrep_0.8.1_amd64.deb \
   && rm -f ripgrep_0.8.1_amd64.deb
 
 # Install docker-machine
-RUN curl -L https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine \
+RUN curl -sSL https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine \
   && echo 3c0a1a03653dff205f27bb178773f3c294319435a2589cf3cb4456423f8cef08 /tmp/docker-machine | sha256sum -c \
   && chmod +x /tmp/docker-machine \
   && mv /tmp/docker-machine /usr/local/bin/docker-machine
@@ -284,7 +292,7 @@ RUN npm install -g yo \
 # Download and install AzCopy SCD of linux-x64
 # downloadazcopycloudshell pointing to a latest azcopy download
 # shasums256forazcopycloudshell pointing to a checksum file correpsonding to the latest package
-RUN curl -L https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x64.tar.gz \
+RUN curl -sSL https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x64.tar.gz \
   && mkdir azcopy \
   && tar xf azcopy-netcore_linux_x64.tar.gz -C azcopy --strip-components 1 \
   && mv azcopy/azcopy /usr/local/bin/azcopy \
