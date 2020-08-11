@@ -21,7 +21,8 @@ RUN az extension add --name ai-examples -y
 
 # Install kubectl
 RUN az aks install-cli \
-  && chmod +x /usr/local/bin/kubectl
+  && chmod +x /usr/local/bin/kubectl \
+  && chmod +x /usr/local/bin/kubelogin
 
 # Download the latest terraform (AMD64), install to global environment.
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D87348FFC4C \
