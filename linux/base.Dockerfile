@@ -96,9 +96,6 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   parallel \
   postgresql-contrib \
   postgresql-client \
-  python-dev \
-  python \
-  python-pip \
   python3 \
   python3-pip \
   python3-venv \
@@ -140,8 +137,7 @@ ENV LANG="en_US.utf8"
 # Update pip and Install Service Fabric CLI
 # Install mssql-scripter
 RUN ln -s -f /usr/bin/python3 /usr/bin/python \
-  && sed -i 's/usr\/bin\/python/usr\/bin\/python2/' /usr/bin/pip2 \
-  && pip2 install --upgrade pip && pip3 install --upgrade pip \
+  && pip3 install --upgrade pip \
   && pip3 install --upgrade sfctl \
   && pip install mssql-scripter
 
@@ -162,9 +158,8 @@ RUN chmod 755 /usr/local/bin/blobxfer \
 # Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
-  && pip2 install virtualenv \
   && cd /opt \
-  && python2 -m virtualenv ansible \
+  && virtualenv -p python3 ansible \
   && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
   && ansible-galaxy collection install azure.azcollection
 
