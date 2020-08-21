@@ -9,9 +9,6 @@ Try out Cloud Shell by clicking the button below.
 
 [![](https://shell.azure.com/images/launchcloudshell.png "Launch Azure Cloud Shell")](https://shell.azure.com)
 
-Try out Cloud Shell locally by simply pulling from the Microsoft Container Registry: mcr.microsoft.com/azure-cloudshell:latest
-
-*Please note that the image from the Azure portal or the Microsoft Container Registry may not directly reflect what is in this GitHub repository.
 
 # About this repository
 
