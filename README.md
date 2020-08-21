@@ -15,13 +15,38 @@ Try out Cloud Shell locally by simply pulling from the Microsoft Container Regis
 
 # About this repository
 
-When you connect to Azure Cloud Shell, we start a container containing a wide variety of tools, and connect your browser to a shell process running inside that container. This repository contains the Docker files used to build that image. It does _not_ contain all of the code used for the rest of the Azure Cloud Shell service. The code in this repository may not match exactly to what is running in the Cloud Shell service at any given time. The service is updated periodically and changes are gradually rolled out to different regions over time, so there may be a lag of up to 3-4 weeks between a change being made here and being reflected in all Cloud Shell regions.
+When you connect to Azure Cloud Shell, we start a container containing a wide variety of tools, and connect your
+browser to a shell process running inside that container. This repository contains the Docker files used to build that image. 
+It does _not_ contain all of the code used for the rest of the Azure Cloud Shell service. The code in this repository may not 
+match exactly to what is running in the Cloud Shell service at any given time. The service is updated periodically and changes 
+are gradually rolled out to different regions over time, so there may be a lag of up to 3-4 weeks between a change being made 
+here and being reflected in all Cloud Shell regions.
 
 This repository has several uses:
 
-1. If you would like to propose a new tool for inclusion in Cloud Shell, you can create an issue or submit a Pull Request to request the tool be added. Please ensure that the PR actually builds within GitHub Actions.
+1. **Running the Cloud Shell image locally**. If you want a curated set of up-to-date command-line tools suitable for managing an Azure environment, but you want to run the tools locally on your own computer instead of in Cloud Shell, you can build the image and run it yourself.
 
-2. If you want a curated set of up-to-date command-line tools suitable for managing an Azure environment, but you want to run the tools locally on your own computer instead of in Cloud Shell, you can build the image and run it yourself.
+1. **Contributing to Cloud Shell.** If you would like to propose a new tool for inclusion in Cloud Shell, you can create an issue or submit a Pull Request to request the tool be added. Please ensure that the PR actually builds within GitHub Actions.
+
+
+## Running the Cloud Shell image locally
+
+```bash
+docker pull mcr.microsoft.com/azure-cloudshell:latest
+docker run -it mcr.microsoft.com/azure-cloudshell /bin/bash
+```
+
+### Differences between running locally and in Cloud Shell
+
+1. **No identity endpoint**. In Cloud Shell, we provide a way to automatically obtain tokens for the user connected to the shell. 
+We can't provide this when you run locally, so you have to authenticate explicitly before you can access Azure resources. 
+When using AZ CLI, run `az login`; for PowerShell, run `Connect-AzAccount`.
+
+2. **No cloud drive**. We don't mount the Cloud Drive from your Azure Cloud Shell, so you won't have access to files stored there.
+
+3. **Root instead of cloud shell user**. In Azure Cloud Shell you always run as a regular user. When running the image locally, you run as root.
+
+# Contributing to Cloud Shell
 
 
 ## Understanding the base.Dockerfile and tools.Dockerfile
@@ -39,20 +64,12 @@ aware that changes the the base layer will take longer to release than changes t
 | Base      | Contains large, infrequently changing packages. Changes every 3-4 months. |
 | Tools      | Contains frequently changing packages. Changes every 2-3 weeks |
 
-
-# Building / Installation
+## Building and Testing the image
 
 ### Required software
 
 * Docker
 * Bash terminal / Powershell
-
-## Pulling from Microsoft container registry
-From the root repository
-```bash
-docker pull mcr.microsoft.com/azure-cloudshell:latest
-```
-This gives you the option of just running the image instead of building it yourself.
 
 ## Building base.Dockerfile image 
 From the root repository
@@ -81,7 +98,7 @@ docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell
 
 For more information about bind mounts, please go onto the [Docker documentation](https://docs.docker.com/storage/bind-mounts/). We do expect all the test cases to pass if you would like your changes to be merged. 
 
-# Contributing
+# Contribution Guidelines 
 
 ## Types of issues 
 
