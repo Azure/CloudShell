@@ -864,6 +864,7 @@ printenv
 printerbanner
 printf
 prlimit
+profile.ps1
 prove
 ps
 ps2ascii
@@ -876,6 +877,7 @@ ps2pdfwr
 ps2ps
 ps2ps2
 ps2txt
+PSCloudShellStartup.ps1
 psql
 pstruct
 ptar
