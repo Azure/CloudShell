@@ -29,12 +29,12 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         $blobxferVersion | Where-Object {$_ -like 'blobxfer, version 1.*' } | Should -Be $true
     }
 
-     It "shipyard" {
+    It "shipyard" {
         $shipyardVersion = shipyard --version 
         $shipyardVersion | Where-Object {$_ -like "shipyard.py, version 3.*"} | Should -Be $true
     }
 
-     It "ansible" {
+    It "ansible" {
         $ansibleVersion = ansible --version
         # Match only major version. Any change in major version is considered potentially breaking
         $ansibleVersion | Where-Object {$_ -like "ansible 2.*.*"} | Should -Be $true
@@ -65,7 +65,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         $dcosVersion | Where-Object {$_ -like 'dcoscli.version=0.*' } | Should -Be $true
     }
 
-     It "kubectl" {
+    It "kubectl" {
         $kubectlVersion = kubectl version --client=true 
         $kubectlVersion | Where-Object {$_ -like '*go1.12.9*' } | Should -Be $true
     }
@@ -115,6 +115,14 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
         # Match only major version. Any change in major version is considered potentially breaking
         $terraformVersion | Where-Object {$_ -like "Terraform v0.*.*"} | Should -Be $true
+    }
+
+    It "Compare bash commands to baseline" {
+        # command_list contains a list of all the files which should be installed
+        $command_diffs = bash -c "compgen -c | sort | uniq > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"
+        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") }) -join ","
+
+        $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
     }
 }
 
@@ -231,7 +239,7 @@ Describe "PowerShell Modules" {
         $module.Version -like "0.*.*" | Should -Be $true
     }
 
-	It "MicrosoftTeams PowerShell Module" {
+    It "MicrosoftTeams PowerShell Module" {
 
         $module = Get-Module -Name MicrosoftTeams -ListAvailable
         $module | Should -Not -BeNullOrEmpty
