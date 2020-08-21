@@ -121,7 +121,10 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         # command_list contains a list of all the files which should be installed
         $command_diffs = bash -c "compgen -c | sort | uniq > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"
 
-        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") }) -join ","        
+        # these may or may not be present depending on how tests were invoked
+        $special = @("profile.ps1", "PSCloudShellStartup.ps1")
+
+        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notin $special}) -join ","        
         $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
         $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") }) -join ","
