@@ -749,13 +749,10 @@ nslookup
 nstat
 nsupdate
 numfmt
-o365
-o365_comp
 objcopy
 objdump
 od
 odbcinst
-office365
 ohai
 on_ac_power
 openssl
