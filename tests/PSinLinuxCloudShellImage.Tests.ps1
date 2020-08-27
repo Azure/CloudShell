@@ -99,6 +99,10 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         $azCliVersion | Where-Object {$_ -like "azure-cli*2.*.*"} | Should -Be $true
     }
 
+    It "az cli extensions" {
+        az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
+    }
+
     It "docker-client, docker-machine" {
 
         # Match only major version. Any change in major version is considered potentially breaking
