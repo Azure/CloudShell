@@ -34,7 +34,7 @@ jobs:
     
     # Run the test cases
     - name: Run the test cases
-      run: docker run --volume $(pwd)/tests:/tests tools_cloudshell pwsh -c "cd /tests; Install-Module -Name Pester -Force; Invoke-Pester -EnableExit"
+      run: docker run --volume $(pwd)/tests:/tests tools_cloudshell /bin/bash /tests/test.sh
     
     # Show Docker image size
     - name: find the pull request id

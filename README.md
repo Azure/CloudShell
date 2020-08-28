@@ -90,7 +90,7 @@ docker run -it tools_cloudshell /usr/bin/pwsh
 
 ## Testing the Cloud Shell image
 ```
-docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell pwsh -c "cd /tests; Install-Module -Name Pester -Force; Invoke-Pester -EnableExit" 
+docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell /tests/test.sh
 ```
 
 For more information about bind mounts, please go onto the [Docker documentation](https://docs.docker.com/storage/bind-mounts/). We do expect all the test cases to pass if you would like your changes to be merged. 
