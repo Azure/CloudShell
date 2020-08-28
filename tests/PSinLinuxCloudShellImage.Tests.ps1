@@ -52,7 +52,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "Ruby" {
         $rubyVersion = ruby --version 
-        $rubyVersion | Where-Object {$_ -like 'ruby 2.3.3*' } | Should -Be $true
+        $rubyVersion | Where-Object {$_ -like 'ruby 2.5.*' } | Should -Be $true
     }
 
     It "Packer" {
