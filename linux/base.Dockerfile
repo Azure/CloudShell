@@ -74,6 +74,7 @@ RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   autoconf \
   azure-functions-core-tools \
+  bash-completion \
   build-essential \
   cifs-utils \
   dnsutils \
@@ -112,8 +113,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   vim \
   wget \
   zip \
-  zsh \
-  bash-completion
+  zsh
 
 # Install the deprecated Python2 packages. Will be removed in a future update
 RUN apt-get install -y \
