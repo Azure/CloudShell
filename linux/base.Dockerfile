@@ -95,6 +95,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   mssql-tools \
   default-mysql-client \
   nano \
+  net-tools \
   parallel \
   postgresql-contrib \
   postgresql-client \
@@ -103,6 +104,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   python3-venv \
   python3.7-dev \
   puppet \
+  rsync \
   software-properties-common \
   tmux \
   unixodbc-dev \
