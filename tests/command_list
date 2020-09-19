@@ -587,6 +587,7 @@ kitchen
 kmod
 knife
 kubectl
+kubelogin
 last
 lastb
 lastlog

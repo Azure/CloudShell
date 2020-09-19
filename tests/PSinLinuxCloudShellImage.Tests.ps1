@@ -66,8 +66,9 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     }
 
     It "kubectl" {
-        $kubectlVersion = kubectl version --client=true 
-        $kubectlVersion | Where-Object {$_ -like '*go1.13.9*' } | Should -Be $true
+        # We auto-upgrade so only check major version here
+        $kubectlVersion = kubectl version --client -o json | jq .clientVersion.major
+        $kubectlVersion | Should -Be '"1"'
     }
 
     It "rg" {
