@@ -135,6 +135,12 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
     }
+
+    It "has local paths in `$PATH" {
+        $paths = ($env:PATH).split(":")
+        $paths | Should -Contain "~/bin"
+        $paths | Should -Contain "~/.local/bin"
+    }
 }
 
 Describe "PowerShell Modules" {
