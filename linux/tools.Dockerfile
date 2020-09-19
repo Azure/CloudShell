@@ -10,6 +10,8 @@ ARG IMAGE_LOCATION=cdpxlinux.azurecr.io/artifact/b787066e-c88f-4e20-ae65-e42a858
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
+RUN echo "tools start $PATH"
+
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
 RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest.deb \
@@ -56,3 +58,5 @@ RUN npm install -q -g @pnp/cli-microsoft365
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
+
+RUN echo "tools end $PATH"
