@@ -9,7 +9,6 @@ Try out Cloud Shell by clicking the button below.
 
 [![](https://shell.azure.com/images/launchcloudshell.png "Launch Azure Cloud Shell")](https://shell.azure.com)
 
-![chart of size](https://edyoung.grafana.net/render/d-solo/SQbJX8OGk/experiment-1?tab=query&orgId=1&from=1469003700318&to=1600626100318&panelId=2&width=500&height=300&tz=America%2FLos_Angeles)
 
 # About this repository
 
