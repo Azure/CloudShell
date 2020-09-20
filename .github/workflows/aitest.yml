@@ -24,5 +24,5 @@ jobs:
       id: ai
       uses: edyoung/insights-action@v1 
       with:
-        aikey: {{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}}
+        aikey: ${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}}
         datamap: '{"mymetric":1, "othermetric": 2}'
