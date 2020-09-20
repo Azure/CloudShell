@@ -246,7 +246,8 @@ RUN wget -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dc
   && mv dcos /usr/local/bin \
   && chmod +x /usr/local/bin/dcos
 
-# Install kubectl
+# Install kubectl. This is overwritten in tools.dockerfile with newer version
+# remove this as part of next base image update
 RUN wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl \
   && echo 4fc8a7024ef17b907820890f11ba7e59a6a578fa91ea593ce8e58b3260f7fb88 kubectl | sha256sum -c \
   && mv kubectl /usr/local/bin \
