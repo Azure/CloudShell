@@ -22,7 +22,7 @@ jobs:
     # Build base dockerfile
     - name: App Insights 
       id: ai
-      uses: edyoung/insights-action@v3 
+      uses: edyoung/insights-action@v4 
       with:
         aikey: ${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}}
         datamap: '{"mymetric":1, "othermetric": 2}'
