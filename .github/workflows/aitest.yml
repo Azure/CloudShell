@@ -25,4 +25,4 @@ jobs:
       uses: edyoung/insights-action@v4 
       with:
         aikey: ${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}}
-        datamap: '{"mymetric":1.5, "othermetric": 2.5}'
+        datamap: '{"mymetric":1.8, "othermetric": 2.3}'
