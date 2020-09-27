@@ -7,10 +7,10 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  #push:
-  #  branches: [ master ]
-  #pull_request:
-  #  branches: [ master ]
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -43,6 +43,12 @@ jobs:
       run: echo ::set-env name=BASE_SIZE::$(docker inspect base_cloudshell:latest --format "{{.Size}}")
     - name: find the tools size info
       run: echo ::set-env name=TOOLS_SIZE::$(docker inspect tools_cloudshell:latest --format "{{.Size}}")
+    - name: App Insights 
+      id: ai
+      uses: edyoung/insights-action@v4 
+      with:
+        aikey: ${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}}
+        datamap: '{"mymetric": $BASE_SIZE, "othermetric": $TOOLS_SIZE}'
     - name: update a comment with size
       run: |
         echo "pull id $ISSUEID size $BASE_SIZE  $TOOLS_SIZE"  && \
@@ -52,5 +58,5 @@ jobs:
         --header 'content-type: application/json' \
         --header 'Accept: application/vnd.github.v3+json' \
         --data "{
-          \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB. \"
+          \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB. <img src='https://insights-image-renderer.azurewebsites.net/api/render'/> \"
           }"
