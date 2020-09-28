@@ -25,30 +25,35 @@ jobs:
     - uses: actions/checkout@v2
 
     # Build base dockerfile
-    - name: Build the base.Dockerfile
-      run: docker build -t base_cloudshell -f linux/base.Dockerfile .
+    #- name: Build the base.Dockerfile
+    #  run: docker build -t base_cloudshell -f linux/base.Dockerfile .
     
     # Build tools dockerfile
-    - name: Build the tools.Dockerfile
-      run: docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
+    #- name: Build the tools.Dockerfile
+    #  run: docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
     
     # Run the test cases
-    - name: Run the test cases
-      run: docker run --volume $(pwd)/tests:/tests tools_cloudshell /bin/bash /tests/test.sh
+    #- name: Run the test cases
+    #  run: docker run --volume $(pwd)/tests:/tests tools_cloudshell /bin/bash /tests/test.sh
     
     # Show Docker image size
     - name: find the pull request id
       run: echo ::set-env name=ISSUEID::$(echo "${{github.ref }}" | sed 's!refs/pull/\([0-9]*\)/merge!\1!') 
     - name: find the base size info
-      run: echo ::set-env name=BASE_SIZE::$(docker inspect base_cloudshell:latest --format "{{.Size}}")
+      #run: echo ::set-env name=BASE_SIZE::$(docker inspect base_cloudshell:latest --format "{{.Size}}")
+      run: echo ::set-env name=BASE_SIZE::100
     - name: find the tools size info
-      run: echo ::set-env name=TOOLS_SIZE::$(docker inspect tools_cloudshell:latest --format "{{.Size}}")
+      #run: echo ::set-env name=TOOLS_SIZE::$(docker inspect tools_cloudshell:latest --format "{{.Size}}")
+      run: echo ::set-env name=TOOLS_SIZE::120
+    - name: create data map
+      id: datamap
+      run: echo ::set-output name=datamap::'{ "mymetric": "$BASE_SIZE", "othermetric": "$TOOLS_SIZE"}'
     - name: App Insights 
       id: ai
       uses: edyoung/insights-action@v4 
       with:
         aikey: ${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}}
-        datamap: '{"mymetric": $BASE_SIZE, "othermetric": $TOOLS_SIZE}'
+        datamap: ${{steps.datamap.outputs.datamap}}
     - name: update a comment with size
       run: |
         echo "pull id $ISSUEID size $BASE_SIZE  $TOOLS_SIZE"  && \
