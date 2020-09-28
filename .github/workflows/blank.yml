@@ -47,7 +47,8 @@ jobs:
       run: echo ::set-env name=TOOLS_SIZE::120
     - name: create data map
       id: datamap
-      run: echo ::set-output name=datamap::'{ "mymetric": "$BASE_SIZE", "othermetric": "$TOOLS_SIZE"}'
+      run: |
+        echo ::set-output name=datamap::'{ "mymetric": "$BASE_SIZE", "othermetric": "$TOOLS_SIZE"}'
     - name: App Insights 
       id: ai
       uses: edyoung/insights-action@v4 
