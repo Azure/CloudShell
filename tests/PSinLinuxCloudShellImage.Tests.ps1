@@ -66,8 +66,9 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     }
 
     It "kubectl" {
-        $kubectlVersion = kubectl version --client=true 
-        $kubectlVersion | Where-Object {$_ -like '*go1.13.9*' } | Should -Be $true
+        # We auto-upgrade so only check major version here
+        $kubectlVersion = kubectl version --client -o json | jq .clientVersion.major
+        $kubectlVersion | Should -Be '"1"'
     }
 
     It "rg" {
@@ -134,6 +135,12 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") }) -join ","
         $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
+    }
+
+    It "has local paths in `$PATH" {
+        $paths = ($env:PATH).split(":")
+        $paths | Should -Contain "~/bin"
+        $paths | Should -Contain "~/.local/bin"
     }
 }
 

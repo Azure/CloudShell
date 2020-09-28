@@ -178,7 +178,7 @@ RUN curl -L https://git.io/getLatestIstio | sh - \
 ENV LINKERD_ROOT /usr/local/linkerd
 RUN curl -sL https://run.linkerd.io/install | sh - \
   && mv $HOME/.linkerd*/ $LINKERD_ROOT
-ENV PATH $PATH:$LINKERD_ROOT/bin:$PATH:$ISTIO_ROOT/bin
+ENV PATH $PATH:$LINKERD_ROOT/bin:$ISTIO_ROOT/bin
 
 # Install Puppet-Bolt
 RUN wget -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-xenial.deb \
