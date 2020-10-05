@@ -90,6 +90,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   libffi-dev \
   libssl-dev \
   man-db \
+  maven \
   moby-cli \
   moby-engine \
   msodbcsql17 \ 
@@ -133,10 +134,6 @@ RUN wget -nv -O cf-cli_install.deb https://cli.run.pivotal.io/stable?release=deb
   && dpkg -i cf-cli_install.deb \
   && apt-get install -f \
   && rm -f cf-cli_install.deb
-
-RUN wget -nv  -O zulu-14.deb https://repos.azul.com/azure-only/zulu/packages/zulu-14/14/zulu-14-azure-jdk_14.27.1-14-linux_amd64.deb \
-  && dpkg -i zulu-14.deb \
-  && apt -y install zulu-14-azure-jdk
 
 # Setup locale to en_US.utf8
 RUN locale-gen en_US en_US.UTF-8
