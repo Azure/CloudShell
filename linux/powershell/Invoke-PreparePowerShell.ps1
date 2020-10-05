@@ -17,25 +17,15 @@ $moduleList = @(
     "SHiPS",
     "AzurePSDrive",
     "MicrosoftPowerBIMgmt",
+    "Az",
     "Az.GuestConfiguration",
     "Microsoft.PowerShell.UnixCompleters"
 )
 
-if ($PSVersionTable.PSEdition -eq "Core")
-{
-    $moduleList += "AzureAD.Standard.Preview"
-    $moduleList += "Az"
-}
-else {
-    $moduleList += "AzureAD"
-    $moduleList += "Az"
-}
-
 # set SkipAzInstallationChecks to avoid az check for AzInstallationChecks.json
 [System.Environment]::SetEnvironmentVariable('SkipAzInstallationChecks', $true)
 
-foreach ($module in $moduleList)
-{
+foreach ($module in $moduleList) {
     try {
         Write-Output "Importing $module..."
         Import-Module $module -Force
