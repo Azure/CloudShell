@@ -66,8 +66,9 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     }
 
     It "kubectl" {
-        $kubectlVersion = kubectl version --client=true 
-        $kubectlVersion | Where-Object {$_ -like '*go1.12.9*' } | Should -Be $true
+        # We auto-upgrade so only check major version here
+        $kubectlVersion = kubectl version --client -o json | jq .clientVersion.major
+        $kubectlVersion | Should -Be '"1"'
     }
 
     It "rg" {
@@ -97,6 +98,10 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         # Match only major version. Any change in major version is considered potentially breaking
         # Output example: azure-cli                         2.0.58
         $azCliVersion | Where-Object {$_ -like "azure-cli*2.*.*"} | Should -Be $true
+    }
+
+    It "az cli extensions" {
+        az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
     }
 
     It "docker-client, docker-machine" {
@@ -130,6 +135,12 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
         $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") }) -join ","
         $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
+    }
+
+    It "has local paths in `$PATH" {
+        $paths = ($env:PATH).split(":")
+        $paths | Should -Contain "~/bin"
+        $paths | Should -Contain "~/.local/bin"
     }
 }
 

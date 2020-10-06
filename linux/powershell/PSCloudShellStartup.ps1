@@ -174,7 +174,7 @@ function Connect-AzureAD
         {
             $errorFolderPath = $script:UserDefaultPath
             $azureFolderPath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.azure')
-            Microsoft.PowerShell.Utility\Write-Warning -Message "An error occured while authenticating to $($script:AzureADModuleName). Check $azureFolderPath for logs"
+            Microsoft.PowerShell.Utility\Write-Warning -Message "An error occurred while authenticating to $($script:AzureADModuleName). Check $azureFolderPath for logs"
             if (Microsoft.PowerShell.Management\Test-Path -Path $azureFolderPath)
             {
                 $errorFolderPath = $azureFolderPath

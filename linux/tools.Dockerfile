@@ -17,7 +17,12 @@ RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure
   && rm -f azure-cli-latest-buster.deb
 
 # Install any Azure CLI extensions that should be included by default.
-RUN az extension add --name ai-examples -y
+RUN az extension add --system --name ai-examples -y
+
+# Install kubectl
+RUN az aks install-cli \
+  && chmod +x /usr/local/bin/kubectl \
+  && chmod +x /usr/local/bin/kubelogin
 
 # Download the latest terraform (AMD64), install to global environment.
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D87348FFC4C \
@@ -51,3 +56,7 @@ RUN npm install -q -g @pnp/cli-microsoft365
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
+
+# Add user's home directories to PATH at the front so they can install tools which
+# override defaults
+ENV PATH ~/.local/bin:~/bin:$PATH
