@@ -136,7 +136,7 @@ RUN wget -nv -O cf-cli_install.deb https://cli.run.pivotal.io/stable?release=deb
   && rm -f cf-cli_install.deb
 
 # Setup locale to en_US.utf8
-RUN locale-gen en_US en_US.UTF-8
+RUN echo en_US UTF-8 >> /etc/locale.gen && locale-gen
 ENV LANG="en_US.utf8"
 
 # Redirect python3 as default and path pip2
@@ -187,7 +187,7 @@ RUN curl -sSL https://run.linkerd.io/install | sh - \
 ENV PATH $PATH:$LINKERD_ROOT/bin:$ISTIO_ROOT/bin
 
 # Install Puppet-Bolt
-RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-xenial.deb \
+RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-buster.deb \
   && dpkg -i puppet-tools.deb \
   && apt-get update \
   && apt-get install puppet-bolt \
@@ -283,8 +283,6 @@ RUN npm install -g yo \
   && npm install -g generator-az-terra-module
 
 # Download and install AzCopy SCD of linux-x64
-# downloadazcopycloudshell pointing to a latest azcopy download
-# shasums256forazcopycloudshell pointing to a checksum file correpsonding to the latest package
 RUN curl -sSL https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x64.tar.gz \
   && mkdir azcopy \
   && tar xf azcopy-netcore_linux_x64.tar.gz -C azcopy --strip-components 1 \
