@@ -241,8 +241,8 @@ RUN PACKER_VERSION=$(curl -sSL https://checkpoint-api.hashicorp.com/v1/check/pac
   && unset PACKER_VERSION
 
 # Install dcos
-RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dcos \
-  && echo 07f77da8a664ad8312fc6318c633a3cd350cdbeb2b483604363922d94a55089e dcos | sha256sum -c \
+RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/latest/dcos \
+  && echo c79285f23525e21f71473649c742af14917c9da7ee2b707ccc27e92da4838ec4 dcos | sha256sum -c \
   && mv dcos /usr/local/bin \
   && chmod +x /usr/local/bin/dcos
 
@@ -251,8 +251,7 @@ RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.
 RUN wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
   && dpkg -i packages-microsoft-prod.deb \
   && apt update \
-  && apt-get -y install powershell
-
+  && apt-get -y install powershell 
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
@@ -260,20 +259,20 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 ENV POWERSHELL_UPDATECHECK Off
 
 # Install Chef Workstation
-RUN wget -nv -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/20.6.62/debian/10/chef-workstation_20.6.62-1_amd64.deb \
-  && echo 737bcf19236e63732871f2fdf7f7d71a02b91dabebc80e5f14d5cdece4ca3cf3 chef-workstation_amd64.deb | sha256sum -c \
+RUN wget -nv -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/20.9.158/debian/10/chef-workstation_20.9.158-1_amd64.deb \
+  && echo af67dfbf705959eb0e4d4b663142a66b2a220b33aefc54b83197ad3f535b69ba chef-workstation_amd64.deb | sha256sum -c \
   && dpkg -i chef-workstation_amd64.deb \
   && rm -f chef-workstation_amd64.deb
 
 # Install ripgrep
-RUN curl -sSLO https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep_0.8.1_amd64.deb \
-  && echo 4d39d6362b109e97ae95eb13a9bc5833cbe612202f1e05b3ac016c5a9c3ff665 ripgrep_0.8.1_amd64.deb | sha256sum -c \
-  && dpkg -i ripgrep_0.8.1_amd64.deb \
-  && rm -f ripgrep_0.8.1_amd64.deb
+RUN curl -sSLO https://github.com/BurntSushi/ripgrep/releases/download/12.1.1/ripgrep_12.1.1_amd64.deb \
+  && echo 18ef498312073da55d2f2f65c6a906085c68368a23c9a45a87fcb8539be96608 ripgrep_12.1.1_amd64.deb | sha256sum -c \
+  && dpkg -i ripgrep_12.1.1_amd64.deb \
+  && rm -f ripgrep_12.1.1_amd64.deb
 
 # Install docker-machine
-RUN curl -sSL https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine \
-  && echo 3c0a1a03653dff205f27bb178773f3c294319435a2589cf3cb4456423f8cef08 /tmp/docker-machine | sha256sum -c \
+RUN curl -sSL https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine \
+  && echo a7f7cbb842752b12123c5a5447d8039bf8dccf62ec2328853583e68eb4ffb097 /tmp/docker-machine | sha256sum -c \
   && chmod +x /tmp/docker-machine \
   && mv /tmp/docker-machine /usr/local/bin/docker-machine
 

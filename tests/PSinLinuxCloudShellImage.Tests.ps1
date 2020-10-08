@@ -1,6 +1,6 @@
-Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker-machine, terraform, ansible, MSI_ENDPOINT environment setting" {
+Describe "Various programs installed with expected versions" {
 
-    It "Base OS - Ubuntu 16.04 - Versionstring - Unix 4.4.0.130" {
+    It "Base OS - CBL-D 10" {
 
         [System.Environment]::OSVersion.Platform | Should -Be 'Unix'
         $osDetails = Get-Content /etc/*release
@@ -62,7 +62,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "dcos" {
         $dcosVersion = dcos --version 
-        $dcosVersion | Where-Object {$_ -like 'dcoscli.version=0.*' } | Should -Be $true
+        $dcosVersion | Where-Object {$_ -like 'dcoscli.version=1.*' } | Should -Be $true
     }
 
     It "kubectl" {
@@ -73,7 +73,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "rg" {
         $rgVersion = rg --version 
-        $rgVersion | Where-Object {$_ -like 'ripgrep 0.8.1*' } | Should -Be $true
+        $rgVersion | Where-Object {$_ -like 'ripgrep 12.*' } | Should -Be $true
     }
 
     It "helm" {
@@ -82,8 +82,8 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     }
 
     It "draft" {
-        $draftVersion = draft version 
-        $draftVersion | Where-Object {$_ -like '&version.Version{SemVer:"v0*' } | Should -Be $true
+        $draftVersion = draft version -s
+        $draftVersion | Where-Object {$_ -like 'v0.16*' } | Should -Be $true
     }
 
     It "startupscript" {

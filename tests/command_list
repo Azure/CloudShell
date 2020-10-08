@@ -504,6 +504,7 @@ gzexe
 gzip
 h2ph
 h2xs
+hab
 halt
 hash
 hd
@@ -1052,6 +1053,7 @@ sha512sum
 shadowconfig
 shasum
 shift
+shipyard
 shopt
 shred
 shuf
