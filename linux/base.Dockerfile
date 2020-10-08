@@ -156,140 +156,149 @@ RUN chmod 755 /usr/local/bin/blobxfer \
   && virtualenv -p python3 blobxfer \
   && /bin/bash -c "source blobxfer/bin/activate && pip3 install blobxfer && deactivate"
 
-# CAN'T INSTALL BATCH-SHIPYARD DUE TO CBL-D not being recognized 
-# && curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/releases/latest | grep tarball_url | cut -d'"' -f4` | tar -zxvpf - \
-# && mv Azure-batch-shipyard-* batch-shipyard \
-# && cd /opt/batch-shipyard \
-# && ./install.sh -c \
-# && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
-# && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard
+# Some hacks to install.sh
+# update os-release to pretend we are Debian
+# depend on python3.7-dev instead of python3-dev (cbl-d bug?)
+RUN curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/releases/latest | grep tarball_url | cut -d'"' -f4` | tar -zxvpf - \
+  && mv Azure-batch-shipyard-* /opt/batch-shipyard \
+  && cd /opt/batch-shipyard \
+  && cp /etc/os-release /etc/os-release.bak \
+  && sed 's/ID=cbld/ID=debian/' < /etc/os-release.bak \
+  && sed 's/ID=cbld/ID=debian/' < /etc/os-release.bak  > /etc/os-release \
+  && sed 's/PYTHON_PKGS="libpython3-dev python3-dev"/PYTHON_PKGS="libpython3.7-dev python3.7-dev"/' < install.sh > install-tweaked.sh \
+  && chmod +x ./install-tweaked.sh \
+  && ./install-tweaked.sh -c \
+  && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
+  && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard \
+  && cp /etc/os-release.bak /etc/os-release
 
 
-# # BEGIN: Install Ansible in isolated Virtual Environment
-COPY ./linux/ansible/ansible*  /usr/local/bin/
-RUN chmod 755 /usr/local/bin/ansible* \
-  && pip2 install virtualenv \
-  && cd /opt \
-  && virtualenv -p python3 ansible \
-  && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
-  && ansible-galaxy collection install azure.azcollection
-
-# Install latest version of Istio
-ENV ISTIO_ROOT /usr/local/istio-latest
-RUN curl -sSL https://git.io/getLatestIstio | sh - \
-  && mv $PWD/istio* $ISTIO_ROOT \
-  && chmod -R 755 $ISTIO_ROOT
-
-# Install latest version of Linkerd
-ENV LINKERD_ROOT /usr/local/linkerd
-RUN curl -sSL https://run.linkerd.io/install | sh - \
-  && mv $HOME/.linkerd*/ $LINKERD_ROOT
-ENV PATH $PATH:$LINKERD_ROOT/bin:$ISTIO_ROOT/bin
-
-# Install Puppet-Bolt
-RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-buster.deb \
-  && dpkg -i puppet-tools.deb \
-  && apt-get update \
-  && apt-get install puppet-bolt \
-  && rm -f puppet-tools.deb
-
-# install go
-RUN wget -nv -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
-  && echo b3dd4bd781a0271b33168e627f7f43886b4c5d1c794a4015abf34e99c6526ca3 go.tar.gz | sha256sum -c \
-  && tar -xf go.tar.gz \
-  && mv go /usr/local \
-  && rm -f go.tar.gz
-
-ENV GOROOT="/usr/local/go"
-ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
-
-RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
-  && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-  && unset INSTALL_DIRECTORY
-
-RUN gem update --system 2.7.7 \
-  && gem install bundler --version 1.16.4 --force \
-  && gem install rake --version 12.3.0 --no-document --force \
-  && gem install colorize --version 0.8.1 --no-document --force \
-  && gem install rspec --version 3.7.0 --no-document --force \
-  && rm -r /root/.gem/
-
-ENV GEM_HOME=~/bundle
-ENV BUNDLE_PATH=~/bundle
-ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
-
-# Download and Install the latest packer (AMD64)
-RUN PACKER_VERSION=$(curl -sSL https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
-  && wget -nv -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
-  && wget -nv -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
-  && wget -nv -O packer.sha256.sig https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS.sig \
-  && curl -s https://keybase.io/hashicorp/pgp_keys.asc | gpg --import \
-  && gpg --verify packer.sha256.sig packer.sha256 \
-  && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+packer_${PACKER_VERSION}_linux_amd64.zip)" packer.sha256) packer.zip | sha256sum -c \
-  && unzip packer.zip \
-  && mv packer /usr/local/bin \
-  && chmod a+x /usr/local/bin/packer \
-  && rm -f packer packer.zip packer.sha256 packer.sha256.sig \
-  && unset PACKER_VERSION
-
-# Install dcos
-RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dcos \
-  && echo 07f77da8a664ad8312fc6318c633a3cd350cdbeb2b483604363922d94a55089e dcos | sha256sum -c \
-  && mv dcos /usr/local/bin \
-  && chmod +x /usr/local/bin/dcos
-
-# Install PowerShell
-# Register the Microsoft repository GPG keys and Install PowerShell Core
-RUN wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
-  && dpkg -i packages-microsoft-prod.deb \
-  && apt update \
-  && apt-get -y install powershell
-
-
-# PowerShell telemetry
-ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
-# don't tell users to upgrade, they can't
-ENV POWERSHELL_UPDATECHECK Off
-
-# Install Chef Workstation
-RUN wget -nv -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/20.6.62/debian/10/chef-workstation_20.6.62-1_amd64.deb \
-  && echo 737bcf19236e63732871f2fdf7f7d71a02b91dabebc80e5f14d5cdece4ca3cf3 chef-workstation_amd64.deb | sha256sum -c \
-  && dpkg -i chef-workstation_amd64.deb \
-  && rm -f chef-workstation_amd64.deb
-
-# Install ripgrep
-RUN curl -sSLO https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep_0.8.1_amd64.deb \
-  && echo 4d39d6362b109e97ae95eb13a9bc5833cbe612202f1e05b3ac016c5a9c3ff665 ripgrep_0.8.1_amd64.deb | sha256sum -c \
-  && dpkg -i ripgrep_0.8.1_amd64.deb \
-  && rm -f ripgrep_0.8.1_amd64.deb
-
-# Install docker-machine
-RUN curl -sSL https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine \
-  && echo 3c0a1a03653dff205f27bb178773f3c294319435a2589cf3cb4456423f8cef08 /tmp/docker-machine | sha256sum -c \
-  && chmod +x /tmp/docker-machine \
-  && mv /tmp/docker-machine /usr/local/bin/docker-machine
-
-# Copy and run the Helm install script, which fetches the latest release of Helm.
-COPY ./linux/helmInstall.sh .
-RUN bash ./helmInstall.sh && rm -f ./helmInstall.sh
-
-# Copy and run the Draft install script, which fetches the latest release of Draft with
-# optimizations for running inside cloud shell.
-COPY ./linux/draftInstall.sh .
-RUN bash ./draftInstall.sh && rm -f ./draftInstall.sh
-
-# Install Yeoman Generator and predefined templates
-RUN npm install -g yo \
-  && npm install -g generator-az-terra-module
-
-# Download and install AzCopy SCD of linux-x64
-RUN curl -sSL https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x64.tar.gz \
-  && mkdir azcopy \
-  && tar xf azcopy-netcore_linux_x64.tar.gz -C azcopy --strip-components 1 \
-  && mv azcopy/azcopy /usr/local/bin/azcopy \
-  && chmod a+x /usr/local/bin/azcopy \
-  && rm -f azcopy-netcore_linux_x64.tar.gz && rm -rf azcopy
-
-# Copy and run script to Install powershell modules
-COPY ./linux/powershell/ powershell
-RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && rm -rf ./powershell
+# # # BEGIN: Install Ansible in isolated Virtual Environment
+# COPY ./linux/ansible/ansible*  /usr/local/bin/
+# RUN chmod 755 /usr/local/bin/ansible* \
+#   && pip2 install virtualenv \
+#   && cd /opt \
+#   && virtualenv -p python3 ansible \
+#   && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
+#   && ansible-galaxy collection install azure.azcollection
+# 
+# # Install latest version of Istio
+# ENV ISTIO_ROOT /usr/local/istio-latest
+# RUN curl -sSL https://git.io/getLatestIstio | sh - \
+#   && mv $PWD/istio* $ISTIO_ROOT \
+#   && chmod -R 755 $ISTIO_ROOT
+# 
+# # Install latest version of Linkerd
+# ENV LINKERD_ROOT /usr/local/linkerd
+# RUN curl -sSL https://run.linkerd.io/install | sh - \
+#   && mv $HOME/.linkerd*/ $LINKERD_ROOT
+# ENV PATH $PATH:$LINKERD_ROOT/bin:$ISTIO_ROOT/bin
+# 
+# # Install Puppet-Bolt
+# RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-buster.deb \
+#   && dpkg -i puppet-tools.deb \
+#   && apt-get update \
+#   && apt-get install puppet-bolt \
+#   && rm -f puppet-tools.deb
+# 
+# # install go
+# RUN wget -nv -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
+#   && echo b3dd4bd781a0271b33168e627f7f43886b4c5d1c794a4015abf34e99c6526ca3 go.tar.gz | sha256sum -c \
+#   && tar -xf go.tar.gz \
+#   && mv go /usr/local \
+#   && rm -f go.tar.gz
+# 
+# ENV GOROOT="/usr/local/go"
+# ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
+# 
+# RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
+#   && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+#   && unset INSTALL_DIRECTORY
+# 
+# RUN gem update --system 2.7.7 \
+#   && gem install bundler --version 1.16.4 --force \
+#   && gem install rake --version 12.3.0 --no-document --force \
+#   && gem install colorize --version 0.8.1 --no-document --force \
+#   && gem install rspec --version 3.7.0 --no-document --force \
+#   && rm -r /root/.gem/
+# 
+# ENV GEM_HOME=~/bundle
+# ENV BUNDLE_PATH=~/bundle
+# ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
+# 
+# # Download and Install the latest packer (AMD64)
+# RUN PACKER_VERSION=$(curl -sSL https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
+#   && wget -nv -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+#   && wget -nv -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
+#   && wget -nv -O packer.sha256.sig https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS.sig \
+#   && curl -s https://keybase.io/hashicorp/pgp_keys.asc | gpg --import \
+#   && gpg --verify packer.sha256.sig packer.sha256 \
+#   && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+packer_${PACKER_VERSION}_linux_amd64.zip)" packer.sha256) packer.zip | sha256sum -c \
+#   && unzip packer.zip \
+#   && mv packer /usr/local/bin \
+#   && chmod a+x /usr/local/bin/packer \
+#   && rm -f packer packer.zip packer.sha256 packer.sha256.sig \
+#   && unset PACKER_VERSION
+# 
+# # Install dcos
+# RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/dcos-1.8/dcos \
+#   && echo 07f77da8a664ad8312fc6318c633a3cd350cdbeb2b483604363922d94a55089e dcos | sha256sum -c \
+#   && mv dcos /usr/local/bin \
+#   && chmod +x /usr/local/bin/dcos
+# 
+# # Install PowerShell
+# # Register the Microsoft repository GPG keys and Install PowerShell Core
+# RUN wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
+#   && dpkg -i packages-microsoft-prod.deb \
+#   && apt update \
+#   && apt-get -y install powershell
+# 
+# 
+# # PowerShell telemetry
+# ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
+# # don't tell users to upgrade, they can't
+# ENV POWERSHELL_UPDATECHECK Off
+# 
+# # Install Chef Workstation
+# RUN wget -nv -O chef-workstation_amd64.deb https://packages.chef.io/files/stable/chef-workstation/20.6.62/debian/10/chef-workstation_20.6.62-1_amd64.deb \
+#   && echo 737bcf19236e63732871f2fdf7f7d71a02b91dabebc80e5f14d5cdece4ca3cf3 chef-workstation_amd64.deb | sha256sum -c \
+#   && dpkg -i chef-workstation_amd64.deb \
+#   && rm -f chef-workstation_amd64.deb
+# 
+# # Install ripgrep
+# RUN curl -sSLO https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep_0.8.1_amd64.deb \
+#   && echo 4d39d6362b109e97ae95eb13a9bc5833cbe612202f1e05b3ac016c5a9c3ff665 ripgrep_0.8.1_amd64.deb | sha256sum -c \
+#   && dpkg -i ripgrep_0.8.1_amd64.deb \
+#   && rm -f ripgrep_0.8.1_amd64.deb
+# 
+# # Install docker-machine
+# RUN curl -sSL https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine \
+#   && echo 3c0a1a03653dff205f27bb178773f3c294319435a2589cf3cb4456423f8cef08 /tmp/docker-machine | sha256sum -c \
+#   && chmod +x /tmp/docker-machine \
+#   && mv /tmp/docker-machine /usr/local/bin/docker-machine
+# 
+# # Copy and run the Helm install script, which fetches the latest release of Helm.
+# COPY ./linux/helmInstall.sh .
+# RUN bash ./helmInstall.sh && rm -f ./helmInstall.sh
+# 
+# # Copy and run the Draft install script, which fetches the latest release of Draft with
+# # optimizations for running inside cloud shell.
+# COPY ./linux/draftInstall.sh .
+# RUN bash ./draftInstall.sh && rm -f ./draftInstall.sh
+# 
+# # Install Yeoman Generator and predefined templates
+# RUN npm install -g yo \
+#   && npm install -g generator-az-terra-module
+# 
+# # Download and install AzCopy SCD of linux-x64
+# RUN curl -sSL https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x64.tar.gz \
+#   && mkdir azcopy \
+#   && tar xf azcopy-netcore_linux_x64.tar.gz -C azcopy --strip-components 1 \
+#   && mv azcopy/azcopy /usr/local/bin/azcopy \
+#   && chmod a+x /usr/local/bin/azcopy \
+#   && rm -f azcopy-netcore_linux_x64.tar.gz && rm -rf azcopy
+# 
+# # Copy and run script to Install powershell modules
+# COPY ./linux/powershell/ powershell
+# RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && rm -rf ./powershell
+# 
