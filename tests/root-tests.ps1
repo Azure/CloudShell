@@ -1,9 +1,9 @@
 #!/usr/bin/env pwsh
 
-# install pester then run tests for regular user
+# Install pester then run tests for root user
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 cd /tests
 Install-Module -Name Pester -Force
-Invoke-Pester -Script PSinLinuxCloudShellImage.Tests.ps1
+Invoke-Pester -Script Root.Tests.ps1
