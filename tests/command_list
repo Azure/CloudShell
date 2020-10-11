@@ -435,6 +435,7 @@ getopt
 getopts
 getpcaps
 getty
+gh
 ghostscript
 git
 git-receive-pack

@@ -41,6 +41,13 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D8734
 COPY ./linux/terraform/terraform*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/terraform* && dos2unix /usr/local/bin/terraform*
 
+
+# github CLI
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
+  apt-add-repository https://cli.github.com/packages && \
+  apt update && \
+  apt install gh
+
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 
