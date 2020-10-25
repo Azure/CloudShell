@@ -122,6 +122,11 @@ Describe "Various programs installed with expected versions" {
         $terraformVersion | Where-Object {$_ -like "Terraform v0.*.*"} | Should -Be $true
     }
 
+    It "github CLI" {
+        Invoke-Expression -Command 'gh' -ErrorVariable myerr
+        $myerr | Should -BeNullOrEmpty
+    }
+
     It "Compare bash commands to baseline" {
         # command_list contains a list of all the files which should be installed
         $command_diffs = bash -c "compgen -c | sort | uniq > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"

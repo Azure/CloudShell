@@ -41,13 +41,24 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D8734
 COPY ./linux/terraform/terraform*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/terraform* && dos2unix /usr/local/bin/terraform*
 
+
+# github CLI
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
+  apt-add-repository https://cli.github.com/packages && \
+  apt update && \
+  apt install gh
+
+RUN mkdir -p /usr/cloudshell
+WORKDIR /usr/cloudshell
+
 # Copy and run script to Install powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/PSCloudShellUtility/ /usr/local/share/powershell/Modules/PSCloudShellUtility/
 COPY ./linux/powershell/ powershell
 RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./powershell
 
-RUN mkdir -p /usr/cloudshell
-WORKDIR /usr/cloudshell
+# install powershell warmup script
+COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
+
 
 RUN npm install -q 
 
