@@ -42,6 +42,22 @@ function Get-DockerfileData {
     Write-Output "pscloudshellVersion= $pscloudshellVer; pscloudshellBlob=$script:pscloudshellBlob"
 }
 
+# A build of LibMI.so compatible with OpenSSL 1.1 is stored in the blob. This has not yet been tested in any other
+# situation than running in Cloud Shell
+function Install-LibMIFile {
+    $libmiversion = $script:dockerfileDataObject.libmiversion
+    $FileHash = $script:dockerfileDataObject.libmifilehash
+    $libmiBlob = "https://pscloudshellbuild.blob.core.windows.net/$libmiversion/a/debian10-libmi/libmi.so"
+    $FullPath = "/opt/microsoft/powershell/7/libmi.so"
+    Write-Output "Updating libmi.so with $($libmiBlob)"
+    Microsoft.PowerShell.Utility\Invoke-WebRequest -Uri $libmiBlob -UseBasicParsing -OutFile $FullPath
+    $hash = (Microsoft.PowerShell.Utility\Get-FileHash $FullPath).Hash
+    if ($hash -ne $FileHash) {
+        throw "Hash mismatch for $FullPath. Expected: $FileHash Actual:$hash."
+    }
+
+}
+
 # Download files from the PSCloudShell Azure storage blob
 function Install-PSCloudShellFile {
     param(
@@ -82,6 +98,10 @@ try {
         
     }
     else {
+        # update libmi.so
+        Write-Output "Updating libmi.so"
+        Install-LibMIFile
+
         # Install modules from the PowerShell Test Gallery
         Write-Output "Installing modules from test gallery"
         PowerShellGet\Install-Module -Name Az -MaximumVersion $script:dockerfileDataObject.AzMaxVersion @intAllUsers
