@@ -457,6 +457,7 @@ getopt
 getopts
 getpcaps
 getty
+gh
 ginstall-info
 git
 git-receive-pack

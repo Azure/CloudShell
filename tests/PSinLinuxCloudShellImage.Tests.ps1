@@ -173,7 +173,7 @@ Describe "PowerShell Modules" {
         $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
 
         # Verify Az module version
-        $module.Version -like "4.*.*" | Should -Be $true
+        $module.Version -ge [version]"5.0" | Should -Be $true
 
     }
 
@@ -182,10 +182,6 @@ Describe "PowerShell Modules" {
         $module = Get-InstalledModule -Name Az.Accounts -AllVersions
         $module | Should -Not -BeNullOrEmpty
         $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
-
-        # Verify Az.Accounts module version
-        $module.Version -like "1.*.*" | Should -Be $true
-
     }
 
     It "Az.Resources PowerShell Module" {
@@ -193,10 +189,6 @@ Describe "PowerShell Modules" {
         $module = Get-InstalledModule -Name Az.Resources -AllVersions
         $module | Should -Not -BeNullOrEmpty
         $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
-
-        # Verify Az.Resources module version
-        $module.Version -like "2.*.*" | Should -Be $true
-
     }
 
     It "SHiPS PowerShell Module" {
