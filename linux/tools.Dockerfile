@@ -59,9 +59,6 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./
 # install powershell warmup script
 COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
 
-
-RUN npm install -q 
-
 # Install Office 365 CLI templates
 RUN npm install -q -g @pnp/cli-microsoft365 
 
