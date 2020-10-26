@@ -146,7 +146,7 @@ RUN ln -s -f /usr/bin/python3 /usr/bin/python \
   && sed -i 's/usr\/bin\/python/usr\/bin\/python2/' /usr/bin/pip2 \
   && pip2 install --upgrade pip && pip3 install --upgrade pip \
   && pip3 install --upgrade sfctl \
-  && pip install mssql-scripter
+  && pip3 install mssql-scripter
 
 # Install Blobxfer and Batch-Shipyard in isolated virtualenvs
 COPY ./linux/blobxfer /usr/local/bin
