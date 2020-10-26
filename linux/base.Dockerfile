@@ -176,10 +176,10 @@ RUN curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/rel
 # # BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
-  && pip2 install virtualenv \
+  && pip3 install virtualenv \
   && cd /opt \
   && virtualenv -p python3 ansible \
-  && /bin/bash -c "source ansible/bin/activate && pip install ansible[azure] && pip install pywinrm>=0.2.2 && deactivate" \
+  && /bin/bash -c "source ansible/bin/activate && pip3 install ansible && pip3 install pywinrm>=0.2.2 && deactivate" \
   && ansible-galaxy collection install azure.azcollection
 
 # Install latest version of Istio
