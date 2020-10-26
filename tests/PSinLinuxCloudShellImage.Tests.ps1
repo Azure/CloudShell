@@ -132,12 +132,12 @@ Describe "Various programs installed with expected versions" {
         $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"
 
         # these may or may not be present depending on how tests were invoked
-        $special = @("profile.ps1", "PSCloudShellStartup.ps1", "dh_pypy", "dh_python3","pybuild","python3-config","python3m-config","x86_64-linux-gnu-python3-config","x86_64-linux-gnu-python3m-config")
+        $special = @("profile.ps1", "PSCloudShellStartup.ps1", "dh_pypy", "dh_python3", "pybuild", "python3-config", "python3m-config", "x86_64-linux-gnu-python3-config", "x86_64-linux-gnu-python3m-config")
 
         $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notin $special}) -join ","        
         $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
-        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") }) -join ","
+        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notin $special}) -join ","
         $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
     }
