@@ -5,7 +5,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxlinux.azurecr.io/artifact/b787066e-c88f-4e20-ae65-e42a858c42ca/buddy/azure/cloudshell:1.0.20201009.1.base.add-cbld.5113b5b1
+ARG IMAGE_LOCATION=cdpxlinux.azurecr.io/artifact/b787066e-c88f-4e20-ae65-e42a858c42ca/buddy/azure/cloudshell:1.0.20201030.1.base.master.0e24a3b1
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
