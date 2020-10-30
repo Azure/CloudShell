@@ -54,3 +54,7 @@ jobs:
         --data "{
           \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB. \"
           }"
+
+    # Run the test cases
+    - name: Run the test cases
+      run: docker run --volume $(pwd)/tests:/tests tools_cloudshell pwsh -c "cd /tests; Install-Module -Name Pester -Force; Invoke-Pester -EnableExit"

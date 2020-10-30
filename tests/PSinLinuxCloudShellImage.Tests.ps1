@@ -1,11 +1,11 @@
-Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker-machine, terraform, ansible, MSI_ENDPOINT environment setting" {
+Describe "Various programs installed with expected versions" {
 
-    It "Base OS - Ubuntu 16.04 - Versionstring - Unix 4.4.0.130" {
+    It "Base OS - CBL-D 10" {
 
         [System.Environment]::OSVersion.Platform | Should -Be 'Unix'
         $osDetails = Get-Content /etc/*release
-        $osDetails | Where-Object {$_.Contains('VERSION_ID="16.04"')} | Should -Not -BeNullOrEmpty
-        $osDetails | Where-Object {$_.Contains('NAME="Ubuntu"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('VERSION_ID="10"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('NAME="Common Base Linux Delridge"')} | Should -Not -BeNullOrEmpty
     }
 
     It "nodejs" {
@@ -52,7 +52,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "Ruby" {
         $rubyVersion = ruby --version 
-        $rubyVersion | Where-Object {$_ -like 'ruby 2.3.3*' } | Should -Be $true
+        $rubyVersion | Where-Object {$_ -like 'ruby 2.5.*' } | Should -Be $true
     }
 
     It "Packer" {
@@ -62,7 +62,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "dcos" {
         $dcosVersion = dcos --version 
-        $dcosVersion | Where-Object {$_ -like 'dcoscli.version=0.*' } | Should -Be $true
+        $dcosVersion | Where-Object {$_ -like 'dcoscli.version=1.*' } | Should -Be $true
     }
 
     It "kubectl" {
@@ -73,7 +73,7 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "rg" {
         $rgVersion = rg --version 
-        $rgVersion | Where-Object {$_ -like 'ripgrep 0.8.1*' } | Should -Be $true
+        $rgVersion | Where-Object {$_ -like 'ripgrep 12.*' } | Should -Be $true
     }
 
     It "helm" {
@@ -82,8 +82,8 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
     }
 
     It "draft" {
-        $draftVersion = draft version 
-        $draftVersion | Where-Object {$_ -like '&version.Version{SemVer:"v0*' } | Should -Be $true
+        $draftVersion = draft version -s
+        $draftVersion | Where-Object {$_ -like 'v0.16*' } | Should -Be $true
     }
 
     It "startupscript" {
@@ -129,15 +129,15 @@ Describe "Image basics - os, nodejs, startupscript, azcli, docker-client, docker
 
     It "Compare bash commands to baseline" {
         # command_list contains a list of all the files which should be installed
-        $command_diffs = bash -c "compgen -c | sort | uniq > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"
+        $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"
 
         # these may or may not be present depending on how tests were invoked
-        $special = @("profile.ps1", "PSCloudShellStartup.ps1")
+        $special = @("profile.ps1", "PSCloudShellStartup.ps1", "dh_pypy", "dh_python3", "pybuild", "python3-config", "python3m-config", "x86_64-linux-gnu-python3-config", "x86_64-linux-gnu-python3m-config")
 
         $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notin $special}) -join ","        
         $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
-        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") }) -join ","
+        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notin $special}) -join ","
         $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
     }
@@ -173,7 +173,7 @@ Describe "PowerShell Modules" {
         $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
 
         # Verify Az module version
-        $module.Version -like "4.*.*" | Should -Be $true
+        $module.Version -ge [version]"5.0" | Should -Be $true
 
     }
 
@@ -182,10 +182,6 @@ Describe "PowerShell Modules" {
         $module = Get-InstalledModule -Name Az.Accounts -AllVersions
         $module | Should -Not -BeNullOrEmpty
         $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
-
-        # Verify Az.Accounts module version
-        $module.Version -like "1.*.*" | Should -Be $true
-
     }
 
     It "Az.Resources PowerShell Module" {
@@ -193,10 +189,6 @@ Describe "PowerShell Modules" {
         $module = Get-InstalledModule -Name Az.Resources -AllVersions
         $module | Should -Not -BeNullOrEmpty
         $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
-
-        # Verify Az.Resources module version
-        $module.Version -like "2.*.*" | Should -Be $true
-
     }
 
     It "SHiPS PowerShell Module" {

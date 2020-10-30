@@ -5,16 +5,16 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxlinux.azurecr.io/artifact/b787066e-c88f-4e20-ae65-e42a858c42ca/official/azure/cloudshell:1.0.20200727.1.base.master.40d4519a
+ARG IMAGE_LOCATION=cdpxlinux.azurecr.io/artifact/b787066e-c88f-4e20-ae65-e42a858c42ca/buddy/azure/cloudshell:1.0.20201009.1.base.add-cbld.5113b5b1
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
-RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest.deb \
-  && dpkg -i azure-cli-latest.deb \
-  && rm -f azure-cli-latest.deb
+RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-buster.deb \
+  && dpkg -i azure-cli-latest-buster.deb \
+  && rm -f azure-cli-latest-buster.deb
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y
@@ -41,12 +41,11 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D8734
 COPY ./linux/terraform/terraform*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/terraform* && dos2unix /usr/local/bin/terraform*
 
-
 # github CLI
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
-  apt-add-repository https://cli.github.com/packages && \
-  apt update && \
-  apt install gh
+RUN curl -sSL https://github.com/cli/cli/releases/download/v1.1.0/gh_1.1.0_linux_amd64.deb > /tmp/gh.deb \
+  && echo 6e894e248db2b9f8be24b2adee35ea3c458632c24a9ef881c5030108b5d3dc15 /tmp/gh.deb | sha256sum -c \
+  && dpkg -i /tmp/gh.deb \
+  && rm /tmp/gh.deb
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
@@ -58,9 +57,6 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./
 
 # install powershell warmup script
 COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
-
-
-RUN npm install -q 
 
 # Install Office 365 CLI templates
 RUN npm install -q -g @pnp/cli-microsoft365 
