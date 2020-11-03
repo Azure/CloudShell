@@ -18,6 +18,7 @@ $script:CloudEnvironmentMap = @{
     Fairfax = 'AzureUSGovernment'; 
     Mooncake = 'AzureChinaCloud';
     BlackForest = 'AzureGermanCloud';
+    USNat = 'AzureUSNat';
     dogfood = 'dogfood'
 }
 
@@ -304,6 +305,14 @@ if ($env:ACC_CLOUD -eq 'dogfood')
     $dfEnvInitScriptURI = Microsoft.PowerShell.Utility\Read-Host -Prompt "Supply the URI"
     $dfEnvInitScript = Microsoft.PowerShell.Utility\Invoke-WebRequest -Uri $dfEnvInitScriptURI -UseBasicParsing | ForEach-Object Content
     $null = [ScriptBlock]::Create($dfEnvInitScript).Invoke()
+}
+
+if ($env:ACC_CLOUD -match 'USNat')
+{
+    $usnat = Get-AzEnvironment -Name $script:CloudEnvironmentMap["USNat"]
+    if ($usnat -eq $null){
+        Add-AzEnvironment -Name $script:CloudEnvironmentMap["USNat"] -PublishSettingsFileUrl false -StorageEndpoint 'core.eaglex.ic.gov' -ActiveDirectoryServiceEndpointResourceId 'https://management.azure.eaglex.ic.gov/' -ResourceManagerEndpoint 'https://management.azure.eaglex.ic.gov' -GraphEndpoint 'https://graph.cloudapi.eaglex.ic.gov' -AzureKeyVaultDnsSuffix 'vault.cloudapi.eaglex.ic.gov' -AzureKeyVaultServiceEndpointResourceId 'https://vault.cloudapi.eaglex.ic.gov' -ActiveDirectoryEndpoint 'https://login.microsoftonline.eaglex.ic.gov/' -AdTenant 'Common'
+    }
 }
 
 if($script:SkipMSIAuth -eq $true)
