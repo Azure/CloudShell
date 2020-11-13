@@ -142,7 +142,8 @@ Describe "Various programs installed with expected versions" {
             "python3m-config", 
             "x86_64-linux-gnu-python3-config", 
             "x86_64-linux-gnu-python3m-config",
-            "linkerd-stable-2.8.1"
+            "linkerd-stable-2.8.1",
+            "linkerd-stable-2.9.0"
         )
 
         $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notin $special}) -join ","        
