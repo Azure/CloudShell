@@ -174,7 +174,10 @@ Describe "PowerShell Modules" {
 
         # Ensure only one version of every single module is installed
         # This test is required since we are pulling modules from multiple repositories and the modules themselves have interconnected dependencies
-        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Should -Be $null
+
+        $special = @("PSReadLine")
+
+        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Where-Object { $_.Name -notin $special} | Should -Be $null
 
     }
 
