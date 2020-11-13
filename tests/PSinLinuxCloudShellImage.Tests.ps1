@@ -132,7 +132,19 @@ Describe "Various programs installed with expected versions" {
         $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"
 
         # these may or may not be present depending on how tests were invoked
-        $special = @("profile.ps1", "PSCloudShellStartup.ps1", "dh_pypy", "dh_python3", "pybuild", "python3-config", "python3m-config", "x86_64-linux-gnu-python3-config", "x86_64-linux-gnu-python3m-config")
+        $special = @(
+            "profile.ps1", 
+            "PSCloudShellStartup.ps1", 
+            "dh_pypy", 
+            "dh_python3", 
+            "pybuild", 
+            "python3-config", 
+            "python3m-config", 
+            "x86_64-linux-gnu-python3-config", 
+            "x86_64-linux-gnu-python3m-config",
+            "linkerd-stable-2.8.1",
+            "linkerd-stable-2.9.0"
+        )
 
         $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notin $special}) -join ","        
         $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
@@ -162,7 +174,10 @@ Describe "PowerShell Modules" {
 
         # Ensure only one version of every single module is installed
         # This test is required since we are pulling modules from multiple repositories and the modules themselves have interconnected dependencies
-        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Should -Be $null
+
+        $special = @("PSReadLine")
+
+        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Where-Object { $_.Name -notin $special} | Should -Be $null
 
     }
 
