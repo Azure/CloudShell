@@ -112,6 +112,8 @@ try {
         PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers   
         PowerShellGet\Install-Module -Name Az.GuestConfiguration -MaximumVersion $script:dockerfileDataObject.AzGuestConfigurationMaxVersion -ErrorAction SilentlyContinue @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
+        PowerShellGet\Install-Module -AllowPreRelease -Force PSReadLine -Repository PSGallery # get psreadline beta
+        PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery
 
         # Install PSCloudShell modules
         $tempDirectory = Microsoft.PowerShell.Management\Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName())
