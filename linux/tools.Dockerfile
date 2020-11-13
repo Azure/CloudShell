@@ -47,6 +47,13 @@ RUN curl -sSL https://github.com/cli/cli/releases/download/v1.1.0/gh_1.1.0_linux
   && dpkg -i /tmp/gh.deb \
   && rm /tmp/gh.deb
 
+# Temporarily rerun PowerShell install during tools build to pick up latest version
+RUN rm packages-microsoft-prod.deb \
+  && wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
+  && dpkg -i packages-microsoft-prod.deb \
+  && apt update \
+  && apt-get -y install powershell 
+
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 
