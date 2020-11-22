@@ -71,6 +71,10 @@ RUN npm install -q -g @pnp/cli-microsoft365
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 
+# Temp: fix linkerd symlink if it points nowhere. This can be removed after next base image update
+RUN ltarget=$(readlink /usr/local/linkerd/bin/linkerd) && \
+  if [ ! -f $ltarget ] ; then rm /usr/local/linkerd/bin/linkerd ; ln -s /usr/local/linkerd/bin/linkerd-stable* /usr/local/linkerd/bin/linkerd ; fi
+
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
 ENV PATH ~/.local/bin:~/bin:$PATH
