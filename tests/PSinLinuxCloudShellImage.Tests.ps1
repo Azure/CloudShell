@@ -1,4 +1,15 @@
+
+
+
 Describe "Various programs installed with expected versions" {
+ 
+    It "experiment" {
+        $script:packages = Get-PackageVersion
+        $script:pmap = @{}
+        $script:packages | % {
+            $script:pmap[$_.Name] = $_    
+        }
+    }
 
     It "Base OS - CBL-D 10" {
 
@@ -8,83 +19,29 @@ Describe "Various programs installed with expected versions" {
         $osDetails | Where-Object {$_.Contains('NAME="Common Base Linux Delridge"')} | Should -Not -BeNullOrEmpty
     }
 
-    It "nodejs" {
-        Test-Path -Path '/usr/local/bin/nodejs'| Should -Be $true
-        $nodeVersion = nodejs --version 
-        $nodeVersion.Contains('v8.16.0') | Should -Be $true
+    It "Static Versions" {
+        # These programs are installed explicitly with specific versions
+        $script:pmap["Node.JS"].Version | Should -Be '8.16.0'
+        $script:pmap["Jenkins X"].Version | Should -Be '1.3.107'
+        
     }
 
-    It "Jenkins client" {
-        $jxVersion = jx --version 
-        $jxVersion.Contains('1.3.107') | Should -Be $true
+
+    It "Some Versions Installed" {
+        # These programs are not pinned to exact versions, we just check they are still installed and 
+        # running the version command works
+        
+        $packages | ? Type -eq "Special" | % {
+            $name = $_.Name
+            $_.Version | Should -Not -BeNullOrEmpty -Because "$name should be present"
+            $_.Version | Should -Not -Be "Error" -Because "Error occurred running $name to determine version"
+            $_.Version | Should -Not -Be "Unknown" -Because "Could not parse version info for $name"
+        }
     }
 
-    It "CloudFoundry CLI" {
-        $cfVersion = cf --version
-        $cfVersion | Where-Object {$_ -like 'cf version 6.*' } | Should -Be $true
-    }
+    
 
-    It "blobxfer" {
-        $blobxferVersion = blobxfer --version 
-        $blobxferVersion | Where-Object {$_ -like 'blobxfer, version 1.*' } | Should -Be $true
-    }
-
-    It "shipyard" {
-        $shipyardVersion = shipyard --version 
-        $shipyardVersion | Where-Object {$_ -like "shipyard.py, version 3.*"} | Should -Be $true
-    }
-
-    It "ansible" {
-        $ansibleVersion = ansible --version
-        # Match only major version. Any change in major version is considered potentially breaking
-        $ansibleVersion | Where-Object {$_ -like "ansible 2.*.*"} | Should -Be $true
-    }
-
-    It "puppet bolt" {
-        $boltVersion = bolt --version
-        $boltVersion | Where-Object {$_ -like "2.*"} | Should -Be $true
-    }
-
-    It "Go lang" {
-        $goVersion = go version
-        $goVersion | Where-Object {$_ -like '*go1.13.7*' } | Should -Be $true
-    }
-
-    It "Ruby" {
-        $rubyVersion = ruby --version 
-        $rubyVersion | Where-Object {$_ -like 'ruby 2.5.*' } | Should -Be $true
-    }
-
-    It "Packer" {
-        $packerVersion = packer --version
-        $packerVersion | Where-Object {$_ -like '1.*' } | Should -Be $true
-    }
-
-    It "dcos" {
-        $dcosVersion = dcos --version 
-        $dcosVersion | Where-Object {$_ -like 'dcoscli.version=1.*' } | Should -Be $true
-    }
-
-    It "kubectl" {
-        # We auto-upgrade so only check major version here
-        $kubectlVersion = kubectl version --client -o json | jq .clientVersion.major
-        $kubectlVersion | Should -Be '"1"'
-    }
-
-    It "rg" {
-        $rgVersion = rg --version 
-        $rgVersion | Where-Object {$_ -like 'ripgrep 12.*' } | Should -Be $true
-    }
-
-    It "helm" {
-        $helmVersion = helm version
-        $helmVersion | Where-Object {$_ -like 'version.BuildInfo{Version:"v3*' } | Should -Be $true
-    }
-
-    It "draft" {
-        $draftVersion = draft version -s
-        $draftVersion | Where-Object {$_ -like 'v0.16*' } | Should -Be $true
-    }
+    
 
     It "startupscript" {
         $pwshPath = which pwsh
@@ -92,40 +49,12 @@ Describe "Various programs installed with expected versions" {
         Test-Path $startupScriptPath | Should -Be $true
     }
 
-    It "azcli" {
-
-        $azCliVersion = az --version
-        # Match only major version. Any change in major version is considered potentially breaking
-        # Output example: azure-cli                         2.0.58
-        $azCliVersion | Where-Object {$_ -like "azure-cli*2.*.*"} | Should -Be $true
-    }
+    
 
     It "az cli extensions" {
         az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
     }
 
-    It "docker-client, docker-machine" {
-
-        # Match only major version. Any change in major version is considered potentially breaking
-        $dockerVersion = docker --version
-        $dockerVersion | Where-Object {$_ -like "Docker version 19.*.*, build *"} | Should -Be $true
-
-        $dockerMachineVersion = docker-machine --version
-        $dockerMachineVersion | Where-Object {$_ -like "docker-machine version 0.*.*, build *"} | Should -Be $true
-    }
-
-    It "terraform" {
-
-        $terraformVersion = terraform --version
-
-        # Match only major version. Any change in major version is considered potentially breaking
-        $terraformVersion | Where-Object {$_ -like "Terraform v0.*.*"} | Should -Be $true
-    }
-
-    It "github CLI" {
-        Invoke-Expression -Command 'gh' -ErrorVariable myerr
-        $myerr | Should -BeNullOrEmpty
-    }
 
     It "Compare bash commands to baseline" {
         # command_list contains a list of all the files which should be installed
@@ -142,14 +71,15 @@ Describe "Various programs installed with expected versions" {
             "python3m-config", 
             "x86_64-linux-gnu-python3-config", 
             "x86_64-linux-gnu-python3m-config",
-            "linkerd-stable-2.8.1",
-            "linkerd-stable-2.9.0"
+            "linkerd-stable.*"
         )
 
-        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notin $special}) -join ","        
+        $specialmatcher = ($special | % { "($_)"}) -join "|"
+
+        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","        
         $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
-        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notin $special}) -join ","
+        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","
         $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
     }
