@@ -187,12 +187,13 @@ ENV ISTIO_ROOT /usr/local/istio-latest
 RUN curl -sSL https://git.io/getLatestIstio | sh - \
   && mv $PWD/istio* $ISTIO_ROOT \
   && chmod -R 755 $ISTIO_ROOT
+ENV PATH $PATH:$ISTIO_ROOT/bin
 
 # Install latest version of Linkerd
-ENV LINKERD_ROOT /usr/local/linkerd
-RUN curl -sSL https://run.linkerd.io/install | sh - \
-  && mv $HOME/.linkerd*/ $LINKERD_ROOT
-ENV PATH $PATH:$LINKERD_ROOT/bin:$ISTIO_ROOT/bin
+RUN export INSTALLROOT=/usr/local/linkerd \
+  && mkdir -p $INSTALLROOT \
+  && curl -sSL https://run.linkerd.io/install | sh - 
+ENV PATH $PATH:/usr/local/linkerd/bin
 
 # Install Puppet-Bolt
 RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-buster.deb \

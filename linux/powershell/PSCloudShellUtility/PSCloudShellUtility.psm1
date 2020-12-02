@@ -1856,4 +1856,116 @@ function RedirectOnlineHelp($Parameters)
     }
 }
 
-#endregion
+function New-PackageInfo() {
+    param(
+        [string]$name,
+        [string]$version,
+        [string]$type
+    )
+    return [PSCustomObject]@{
+        Name    = $name
+        Version = $version
+        Type    = $type
+    }
+}
+
+function Get-PackageVersion2() {
+    <#
+        .DESCRIPTION
+        Report versions of all installed packages
+
+        .EXAMPLE
+        Get-PackageVersion | Where-Object Name -like "*emacs*"
+    #>
+    [CmdletBinding()]
+    param()
+
+    # Apt and some other programs write to stderr, which fails tests without this
+    $ErrorActionPreference = "Continue"
+    
+    # Enumerate all APT packages with versions
+    $packages = New-Object -TypeName System.Collections.ArrayList
+    apt list --installed 2> /dev/null | % { 
+        Write-Verbose "Apt: $_"
+        if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") { 
+            $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "Apt"
+            $null = $packages.Add($p)
+        }
+    }
+
+    # enumerate special packages
+    $pwsh = New-PackageInfo -Name "PowerShell" -Version $PSVersionTable.PSVersion.ToString() -type "Special"
+    $null = $packages.Add($pwsh)
+
+    function Get-VersionFromCommand($package) {
+        try {
+            $output = Invoke-Expression "& $($package.command) $($package.Args) 2>/dev/null"
+        }
+        catch {
+            return "Error"
+        }
+                
+        $version = ($output | % {
+                if ($_ -match $package.match) {
+                    Write-Verbose "matched $_"
+                    $matches[1];
+                }
+            })
+        if ($null -eq $version) { $version = "Unknown"}
+        return $version
+    }
+
+    $packageVersionDetections = @(
+        @{displayname = "Node.JS"; command = "node"; args = "--version"; match = "v(.*)"},
+        @{displayname = "Jenkins X"; command = "jx"; args = "version -n"; match = "jx\s+(.*)"},
+        @{displayname = "Cloud Foundry CLI"; command = "cf"; args = "-v"; match = "cf version (.*)"},
+        @{displayname = "Blobxfer"; command = "blobxfer"; args = "--version"; match = "blobxfer, version (.*)"},
+        @{displayname = "Batch Shipyard"; command = "shipyard"; args = "--version"; match = "shipyard.py, version (.*)"},
+        @{displayname = "Ansible"; command = "ansible"; args = "--version"; match = "ansible ([\d\.]+)"},
+        @{displayname = "Istio"; command = "istioctl"; args = "version -s --remote=false"; match = "(.+)"},
+        @{displayname = "Linkerd"; command = "linkerd"; args = "version --client --short"; match = "(stable-[\d\.]+)"},
+        @{displayname = "Go"; command = "go"; args = "version"; match = "go version go(\S+) .*"},
+        @{displayname = "Packer"; command = "packer"; args = "version"; match = "Packer v(.+)"},
+        @{displayname = "DC/OS CLI"; command = "dcos"; args = "--version"; match = "dcoscli.version=(.*)"},
+        @{displayname = "Chef Workstation"; command = "chef"; args = "-v"; match = "Chef Workstation version: (.*)"},
+        @{displayname = "Ripgrep"; command = "rg"; args = "--help | head"; match = "ripgrep ([\d\.]+)$"},
+        @{displayname = "Docker-machine"; command = "docker-machine"; args = "version"; match = "docker-machine version ([\d\.]+),"},
+        @{displayname = "Helm"; command = "helm"; args = "version --short"; match = "v(.+)"},
+        @{displayname = "Draft"; command = "draft"; args = "version --short"; match = "v(.+)"},
+        @{displayname = "AZCopy"; command = "azcopy"; args = "--version"; match = "azcopy version (.+)"},
+        @{displayname = "Azure CLI"; command = "az"; args = "version "; match = "`"azure-cli`": `"(.+)`""},
+        @{displayname = "Kubectl"; command = "kubectl"; args = "version --client=true --short=true"; match = "Client Version: v(.+)"}
+        @{displayname = "Terraform"; command = "terraform"; args = "version"; match = "Terraform v(.+)"},
+        @{displayname = "GitHub CLI"; command = "gh"; args = "--version"; match = "gh version (.+) \(.*"}
+    )
+
+    foreach ($package in $packageVersionDetections) {
+        Write-Verbose "$($package.displayname)"
+        $version = Get-VersionFromCommand -Package $package
+        $p = New-PackageInfo -Name $package.displayname -Version $version -type "Special"
+        $null = $packages.Add($p)
+    }
+
+    # PIP3 packages
+    & pip3 list | % { 
+        if ($_ -match "(\w+)\s+(.*)") { 
+            $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "PIP"
+            $null = $packages.Add($p)
+        }
+    }
+
+    # TODO Ruby Gems
+    # $rubypackages = [ordered]@{}
+    # & gem list --local | % { if ($_ -match "(\w+)\s+\((.*)\)") { $pippackages[$matches[1]] = $matches[2]}}}
+
+    # PowerShell modules
+    Get-Module -ListAvailable | % {
+        $p = New-PackageInfo -name $_.Name -version $_.Version -type "PowerShell"
+        $null = $packages.Add($p)
+    }
+
+    # NPM global modules
+
+
+    $packages | sort-object -Property Type, Name
+}
