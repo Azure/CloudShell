@@ -3,11 +3,11 @@
 
 Describe "Various programs installed with expected versions" {
  
-    It "experiment" {
+    BeforeAll {
         $script:packages = Get-PackageVersion
         $script:pmap = @{}
         $script:packages | % {
-            $script:pmap[$_.Name] = $_    
+            $script:pmap[$_.Name] = $_
         }
     }
 
@@ -22,16 +22,14 @@ Describe "Various programs installed with expected versions" {
     It "Static Versions" {
         # These programs are installed explicitly with specific versions
         $script:pmap["Node.JS"].Version | Should -Be '8.16.0'
-        $script:pmap["Jenkins X"].Version | Should -Be '1.3.107'
-        
+        $script:pmap["Jenkins X"].Version | Should -Be '1.3.107'        
     }
-
 
     It "Some Versions Installed" {
         # These programs are not pinned to exact versions, we just check they are still installed and 
         # running the version command works
         
-        $packages | ? Type -eq "Special" | % {
+        $script:packages | ? Type -eq "Special" | % {
             $name = $_.Name
             $_.Version | Should -Not -BeNullOrEmpty -Because "$name should be present"
             $_.Version | Should -Not -Be "Error" -Because "Error occurred running $name to determine version"
@@ -39,22 +37,15 @@ Describe "Various programs installed with expected versions" {
         }
     }
 
-    
-
-    
-
     It "startupscript" {
         $pwshPath = which pwsh
         $startupScriptPath = Join-Path (Split-Path $pwshPath) 'PSCloudShellStartup.ps1'
         Test-Path $startupScriptPath | Should -Be $true
     }
 
-    
-
     It "az cli extensions" {
         az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
     }
-
 
     It "Compare bash commands to baseline" {
         # command_list contains a list of all the files which should be installed
