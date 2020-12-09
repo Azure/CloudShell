@@ -1869,7 +1869,7 @@ function New-PackageInfo() {
     }
 }
 
-function Get-PackageVersion2() {
+function Get-PackageVersion() {
     <#
         .DESCRIPTION
         Report versions of all installed packages
