@@ -114,6 +114,7 @@ try {
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
         PowerShellGet\Install-Module -AllowPreRelease -Force PSReadLine -Repository PSGallery # get psreadline beta
         PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery
+        PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.4-Preview7 -AllowPrerelease -Force
 
         # Install PSCloudShell modules
         $tempDirectory = Microsoft.PowerShell.Management\Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName())
