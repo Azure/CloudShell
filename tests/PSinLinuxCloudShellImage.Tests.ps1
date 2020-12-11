@@ -80,6 +80,11 @@ Describe "Various programs installed with expected versions" {
         $paths | Should -Contain "~/bin"
         $paths | Should -Contain "~/.local/bin"
     }
+
+    It "Ansible pwsh has modules" {
+        $process = Start-Process -FilePath /opt/ansible/bin/python -ArgumentList "-c `"import msrest`"" -Wait -PassThru
+        $process.ExitCode | Should -Be 0
+    }
 }
 
 Describe "PowerShell Modules" {
