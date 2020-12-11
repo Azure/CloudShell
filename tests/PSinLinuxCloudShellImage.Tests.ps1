@@ -1,6 +1,3 @@
-
-
-
 Describe "Various programs installed with expected versions" {
  
     BeforeAll {
@@ -88,6 +85,8 @@ Describe "Various programs installed with expected versions" {
 
     It "Has various environment vars" {
         $env:AZUREPS_HOST_ENVIRONMENT | Should -Be "cloud-shell/1.0"
+        $env:JAVA_HOME | Should -Not -BeNullOrEmpty
+        Test-Path "$($env:JAVA_HOME)"
     }
 }
 
