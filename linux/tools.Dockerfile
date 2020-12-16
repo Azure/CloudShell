@@ -18,6 +18,7 @@ RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y
+RUN az extension add --system --name azure-cli-ml -y
 
 # Install kubectl
 RUN az aks install-cli \
