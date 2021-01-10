@@ -47,13 +47,6 @@ RUN curl -sSL https://github.com/cli/cli/releases/download/v1.1.0/gh_1.1.0_linux
     && dpkg -i /tmp/gh.deb \
     && rm /tmp/gh.deb
 
-# Temporarily rerun PowerShell install during tools build to pick up latest version
-RUN rm packages-microsoft-prod.deb \
-    && wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
-    && dpkg -i packages-microsoft-prod.deb \
-    && apt update \
-    && apt-get -y install powershell 
-
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 
@@ -70,15 +63,6 @@ RUN npm install -q -g @pnp/cli-microsoft365
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
-
-# Temp: fix linkerd symlink if it points nowhere. This can be removed after next base image update
-RUN ltarget=$(readlink /usr/local/linkerd/bin/linkerd) && \
-    if [ ! -f $ltarget ] ; then rm /usr/local/linkerd/bin/linkerd ; ln -s /usr/local/linkerd/bin/linkerd-stable* /usr/local/linkerd/bin/linkerd ; fi
-
-# Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
-RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
-    && /opt/ansible/bin/python -m pip install -r requirements-azure.txt \
-    && rm requirements-azure.txt
 
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
