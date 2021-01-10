@@ -5,7 +5,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxlinux.azurecr.io/artifact/b787066e-c88f-4e20-ae65-e42a858c42ca/buddy/azure/cloudshell:1.0.20210110.1.base.node_upgrade.79a00737
+ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/buddy/azure/cloudshell:1.0.20210110.1.base.node_upgrade.79a00737
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
