@@ -6,7 +6,6 @@
 ]]
 {
 }
-2to3-2.7
 aa-enabled
 aa-exec
 aa-remove-unknown
@@ -44,9 +43,12 @@ apt-add-repository
 apt-cache
 apt-cdrom
 apt-config
+apt-extracttemplates
+apt-ftparchive
 apt-get
 apt-key
 apt-mark
+apt-sortpkgs
 ar
 arch
 arp
@@ -91,6 +93,7 @@ bootctl
 break
 broadwayd
 bsd-from
+bsd-mailx
 bsd-write
 builtin
 bundle
@@ -243,8 +246,6 @@ df
 dh_autotools-dev_restoreconfig
 dh_autotools-dev_updateconfig
 dh_bash-completion
-dh_perl_dbi
-dh_python2
 diff
 diff3
 dig
@@ -269,8 +270,7 @@ docker-proxy
 domainname
 done
 dos2unix
-dotlock
-dotlock.mailutils
+dotlockfile
 dotnet
 dpkg
 dpkg-architecture
@@ -413,10 +413,7 @@ fold
 foodcritic
 for
 free
-frm
-frm.mailutils
 from
-from.mailutils
 fsck
 fsck.cramfs
 fsck.ext2
@@ -698,9 +695,7 @@ m365
 m365_comp
 m4
 mac2unix
-maidag
 mail
-mail.mailutils
 mailq
 mailx
 make
@@ -718,12 +713,9 @@ md5sum
 md5sum.textutils
 mdig
 mesg
-messages
-messages.mailutils
 microsoft365
 migrate-pubring-from-classic-gpg
 mii-tool
-mimeview
 mkdir
 mke2fs
 mkfifo
@@ -745,8 +737,6 @@ more
 mount
 mount.cifs
 mountpoint
-movemail
-movemail.mailutils
 mpstat
 mssql-scripter
 mssql-scripter.bat
@@ -824,8 +814,6 @@ pasteurize
 patch
 pathchk
 pdb
-pdb2
-pdb2.7
 pdb3
 pdb3.7
 peekfd
@@ -859,8 +847,6 @@ ping4
 ping6
 pinky
 pip
-pip2
-pip2.7
 pip3
 pip3.7
 pivot_root
@@ -914,21 +900,13 @@ py3versions
 pyclean
 pycompile
 pydoc
-pydoc2
-pydoc2.7
 pydoc3
 pydoc3.7
 pygettext
-pygettext2
-pygettext2.7
 pygettext3
 pygettext3.7
 pygmentize
 python
-python2
-python2.7
-python2.7-config
-python2-config
 python3
 python3.7
 python3.7-config
@@ -953,8 +931,6 @@ read
 readarray
 readelf
 readlink
-readmsg
-readmsg.mailutils
 readonly
 readprofile
 realpath
@@ -1048,7 +1024,6 @@ shopt
 shred
 shuf
 shutdown
-sieve
 size
 skill
 slabtop
@@ -1264,8 +1239,6 @@ x86_64-linux-gnu-ld.gold
 x86_64-linux-gnu-nm
 x86_64-linux-gnu-objcopy
 x86_64-linux-gnu-objdump
-x86_64-linux-gnu-python2.7-config
-x86_64-linux-gnu-python2-config
 x86_64-linux-gnu-python3.7-config
 x86_64-linux-gnu-python3.7m-config
 x86_64-linux-gnu-python-config
