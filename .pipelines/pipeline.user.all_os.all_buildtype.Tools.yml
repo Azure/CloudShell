@@ -5,7 +5,7 @@ package:
         context_folder: '.'
         dockerfile_name: 'linux/tools.Dockerfile'
         repository_name: 'azure/cloudshell'
-	      tag: 'tools-official'
+        tag: 'tools-official'
         export_to_artifact_path: 'images\cloudshell.tar.gz'
         publish_build_tag: 'true'
         publish_unique_tag: 'true'
