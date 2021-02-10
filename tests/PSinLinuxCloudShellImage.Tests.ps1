@@ -86,6 +86,10 @@ Describe "Various programs installed with expected versions" {
         $process = Start-Process -FilePath /opt/ansible/bin/python -ArgumentList "-c `"import msrest`"" -Wait -PassThru
         $process.ExitCode | Should -Be 0
     }
+
+    It "Has various environment vars" {
+        $env:AZUREPS_HOST_ENVIRONMENT | Should -Be "cloud-shell/1.0"
+    }
 }
 
 Describe "PowerShell Modules" {

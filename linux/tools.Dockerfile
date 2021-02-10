@@ -18,7 +18,9 @@ RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y
-RUN az extension add --system --name azure-cli-ml -y
+
+# EY: get an error when we try to install this.
+# RUN az extension add --system --name azure-cli-ml -y
 
 # Install kubectl
 RUN az aks install-cli \
@@ -68,3 +70,6 @@ RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
 ENV PATH ~/.local/bin:~/bin:$PATH
+
+# Set AZUREPS_HOST_ENVIRONMENT 
+ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0
