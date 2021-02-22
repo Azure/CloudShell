@@ -162,9 +162,13 @@ function Connect-AzureAD
 
     try
     {  
-        
+        $envName = $env:ACC_CLOUD
+        if ($CloudEnvironmentMap.ContainsKey($env:ACC_CLOUD))
+        {
+            $envName = $script:CloudEnvironmentMap[$env:ACC_CLOUD]
+        }
         # Remove AccountId from parameters since it's missing for some users; Plus, it doesn't affect the authorization.
-        $azureADParameters = @{'Identity' = $true; 'TenantId' = $env:ACC_TID;  'AzureEnvironmentName' = $script:CloudEnvironmentMap[$env:ACC_CLOUD]}
+        $azureADParameters = @{'Identity' = $true; 'TenantId' = $env:ACC_TID;  'AzureEnvironmentName' = $envName}
 
         # This call sets the local process context with the token, account and tenant information
         & $script:AzureADModuleName\Connect-AzureAD @azureADParameters -ErrorAction SilentlyContinue -ErrorVariable azureADError | Microsoft.PowerShell.Core\Out-Null
