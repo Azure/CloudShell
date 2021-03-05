@@ -69,7 +69,13 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./
 COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
 
 # Install Office 365 CLI templates
-RUN npm install -q -g @pnp/cli-microsoft365 
+RUN npm install -q -g @pnp/cli-microsoft365
+
+# Install Bicep CLI
+RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 \
+  && chmod +x ./bicep \
+  && mv ./bicep /usr/local/bin/bicep \
+  && bicep --help
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
