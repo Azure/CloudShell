@@ -77,6 +77,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   bash-completion \
   build-essential \
   cifs-utils \
+  datamash \
   dnsutils \
   dos2unix \
   dotnet-runtime-3.1 \
