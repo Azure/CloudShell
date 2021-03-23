@@ -30,7 +30,12 @@ This repository has several uses:
 
 ```bash
 docker pull mcr.microsoft.com/azure-cloudshell:latest
+
+# for bash
 docker run -it mcr.microsoft.com/azure-cloudshell /bin/bash
+
+# for powershell
+docker run -it mcr.microsoft.com/azure-cloudshell /usr/bin/pwsh
 ```
 
 ### Differences between running locally and in Cloud Shell
