@@ -20,7 +20,8 @@ If the bug is in Cloud Shell, file it under https://github.com/Azure/cloudshell/
 But how do you tell which is which?
 
 - If your scenario doesn't involve running `az something`, it's not AZ CLI. 
-- See if it is possible to run the scenario inside *and* outside of Cloud Shell. 
+- If your scenario happens when you are not using Cloud Shell, it's not Cloud Shell.
+- If you are running `az` inside Cloud Shell, see if it is possible to reproduce the issue inside *and* outside of Cloud Shell. 
 For example, you can [install AZ CLI locally](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli). 
 If it works on your own computer and fails in Cloud Shell, it is likely a Cloud Shell issue. 
 If it fails locally, it is **not** a Cloud Shell issue, because you are not using Cloud Shell at that time.
