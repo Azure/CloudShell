@@ -6,4 +6,4 @@ $ProgressPreference = "SilentlyContinue"
 
 cd /tests
 Install-Module -Name Pester -Force
-Invoke-Pester -Script PSinLinuxCloudShellImage.Tests.ps1
+Invoke-Pester -CI -Script PSinLinuxCloudShellImage.Tests.ps1
