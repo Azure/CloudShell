@@ -46,8 +46,8 @@ COPY ./linux/terraform/terraform*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/terraform* && dos2unix /usr/local/bin/terraform*
 
 # github CLI
-RUN curl -sSL https://github.com/cli/cli/releases/download/v1.7.0/gh_1.7.0_linux_amd64.deb > /tmp/gh.deb \
-    && echo 1907a1094cb7eb5218ca4e22a27229849e9a2bfc07ad4e83e1cbf43487b9c1bc /tmp/gh.deb | sha256sum -c \
+RUN curl -sSL https://github.com/cli/cli/releases/download/v1.8.1/gh_1.8.1_linux_amd64.deb > /tmp/gh.deb \
+    && echo 9354b1fa20334ef1cca55cac1db637684c00b9d889578269df256f04ea077acf /tmp/gh.deb | sha256sum -c \
     && dpkg -i /tmp/gh.deb \
     && rm /tmp/gh.deb
 
