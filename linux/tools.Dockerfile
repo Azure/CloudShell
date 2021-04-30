@@ -29,7 +29,7 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubelogin
 
 # Download the latest terraform (AMD64), install to global environment.
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 51852D87348FFC4C \
+RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B36CBA91A2C0730C435FC280B0B441097685B676 \
     && TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
     && wget -nv -O terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip \
     && wget -nv -O terraform.sha256 https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS \
