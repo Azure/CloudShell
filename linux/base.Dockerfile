@@ -202,6 +202,21 @@ RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-bus
   && apt-get install puppet-bolt \
   && rm -f puppet-tools.deb
 
+# install Rust
+
+ENV RUSTUP_HOME=/usr/local/rustup \
+  CARGO_HOME=/usr/local/cargo \
+  PATH=/usr/local/cargo/bin:$PATH
+
+RUN wget https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init \
+  chmod +x rustup-init; \
+  ./rustup-init -y --no-modify-path --default-toolchain nightly; \
+  rm rustup-init; \
+  chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
+  rustup --version; \
+  cargo --version; \
+  rustc --version;
+
 # install go
 RUN wget -nv -O go.tar.gz https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
   && echo b3dd4bd781a0271b33168e627f7f43886b4c5d1c794a4015abf34e99c6526ca3 go.tar.gz | sha256sum -c \
