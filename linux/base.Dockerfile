@@ -208,7 +208,16 @@ ENV RUSTUP_HOME=/usr/local/rustup \
   CARGO_HOME=/usr/local/cargo \
   PATH=/usr/local/cargo/bin:$PATH
 
-RUN wget https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init \
+RUN RUN set -eux; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
+  ca-certificates \
+  gcc \
+  libc6-dev \
+  wget \
+  ; \
+  \ 
+  wget https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init \
   chmod +x rustup-init; \
   ./rustup-init -y --no-modify-path --default-toolchain nightly; \
   rm rustup-init; \
