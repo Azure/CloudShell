@@ -29,7 +29,7 @@ if ($image -eq "base" -or $image -eq "all") {
 
 if ($buildbase) {
     Write-Verbose "Building Base image"
-    & docker build -t base_cloudshell -f linux/base.Dockerfile .
+    & docker build -t base_cloudshell $args -f linux/base.Dockerfile .
     Write-Verbose "Finished building base image"
 }
 
