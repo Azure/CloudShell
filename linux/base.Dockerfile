@@ -217,7 +217,7 @@ RUN RUN set -eux; \
   wget \
   ; \
   \ 
-  wget https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init \
+  wget https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init; \
   chmod +x rustup-init; \
   ./rustup-init -y --no-modify-path --default-toolchain nightly; \
   rm rustup-init; \
