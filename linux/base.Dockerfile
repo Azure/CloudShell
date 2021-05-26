@@ -107,6 +107,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   python3.7-dev \
   puppet \
   rsync \
+  ssl-cert \
   software-properties-common \
   tmux \
   unixodbc-dev \
