@@ -1921,7 +1921,7 @@ function Get-PackageVersion() {
         @{displayname = "Cloud Foundry CLI"; command = "cf"; args = "-v"; match = "cf version (.*)"},
         @{displayname = "Blobxfer"; command = "blobxfer"; args = "--version"; match = "blobxfer, version (.*)"},
         @{displayname = "Batch Shipyard"; command = "shipyard"; args = "--version"; match = "shipyard.py, version (.*)"},
-        @{displayname = "Ansible"; command = "ansible"; args = "--version"; match = "ansible ([\d\.]+)"},
+        @{displayname = "Ansible"; command = "ansible"; args = "--version"; match = "ansible \[core ([\d\.]+)\]"},
         @{displayname = "Istio"; command = "istioctl"; args = "version -s --remote=false"; match = "(.+)"},
         @{displayname = "Linkerd"; command = "linkerd"; args = "version --client --short"; match = "(stable-[\d\.]+)"},
         @{displayname = "Go"; command = "go"; args = "version"; match = "go version go(\S+) .*"},

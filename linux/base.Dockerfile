@@ -89,6 +89,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   less \
   libffi-dev \
   libssl-dev \
+  locales \
   man-db \
   maven \
   moby-cli \
@@ -99,7 +100,6 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   nano \
   net-tools \
   parallel \
-  postgresql-contrib \
   postgresql-client \
   python3 \
   python3-pip \
@@ -107,6 +107,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   python3.7-dev \
   puppet \
   rsync \
+  ssl-cert \
   software-properties-common \
   tmux \
   unixodbc-dev \
