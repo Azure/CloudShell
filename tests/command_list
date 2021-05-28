@@ -205,6 +205,9 @@ curl
 cut
 dash
 date
+dbilogstrip
+dbiprof
+dbiproxy
 dbus-cleanup-sockets
 dbus-daemon
 dbus-monitor
@@ -240,6 +243,7 @@ df
 dh_autotools-dev_restoreconfig
 dh_autotools-dev_updateconfig
 dh_bash-completion
+dh_perl_dbi
 dh_python2
 diff
 diff3
