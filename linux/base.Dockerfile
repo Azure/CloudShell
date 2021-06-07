@@ -43,6 +43,7 @@ RUN set -ex \
     C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
     DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
     FD3A5288F042B6850C66B31F09FE44734EB7990E \
+    74F12602B6F1C4E913FAA37AD3A89613643B6201 \
     ; do \
     gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" || \
     gpg --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
