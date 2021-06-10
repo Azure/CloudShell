@@ -94,7 +94,7 @@ try {
         PowerShellGet\Install-Module -Name SHiPS @prodAllUsers    
         PowerShellGet\Install-Module -Name SQLServer -MaximumVersion $script:dockerfileDataObject.SQLServerModuleMaxVersion @prodAllUsers
         PowerShellGet\Install-Module -Name MicrosoftPowerBIMgmt -MaximumVersion $script:dockerfileDataObject.PowerBIMaxVersion @prodAllUsers
-        PowerShellGet\Install-Module -Name MicrosoftTeams -MaximumVersion 2.0.0 @prodAllUsers           
+        PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers           
     }
     else {
         # update libmi.so
