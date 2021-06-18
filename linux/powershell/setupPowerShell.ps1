@@ -113,7 +113,14 @@ try {
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
         PowerShellGet\Install-Module -AllowPreRelease -Force PSReadLine -Repository PSGallery # get psreadline beta
         PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery
-        PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.4-Preview7 -AllowPrerelease -Force
+        PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.5 -Force
+
+        # With older base image builds, teams 1.1.6 is already installed 
+        if (Get-Module MicrosoftTeams -ListAvailable) {
+            Update-Module MicrosoftTeams -Force -Scope AllUsers
+        } else {
+            PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers     
+        }
 
         # Install PSCloudShell modules
         $tempDirectory = Microsoft.PowerShell.Management\Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.IO.Path]::GetRandomFileName())
