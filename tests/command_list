@@ -130,7 +130,6 @@ cf
 cfdisk
 c++filt
 chage
-chardetect
 chattr
 chcon
 chcpu
@@ -794,6 +793,7 @@ node
 nodejs
 nohup
 nologin
+normalizer
 npm
 nproc
 npx
