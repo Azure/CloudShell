@@ -46,10 +46,10 @@ COPY ./linux/terraform/terraform*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/terraform* && dos2unix /usr/local/bin/terraform*
 
 # github CLI
-RUN curl -sSL https://github.com/cli/cli/releases/download/v1.10.3/gh_1.10.3_linux_amd64.deb > /tmp/gh.deb \
-    && echo 15948c51146a7f8cdee2e939450dd1593fb2832b5801c2034bc818b62296767c /tmp/gh.deb | sha256sum -c \
-    && dpkg -i /tmp/gh.deb \
-    && rm /tmp/gh.deb
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt update \
+    && apt install gh
 
 # Temporarily rerun PowerShell install during tools build to pick up latest version
 RUN rm packages-microsoft-prod.deb \
