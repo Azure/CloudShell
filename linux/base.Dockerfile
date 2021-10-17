@@ -15,10 +15,14 @@
 # 'Quinault' is almost identical to Debian 10 (Buster) 
 FROM sbidprod.azurecr.io/quinault
 
+SHELL ["/bin/bash","-c"] 
+
+COPY linux/aptinstall.sh .
+
 # The universe repository is only currently required for Python2
 RUN echo "deb https://packages.microsoft.com/repos/cbl-d quinault-universe main" >> /etc/apt/sources.list
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && bash ./aptinstall.sh \
   apt-transport-https \
   curl \
   xz-utils \
@@ -71,7 +75,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B02C46DF41
 
 RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
-RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
+RUN apt-get update && bash ./aptinstall.sh \
   autoconf \
   azure-functions-core-tools \
   bash-completion \
@@ -118,7 +122,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
   zsh
 
 # Install the deprecated Python2 packages. Will be removed in a future update
-RUN apt-get install -y \
+RUN bash ./aptinstall.sh \
   python-dev \
   python \
   python-pip
@@ -200,7 +204,7 @@ ENV PATH $PATH:/usr/local/linkerd/bin
 RUN wget -nv -O puppet-tools.deb https://apt.puppet.com/puppet-tools-release-buster.deb \
   && dpkg -i puppet-tools.deb \
   && apt-get update \
-  && apt-get install puppet-bolt \
+  && bash ./aptinstall.sh puppet-bolt \
   && rm -f puppet-tools.deb
 
 # install go
@@ -253,7 +257,7 @@ RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/latest/
 RUN wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
   && dpkg -i packages-microsoft-prod.deb \
   && apt update \
-  && apt-get -y install powershell 
+  && bash ./aptinstall.sh powershell 
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
