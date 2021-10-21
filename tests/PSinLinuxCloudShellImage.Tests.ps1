@@ -22,7 +22,8 @@ Describe "Various programs installed with expected versions" {
     It "Static Versions" {
         # These programs are installed explicitly with specific versions
         $script:pmap["Node.JS"].Version | Should -Be '8.16.0'
-        $script:pmap["Jenkins X"].Version | Should -Be '1.3.107'        
+        $script:pmap["Jenkins X"].Version | Should -Be '1.3.107'
+        $script:pmap["PowerShell"].Version | Should -BeLike '7.2*'        
     }
 
     It "Some Versions Installed" {
@@ -62,7 +63,8 @@ Describe "Various programs installed with expected versions" {
             "python3m-config", 
             "x86_64-linux-gnu-python3-config", 
             "x86_64-linux-gnu-python3m-config",
-            "linkerd-stable.*"
+            "linkerd-stable.*",
+            "pwsh-preview"
         )
 
         $specialmatcher = ($special | % { "($_)"}) -join "|"
