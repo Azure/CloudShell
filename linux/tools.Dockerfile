@@ -18,7 +18,7 @@ RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y
-RUN az extension add --system --name ssh -y
+RUN az extension add --system --name ssh -y --version 0.2.0
 
 # EY: get an error when we try to install this.
 # RUN az extension add --system --name azure-cli-ml -y
