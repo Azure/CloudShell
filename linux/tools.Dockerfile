@@ -16,9 +16,14 @@ RUN wget -nv https://azurecliprod.blob.core.windows.net/cloudshell-release/azure
     && dpkg -i azure-cli-latest-buster.deb \
     && rm -f azure-cli-latest-buster.deb
 
+# latest SSHArc 0.2.0 from ClI package.
+RUN wget -nv -q http://aka.ms/SSHArc/CLI/Download \
+    && /opt/ansible/bin/python -m pip install -r ssh-0.2.0-py3-none-any.whl \
+    && rm ssh-0.2.0-py3-none-any.whl
+
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y
-RUN az extension add --system --name ssh -y --version 0.2.0
+RUN az extension add --system --name ssh -y
 
 # EY: get an error when we try to install this.
 # RUN az extension add --system --name azure-cli-ml -y
