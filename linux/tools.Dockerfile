@@ -57,14 +57,11 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | g
     && apt install gh
 
 # Temporarily rerun PowerShell install during tools build to pick up latest version
-# while we are using PWSH RC, use that instead of release version
 RUN rm packages-microsoft-prod.deb \
     && wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
     && dpkg -i packages-microsoft-prod.deb \
     && apt update \
-    && apt-get -y install powershell-preview \
-    && rm /usr/bin/pwsh \
-    && ln -s /usr/bin/pwsh-preview /usr/bin/pwsh
+    && apt-get -y install powershell 
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
