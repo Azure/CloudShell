@@ -46,6 +46,7 @@ Describe "Various programs installed with expected versions" {
 
     It "az cli extensions" {
         az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
+        az extension list | jq '.[] | .name' | Should -Contain '"ssh"'
     }
 
     It "Compare bash commands to baseline" {
