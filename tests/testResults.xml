@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="32" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2021-11-10" time="00:30:11">
+  <environment clr-version="Unknown" cwd="/tests" machine-name="503ff6c103f3" user="csuser" os-version="5.10.60.1-microsoft-standard-WSL2" platform="Linux" nunit-version="2.5.8.0" user-domain="" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="36.9118" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="/tests/PSinLinuxCloudShellImage.Tests.ps1" executed="True" result="Success" success="True" time="36.9118" asserts="0" description="/tests/PSinLinuxCloudShellImage.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Various programs installed with expected versions" executed="True" result="Success" success="True" time="7.9074" asserts="0" description="Various programs installed with expected versions">
+            <results>
+              <test-case description="Base OS - CBL-D 10" name="Various programs installed with expected versions.Base OS - CBL-D 10" time="0.0941" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Static Versions" name="Various programs installed with expected versions.Static Versions" time="0.0092" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Some Versions Installed" name="Various programs installed with expected versions.Some Versions Installed" time="0.0973" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="startupscript" name="Various programs installed with expected versions.startupscript" time="0.0131" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="az cli extensions" name="Various programs installed with expected versions.az cli extensions" time="0.9076" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Compare bash commands to baseline" name="Various programs installed with expected versions.Compare bash commands to baseline" time="0.066" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="has local paths in $PATH" name="Various programs installed with expected versions.has local paths in $PATH" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Ansible pwsh has modules" name="Various programs installed with expected versions.Ansible pwsh has modules" time="0.1456" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has various environment vars" name="Various programs installed with expected versions.Has various environment vars" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="PowerShell Modules" executed="True" result="Success" success="True" time="36.6042" asserts="0" description="PowerShell Modules">
+            <results>
+              <test-case description="Single version of Modules are installed" name="PowerShell Modules.Single version of Modules are installed" time="0.1692" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Az PowerShell Module" name="PowerShell Modules.Az PowerShell Module" time="0.5421" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Az.Accounts PowerShell Module" name="PowerShell Modules.Az.Accounts PowerShell Module" time="0.635" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Az.Resources PowerShell Module" name="PowerShell Modules.Az.Resources PowerShell Module" time="0.743" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="SHiPS PowerShell Module" name="PowerShell Modules.SHiPS PowerShell Module" time="0.7602" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="AzurePSDrive PowerShell Module" name="PowerShell Modules.AzurePSDrive PowerShell Module" time="0.0163" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="PSCloudShellUtility PowerShell Module" name="PowerShell Modules.PSCloudShellUtility PowerShell Module" time="0.0152" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="EXOConnector PowerShell Module" name="PowerShell Modules.EXOConnector PowerShell Module" time="0.0612" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="PowerBI PowerShell Module" name="PowerShell Modules.PowerBI PowerShell Module" time="0.0199" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Az.GuestConfiguration PowerShell Module" name="PowerShell Modules.Az.GuestConfiguration PowerShell Module" time="0.0105" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="MicrosoftTeams PowerShell Module" name="PowerShell Modules.MicrosoftTeams PowerShell Module" time="3.5157" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Microsoft.PowerShell.UnixCompleters PowerShell Module" name="PowerShell Modules.Microsoft.PowerShell.UnixCompleters PowerShell Module" time="0.0089" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Initialize AzureAD.Standard.Preview Module" name="PowerShell Modules.Initialize AzureAD.Standard.Preview Module" time="1.4648" asserts="0" success="True" result="Success" executed="True" />
+              <test-suite type="ParameterizedTest" name="PowerShell Modules.Import-Module test for &lt;ModuleName&gt;" executed="True" result="Success" success="True" time="20.7185" asserts="0" description="Import-Module test for &lt;ModuleName&gt;">
+                <results>
+                  <test-case description="Import-Module test for Microsoft.PowerShell.Management" name="PowerShell Modules.Import-Module test for Microsoft.PowerShell.Management" time="0.013" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for PSCloudShellUtility" name="PowerShell Modules.Import-Module test for PSCloudShellUtility" time="0.0267" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for SHiPS" name="PowerShell Modules.Import-Module test for SHiPS" time="0.1287" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for AzureAD.Standard.Preview" name="PowerShell Modules.Import-Module test for AzureAD.Standard.Preview" time="0.1276" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for Az" name="PowerShell Modules.Import-Module test for Az" time="15.1504" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for MicrosoftPowerBIMgmt" name="PowerShell Modules.Import-Module test for MicrosoftPowerBIMgmt" time="1.1972" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for Az.GuestConfiguration" name="PowerShell Modules.Import-Module test for Az.GuestConfiguration" time="0.2031" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for EXOPSSessionConnector" name="PowerShell Modules.Import-Module test for EXOPSSessionConnector" time="0.0158" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for MicrosoftTeams" name="PowerShell Modules.Import-Module test for MicrosoftTeams" time="3.7309" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Import-Module test for Microsoft.PowerShell.UnixCompleters" name="PowerShell Modules.Import-Module test for Microsoft.PowerShell.UnixCompleters" time="0.1251" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
