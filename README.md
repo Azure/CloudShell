@@ -25,6 +25,7 @@ This repository has several uses:
 
 1. **Contributing to Cloud Shell.** If you would like to propose a new tool for inclusion in Cloud Shell, you can create an issue or submit a Pull Request to request the tool be added. Please ensure that the PR actually builds within GitHub Actions.
 
+The repository does *not* provide an out-of-the-box replacement for the Cloud Shell service. In addition to the container image here, Azure Cloud Shell consists of a user interface integrated into the portal, a web service which manages the infrastructure on which the containers run, and some additional code used inside the container to connect the shell process to the user interface via websocket.
 
 ## Running the Cloud Shell image locally
 
