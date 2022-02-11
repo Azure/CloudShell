@@ -77,7 +77,7 @@ RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 RUN apt-get update && bash ./aptinstall.sh \
   autoconf \
-  azure-functions-core-tools \
+  azure-functions-core-tools-4 \
   bash-completion \
   build-essential \
   cifs-utils \
