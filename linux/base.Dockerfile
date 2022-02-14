@@ -86,6 +86,7 @@ RUN apt-get update && bash ./aptinstall.sh \
   dotnet-runtime-3.1 \
   dotnet-sdk-3.1 \
   emacs \
+  gcc \
   iptables \
   iputils-ping \
   java-common \
@@ -93,6 +94,7 @@ RUN apt-get update && bash ./aptinstall.sh \
   less \
   libffi-dev \
   libssl-dev \
+  libpq-dev \
   locales \
   man-db \
   maven \
