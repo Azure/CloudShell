@@ -837,6 +837,7 @@ perlivp
 perlthanks
 pg_basebackup
 pgbench
+pg_config
 pg_dump
 pg_dumpall
 pg_isready
