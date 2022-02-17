@@ -92,6 +92,7 @@ RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/
 
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
+# Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
 ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
 
 # Set AZUREPS_HOST_ENVIRONMENT 
