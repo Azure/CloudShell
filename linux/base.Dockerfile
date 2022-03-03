@@ -86,7 +86,6 @@ RUN apt-get update && bash ./aptinstall.sh \
   dotnet-runtime-3.1 \
   dotnet-sdk-3.1 \
   emacs \
-  gcc \
   iptables \
   iputils-ping \
   java-common \
