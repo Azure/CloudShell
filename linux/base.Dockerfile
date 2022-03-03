@@ -93,6 +93,7 @@ RUN apt-get update && bash ./aptinstall.sh \
   less \
   libffi-dev \
   libssl-dev \
+  libpq-dev \
   locales \
   man-db \
   maven \
