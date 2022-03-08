@@ -3,7 +3,7 @@ name: Bug report
 about: Create a bug report
 title: "[BUG]"
 labels: bug
-assignees: edyoung, BellaLi
+assignees: edyoung
 
 ---
 
