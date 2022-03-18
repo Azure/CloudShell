@@ -260,6 +260,13 @@ RUN wget -nv -q https://packages.microsoft.com/config/debian/10/packages-microso
   && apt update \
   && bash ./aptinstall.sh powershell 
 
+# Install .NET 6
+# The Microsoft repository GPG keys are already registered in previous step (Install PowerShell)
+# Install .NET 6 runtime, ASP.NET Core runtime and SDK using apt-get
+RUN bash ./aptinstall.sh \
+  dotnet-runtime-6.0 \
+  dotnet-sdk-6.0
+
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 # don't tell users to upgrade, they can't
