@@ -1,3 +1,9 @@
+static_analysis_options:
+  binskim_options:
+    files_to_scan:     
+        - from: '.'
+          exclude:                         
+            - '**/*'
 package:
     commands:
       - !!dockerbuildcommand
