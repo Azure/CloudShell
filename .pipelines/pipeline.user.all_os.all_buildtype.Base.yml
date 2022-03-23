@@ -1,10 +1,3 @@
-steps.task:
-# Node install
-- task: NodeTool@0
-  displayName: Node install
-  inputs:
-    versionSpec: '6.x'
-
 package:
     commands:
       - !!dockerbuildcommand
@@ -16,3 +9,10 @@ package:
         publish_build_tag: 'true'
         publish_unique_tag: 'true'
         publish_fixed_tag: 'true'
+
+static_analysis_options:
+  ARMory_options:
+    files_to_scan:     
+        - from: '.'
+          exclude:                         
+            - '**/*'
