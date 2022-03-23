@@ -1,9 +1,10 @@
-static_analysis_options:
-  binskim_options:
-    files_to_scan:     
-        - from: '.'
-          exclude:                         
-            - '**/*'
+steps:
+# Node install
+- task: NodeTool@0
+  displayName: Node install
+  inputs:
+    versionSpec: '6.x'
+
 package:
     commands:
       - !!dockerbuildcommand
