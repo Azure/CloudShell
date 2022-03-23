@@ -1,4 +1,4 @@
-steps:
+steps.task:
 # Node install
 - task: NodeTool@0
   displayName: Node install
