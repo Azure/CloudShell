@@ -11,7 +11,7 @@ package:
         publish_fixed_tag: 'true'
 
 static_analysis_options:
-  ARMory_options:
+  credscan_options:
     files_to_scan:     
         - from: '.'
           exclude:                         
