@@ -55,8 +55,9 @@ function Install-LibMIFile {
 # Install Azure and AzureAD (Active Directory) modules
 # This function replaces the old poshtestgallery issue
 function Install-AzAndAzAdModules {
-    echo "Install-AzAndAdModules.."
-    mkdir temp && curl -o az-cmdlets.tar.gz -sSL "https://azpspackage.blob.core.windows.net/release/Az-Cmdlets-7.3.2.35305.tar.gz" 
+    Write-Output "Install-AzAndAdModules.."
+    mkdir temp
+    curl -o az-cmdlets.tar.gz -sSL "https://azpspackage.blob.core.windows.net/release/Az-Cmdlets-7.3.2.35305.tar.gz" 
     tar -xf az-cmdlets.tar.gz -C temp 
     rm az-cmdlets.tar.gz
     cd temp
@@ -67,17 +68,17 @@ function Install-AzAndAzAdModules {
     Write-Output "Source Location: $SourceLocation"
 
     $gallery = [guid]::NewGuid().ToString()
-    Write-Host "Registering temporary repository $gallery with InstallationPolicy Trusted..."
+    Write-Output "Registering temporary repository $gallery with InstallationPolicy Trusted..."
     Register-PSRepository -Name $gallery -SourceLocation $($pwd.providerPath) -PackageManagementProvider NuGet -InstallationPolicy Trusted
 
     try {
-        Write-Host "Installing Az..."
+        Write-Output "Installing Az..."
         Install-Module -Name Az -Repository $gallery -Scope AllUsers -AllowClobber -Force
-        Write-Host "Installing AzureAD.Standard.Preview..."
+        Write-Output "Installing AzureAD.Standard.Preview..."
         Install-Module -Name "AzureAD.Standard.Preview" -Repository $gallery -Scope AllUsers -AllowClobber -Force
     }
     finally {
-        Write-Host "Unregistering gallery $gallery..."
+        Write-Output "Unregistering gallery $gallery..."
         Unregister-PSRepository -Name $gallery
     }
 
@@ -142,7 +143,8 @@ try {
 
         # With older base image builds, teams 1.1.6 is already installed 
         if (Get-Module MicrosoftTeams -ListAvailable) {
-            #For some odd reason, Update-Module was create a new module with 
+            # For some odd reason, Update-Module was creating the MicrosoftTeams module twice with different version numbers.
+            # Uninstalling and then installing it again was the only way to keep it as one module. 
             Uninstall-Module MicrosoftTeams -Force
             PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers
         } else {
