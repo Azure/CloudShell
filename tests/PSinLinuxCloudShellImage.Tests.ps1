@@ -117,7 +117,6 @@ Describe "PowerShell Modules" {
 
         $module = Get-InstalledModule -Name Az -AllVersions
         $module | Should -Not -BeNullOrEmpty
-        $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
 
         # Verify Az module version
         $module.Version -ge [version]"5.0" | Should -Be $true
@@ -128,14 +127,12 @@ Describe "PowerShell Modules" {
 
         $module = Get-InstalledModule -Name Az.Accounts -AllVersions
         $module | Should -Not -BeNullOrEmpty
-        $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
     }
 
     It "Az.Resources PowerShell Module" {
 
         $module = Get-InstalledModule -Name Az.Resources -AllVersions
         $module | Should -Not -BeNullOrEmpty
-        $module.Repository | Should -Be "https://www.poshtestgallery.com/api/v2"
     }
 
     It "SHiPS PowerShell Module" {

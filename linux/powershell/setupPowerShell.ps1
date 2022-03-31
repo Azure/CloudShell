@@ -9,11 +9,6 @@ param(
 
 $ProgressPreference = 'SilentlyContinue' # Suppresses progress, which doesn't render correctly in docker
 
-# The preview version of the PowerShell gallery. We pick up Azure modules from there because they are released to that location shortly before
-# being released to the main gallery. This allows us to build the Cloud Shell image and deploy it to production at the same time that the modules
-# can be downloaded from the main gallery
-$intGallery = 'https://www.poshtestgallery.com/api/v2' 
-
 # PowerShellGallery PROD site
 $prodGallery = 'https://www.powershellgallery.com/api/v2' 
 
@@ -55,6 +50,40 @@ function Install-LibMIFile {
     if ($hash -ne $FileHash) {
         throw "Hash mismatch for $FullPath. Expected: $FileHash Actual:$hash."
     }
+}
+
+# Install Azure and AzureAD (Active Directory) modules
+# This function replaces the old poshtestgallery issue
+function Install-AzAndAzAdModules {
+    Write-Output "Install-AzAndAdModules.."
+    mkdir temp
+    curl -o az-cmdlets.tar.gz -sSL "https://azpspackage.blob.core.windows.net/release/Az-Cmdlets-7.3.2.35305.tar.gz" 
+    tar -xf az-cmdlets.tar.gz -C temp 
+    rm az-cmdlets.tar.gz
+    cd temp
+
+    curl -o "AzureAD.Standard.Preview.nupkg" -sSL "https://pscloudshellbuild.blob.core.windows.net/azuread-standard-preview/azuread.standard.preview.0.1.599.7.nupkg"
+
+    $SourceLocation = $PSScriptRoot
+    Write-Output "Source Location: $SourceLocation"
+
+    $gallery = [guid]::NewGuid().ToString()
+    Write-Output "Registering temporary repository $gallery with InstallationPolicy Trusted..."
+    Register-PSRepository -Name $gallery -SourceLocation $($pwd.providerPath) -PackageManagementProvider NuGet -InstallationPolicy Trusted
+
+    try {
+        Write-Output "Installing Az..."
+        Install-Module -Name Az -Repository $gallery -Scope AllUsers -AllowClobber -Force
+        Write-Output "Installing AzureAD.Standard.Preview..."
+        Install-Module -Name "AzureAD.Standard.Preview" -Repository $gallery -Scope AllUsers -AllowClobber -Force
+    }
+    finally {
+        Write-Output "Unregistering gallery $gallery..."
+        Unregister-PSRepository -Name $gallery
+    }
+
+    cd ..
+    rm -rf temp
 
 }
 
@@ -85,8 +114,6 @@ try {
 
     # Set up repo as trusted to avoid prompts
     PowerShellGet\Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-    PowerShellGet\Register-PSRepository -Name intGallery -SourceLocation $intGallery -InstallationPolicy Trusted
-    $intAllUsers = @{Repository = "intGallery"; Scope = "AllUsers"}
     $prodAllUsers = @{Repository = "PSGallery"; Scope = "AllUsers"}
 
     if ($image -eq "Base") {
@@ -101,11 +128,10 @@ try {
         Write-Output "Updating libmi.so"
         Install-LibMIFile
 
-        # Install modules from the PowerShell Test Gallery
-        Write-Output "Installing modules from test gallery"
-        PowerShellGet\Install-Module -Name Az -MaximumVersion $script:dockerfileDataObject.AzMaxVersion @intAllUsers
-        PowerShellGet\Install-Module -Name AzureAD.Standard.Preview -MaximumVersion $script:dockerfileDataObject.AzureADStandardMaxVersion @intAllUsers
-
+        # Installing modules from Azure Powershell and AzureAD
+        Write-Output "Installing modules from Azure Powershell and AzureAD"
+        Install-AzAndAzAdModules
+        
         # Install modules from PSGallery
         Write-Output "Installing modules from production gallery"    
         PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers   
@@ -117,7 +143,10 @@ try {
 
         # With older base image builds, teams 1.1.6 is already installed 
         if (Get-Module MicrosoftTeams -ListAvailable) {
-            Update-Module MicrosoftTeams -Force -Scope AllUsers
+            # For some odd reason, Update-Module was creating the MicrosoftTeams module twice with different version numbers.
+            # Uninstalling and then installing it again was the only way to keep it as one module. 
+            Uninstall-Module MicrosoftTeams -Force
+            PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers
         } else {
             PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers     
         }
@@ -154,7 +183,6 @@ try {
 }
 finally {
     # Clean-up the PowerShell Gallery registration settings
-    PowerShellGet\Unregister-PSRepository -Name intGallery -ErrorAction Ignore
     PowerShellGet\Set-PSRepository -Name PSGallery -InstallationPolicy Untrusted -ErrorAction Ignore
     if ($tempDirectory -and (Microsoft.PowerShell.Management\Test-Path $tempDirectory)) {
         Microsoft.PowerShell.Management\Remove-Item $tempDirectory -Force -Recurse -ErrorAction Ignore
