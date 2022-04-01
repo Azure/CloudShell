@@ -57,7 +57,7 @@ function Install-LibMIFile {
 function Install-AzAndAzAdModules {
     Write-Output "Install-AzAndAdModules.."
     mkdir temp
-    curl -o az-cmdlets.tar.gz -sSL "https://azpspackage.blob.core.windows.net/release/Az-Cmdlets-7.3.2.35305.tar.gz" 
+    curl -o az-cmdlets.tar.gz -sSL "https://azpspackage.blob.core.windows.net/release/Az-Cmdlets-latest.tar.gz" 
     tar -xf az-cmdlets.tar.gz -C temp 
     rm az-cmdlets.tar.gz
     cd temp
