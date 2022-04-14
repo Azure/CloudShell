@@ -4,7 +4,7 @@ package:
         name: 'Base Docker image for Cloudshell'
         context_folder: '.'
         dockerfile_name: 'linux/base.Dockerfile'
-        repository_name: 'azure/cloudshell'
+        repository_name: 'public/azure-cloudshell'
         export_to_artifact_path: 'images\cloudshell.tar.gz'
         publish_build_tag: 'true'
         publish_unique_tag: 'true'
