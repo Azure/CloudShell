@@ -62,7 +62,7 @@ function Install-AzAndAzAdModules {
     rm az-cmdlets.tar.gz
     cd temp
 
-    curl -o "AzureAD.Standard.Preview.nupkg" -sSL "https://pscloudshellbuild.blob.core.windows.net/azuread-standard-preview/azuread.standard.preview.0.1.599.7.nupkg"
+    curl -o "AzureAD.Standard.Preview.nupkg" -sSL "https://pscloudshellbuild.blob.core.windows.net/azuread-standard-preview/azuread.standard.preview.0.0.0.10.nupkg"
 
     $SourceLocation = $PSScriptRoot
     Write-Output "Source Location: $SourceLocation"
