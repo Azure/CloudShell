@@ -8,5 +8,7 @@
     "AzureADStandardMaxVersion": "0.0.9999.9999",
     "SQLServerModuleMaxVersion": "21.9999.99999",
     "PowerBIMaxVersion": "1.9999.9999",
-    "AzGuestConfigurationMaxVersion": "0.9999.9999"
+    "AzGuestConfigurationMaxVersion": "0.9999.9999",
+    "Microsoft.PowerShell.SecretManagement": "0.9999.9999",
+    "Microsoft.PowerShell.SecretStore": "0.9999.9999"
 }
