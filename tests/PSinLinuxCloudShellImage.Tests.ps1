@@ -224,7 +224,7 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "AzureAD.Standard.Preview" }
         @{ ModuleName = "Az" }
         @{ ModuleName = "MicrosoftPowerBIMgmt" }
-        @{ ModuleName = "Az.GuestConfiguration" }
+        @{ ModuleName = "GuestConfiguration" }
         @{ ModuleName = "EXOPSSessionConnector" }
         @{ ModuleName = "MicrosoftTeams" }
         @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }
