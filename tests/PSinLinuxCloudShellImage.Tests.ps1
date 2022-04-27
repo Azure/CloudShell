@@ -197,8 +197,8 @@ Describe "PowerShell Modules" {
         $module = Get-Module -Name GuestConfiguration -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
-        # GuestConfiguration module version must be 3.*.* or greater
-        $module.Version -like "3.*.*" | Should -Be $true
+        # GuestConfiguration module version must be 3.5.4 or greater
+        $module.Version -ge '3.5.4' | Should -Be $true
     }
 
     It "MicrosoftTeams PowerShell Module" {
