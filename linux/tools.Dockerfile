@@ -86,7 +86,7 @@ RUN ltarget=$(readlink /usr/local/linkerd/bin/linkerd) && \
     if [ ! -f $ltarget ] ; then rm /usr/local/linkerd/bin/linkerd ; ln -s /usr/local/linkerd/bin/linkerd-stable* /usr/local/linkerd/bin/linkerd ; fi
 
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
-RUN /opt/ansible/bin/python -m pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
+RUN /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
 
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
