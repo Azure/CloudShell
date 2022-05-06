@@ -216,14 +216,14 @@ Describe "PowerShell Modules" {
     
     It "Microsoft.PowerShell.SecretManagement PowerShell Module" {
         
-        $module = Get-Module -Name Microsoft.PowerShell.SecretManagement -ListAvailable
+        $module = Get-Module -Name 'Microsoft.PowerShell.SecretManagement' -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
     }
     
     It "Microsoft.PowerShell.SecretStore PowerShell Module" {
         
-        $module = Get-Module -Name Microsoft.PowerShell.SecretStore -ListAvailable
+        $module = Get-Module -Name 'Microsoft.PowerShell.SecretStore' -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
     }
