@@ -5,6 +5,9 @@ environment:
     provider: 'appcontainer'  
     image: 'cdpxlinux.azurecr.io/global/ubuntu-1804-all:4.0'
     source_mode: 'link'
+    
+workspace_options:
+  enable_shared_acr: true
 
 version:
   name: 'Cloudshell'
