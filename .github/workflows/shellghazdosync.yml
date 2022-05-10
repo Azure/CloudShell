@@ -13,7 +13,7 @@ jobs:
         env:
           ado_token: "${{ secrets.ADO_PERSONAL_ACCESS_TOKEN }}"
           github_token: "${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}"
-          ado_organization: "msazure.visualstudio.com"
+          ado_organization: "https://msazure.visualstudio.com/"
           ado_project: "One"
           ado_area_path: "One\\MGMT\\Compute\\Azure\ Cloud\ Shell"
           ado_iteration_path: "One\\Custom\\Azure"
