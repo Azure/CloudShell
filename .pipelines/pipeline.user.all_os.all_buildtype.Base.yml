@@ -9,3 +9,6 @@ package:
         publish_build_tag: 'true'
         publish_unique_tag: 'true'
         publish_fixed_tag: 'true'
+
+workspace_options:
+  enable_shared_acr: true
