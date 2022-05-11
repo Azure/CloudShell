@@ -24,3 +24,66 @@ COPY mariner/tdnfinstall.sh .
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   mariner-repos-extended \
   mariner-repos-microsoft-preview
+
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  apt-transport-https \
+  curl \
+  xz-utils \
+  git \
+  gpg \
+  locales \
+  wget \
+  zip \
+  zsh \
+  python3 \
+  python3-pip \
+  jq
+
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  nodejs \
+  azure-cli
+
+
+RUN bash ./tdnfinstall.sh \
+  golang
+
+ENV GOROOT="/usr/lib/golang"
+ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
+
+RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
+  && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+  && ln -sf INSTALL_DIRECTORY/dep /usr/bin/dep \
+  && unset INSTALL_DIRECTORY
+
+RUN bash ./tdnfinstall.sh \
+  powershell
+
+# PowerShell telemetry
+ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
+# don't tell users to upgrade, they can't
+ENV POWERSHELL_UPDATECHECK Off
+
+# Copy and run script to Install powershell modules
+COPY ./linux/powershell/ powershell
+RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && rm -rf ./powershell
+RUN mkdir -p /usr/cloudshell
+WORKDIR /usr/cloudshell
+
+# Copy and run script to Install powershell modules and setup Powershell machine profile
+COPY ./linux/powershell/PSCloudShellUtility/ /usr/local/share/powershell/Modules/PSCloudShellUtility/
+COPY ./linux/powershell/ powershell
+RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./powershell
+
+# install powershell warmup script
+COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
+
+# Remove su so users don't have su access by default. 
+RUN rm -f ./linux/Dockerfile && rm -f /bin/su
+
+# Add user's home directories to PATH at the front so they can install tools which
+# override defaults
+# Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
+ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
+
+# Set AZUREPS_HOST_ENVIRONMENT 
+ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0
