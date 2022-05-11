@@ -2,7 +2,7 @@
 
 [CmdletBinding()]
 param(
-    [string]$image = "tools_cloudshell"
+    [string]$image = "mariner_cloudshell"
 )
 
 $ErrorActionPreference = "Stop"
