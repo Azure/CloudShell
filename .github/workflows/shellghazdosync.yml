@@ -15,7 +15,7 @@ jobs:
           github_token: "${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}"
           ado_organization: "msazure"
           ado_project: "One"
-          ado_area_path: "One\\MGMT\\Compute\\Azure\ Cloud\ Shell"
+          ado_area_path: "${{ secrets.AREA }}"
           ado_iteration_path: "${{ secrets.ITERATION_PATH }}"
           ado_wit: "Bug"
           ado_new_state: "New"
