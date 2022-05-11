@@ -27,8 +27,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Build base dockerfile
-      - name: Build the base.Dockerfile
+      # Build mariner dockerfile
+      - name: Build the mariner.Dockerfile
         run: docker build -t mariner_cloudshell -f mariner/mariner.Dockerfile .
 
       # Build tools dockerfile
