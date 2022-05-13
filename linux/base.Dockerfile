@@ -18,6 +18,7 @@ FROM sbidprod.azurecr.io/quinault
 SHELL ["/bin/bash","-c"] 
 
 COPY linux/aptinstall.sh .
+COPY linux/installMaven.sh .
 
 # The universe repository is only currently required for Python2
 RUN echo "deb https://packages.microsoft.com/repos/cbl-d quinault-universe main" >> /etc/apt/sources.list
@@ -94,7 +95,7 @@ RUN apt-get update && bash ./aptinstall.sh \
   libpq-dev \
   locales \
   man-db \
-  maven \
+  #maven \ # Removing maven in the base image as CBL-D Quinault not supporting latest maven image. Installing it from Apache mirror directly below.
   moby-cli \
   moby-engine \
   msodbcsql17 \ 
@@ -119,6 +120,12 @@ RUN apt-get update && bash ./aptinstall.sh \
   wget \
   zip \
   zsh
+
+# Install Maven from Apache mirrors directly
+RUN bash ./installMaven.sh
+ENV M2_HOME /opt/maven
+ENV MAVEN_HOME /opt/maven
+ENV PATH $PATH:/opt/maven/bin
 
 # Install the deprecated Python2 packages. Will be removed in a future update
 RUN bash ./aptinstall.sh \
