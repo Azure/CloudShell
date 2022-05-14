@@ -95,7 +95,7 @@ RUN apt-get update && bash ./aptinstall.sh \
   libpq-dev \
   locales \
   man-db \
-  #maven \ # Removing maven in the base image as CBL-D Quinault not supporting latest maven image. Installing it from Apache mirror directly below.
+  msopenjdk-17 \
   moby-cli \
   moby-engine \
   msodbcsql17 \ 
@@ -121,11 +121,12 @@ RUN apt-get update && bash ./aptinstall.sh \
   zip \
   zsh
 
-# Install Maven from Apache mirrors directly
+# Install Maven from Apache mirrors directly and override just the maven installer from CBL-D
 RUN bash ./installMaven.sh
 ENV M2_HOME /opt/maven
 ENV MAVEN_HOME /opt/maven
 ENV PATH $PATH:/opt/maven/bin
+ENV JAVA_HOME /usr/lib/jvm/msopenjdk-17-amd64
 
 # Install the deprecated Python2 packages. Will be removed in a future update
 RUN bash ./aptinstall.sh \
