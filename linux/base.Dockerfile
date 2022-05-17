@@ -18,6 +18,7 @@ FROM sbidprod.azurecr.io/quinault
 SHELL ["/bin/bash","-c"] 
 
 COPY linux/aptinstall.sh .
+COPY linux/installMaven.sh .
 
 # The universe repository is only currently required for Python2
 RUN echo "deb https://packages.microsoft.com/repos/cbl-d quinault-universe main" >> /etc/apt/sources.list
@@ -94,7 +95,7 @@ RUN apt-get update && bash ./aptinstall.sh \
   libpq-dev \
   locales \
   man-db \
-  maven \
+  msopenjdk-17 \
   moby-cli \
   moby-engine \
   msodbcsql17 \ 
@@ -119,6 +120,13 @@ RUN apt-get update && bash ./aptinstall.sh \
   wget \
   zip \
   zsh
+
+# Install Maven from Apache mirrors directly and override just the maven installer from CBL-D
+RUN bash ./installMaven.sh
+ENV M2_HOME /opt/maven
+ENV MAVEN_HOME /opt/maven
+ENV PATH $PATH:/opt/maven/bin
+ENV JAVA_HOME /usr/lib/jvm/msopenjdk-17-amd64
 
 # Install the deprecated Python2 packages. Will be removed in a future update
 RUN bash ./aptinstall.sh \
@@ -184,7 +192,7 @@ RUN chmod 755 /usr/local/bin/ansible* \
   && cd /opt \
   && virtualenv -p python3 ansible \
   && /bin/bash -c "source ansible/bin/activate && pip3 install ansible && pip3 install pywinrm>=0.2.2 && deactivate" \
-  && ansible-galaxy collection install azure.azcollection
+  && ansible-galaxy collection install azure.azcollection -p /usr/share/ansible/collections
 
 # Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest

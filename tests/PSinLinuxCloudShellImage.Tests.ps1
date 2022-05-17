@@ -84,6 +84,7 @@ Describe "Various programs installed with expected versions" {
     }
 
     It "Ansible pwsh has modules" {
+        Test-Path -Path "/usr/share/ansible/collections/ansible_collections/azure/azcollection/" | Should -Be $true
         $process = Start-Process -FilePath /opt/ansible/bin/python -ArgumentList "-c `"import msrest`"" -Wait -PassThru
         $process.ExitCode | Should -Be 0
     }

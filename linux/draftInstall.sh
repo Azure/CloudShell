@@ -68,7 +68,7 @@ checkLatestVersion() {
 # for that binary.
 downloadFile() {
   DIST="$PROJECT_NAME-$TAG-$OS-$ARCH.tar.gz"
-  DOWNLOAD_URL="https://azuredraft.blob.core.windows.net/draft/$DIST"
+  DOWNLOAD_URL="https://azuredraft.blob.core.windows.net/draft/draft-v0.16.0-linux-amd64.tar.gz" #short-term fix 
   CHECKSUM_URL="$DOWNLOAD_URL.sha256"
   TEMP_FILE="/tmp/$DIST"
   CHECKSUM_FILE="/tmp/$DIST.sha256"
