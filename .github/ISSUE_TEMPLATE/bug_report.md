@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a bug report
 title: "[BUG]"
-labels: bug, triage needed
+labels: bug, Triage-needed
 assignees: 
 
 ---
