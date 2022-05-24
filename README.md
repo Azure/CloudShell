@@ -109,7 +109,7 @@ For more information about bind mounts, please go onto the [Docker documentation
 | ---|---|
 | Package is out of date      | Create a Pull Request or Issue |
 | New desired package     | Create a Pull Request or Issue |
-| New desired Cloud Shell feature | Create an Issue |
+| New desired Cloud Shell feature | Create an [Discussion](https://github.com/Azure/CloudShell/discussions) |
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
 | Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
