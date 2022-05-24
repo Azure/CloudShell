@@ -4,32 +4,20 @@ metadata:
   name: sidecar-pod-1
 spec:
   volumes:
-  - name: log
+  - name: shared-pkgs
     emptyDir: {}
 
   containers:
   - image: mincloudshell:latest
     imagePullPolicy: IfNotPresent
     name: application
-    args:
-     - /bin/sh
-     - -c
-     - tail -fn+1 /tmp/monitor_log
     volumeMounts:
-    - name: log
-      mountPath: /var/log
+    - name: shared-pkgs
+      mountPath: /tmp/cloudshellpkgs
 
-  # - name: sidecar
-  #   image: busybox
-  #   args:
-  #    - /bin/sh
-  #    - -c
-  #    - >
-  #     while true; do
-  #       echo "$(date) INFO hello" >> /var/log/myapp.log ;
-  #       sleep 1;
-  #     done
+  - name: sidecar
+    image: sideinstaller:latest
+    imagePullPolicy: IfNotPresent
     volumeMounts:
-    - name: log
-      mountPath: /var/log
-      
+    - name: shared-pkgs
+      mountPath: /tmp/pkgs
