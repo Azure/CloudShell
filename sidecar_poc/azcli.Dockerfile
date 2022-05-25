@@ -3,7 +3,7 @@ SHELL ["/bin/bash","-c"]
 
 COPY sidecar_poc/watchUpdate.sh .
 COPY sidecar_poc/entrypoint.sh .
-RUN apt-get update && apt-get install azure-cli=2.36.0-1~buster
+RUN apt-get update && apt-get install -y azure-cli=2.36.0-1~buster && apt-get install -y inotify-tools
 
 # Start a inotify watcher
 RUN mkdir -p /tmp/cloudshellpkgs && cd / && chmod +x watchUpdate.sh && chmod +x entrypoint.sh

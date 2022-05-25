@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sidecar-pod-2
+spec:
+  volumes:
+  - name: shared-pkgs
+    emptyDir: {}
+
+  containers:
+  - image: azshell:latest
+    imagePullPolicy: IfNotPresent
+    name: az-application
+    volumeMounts:
+    - name: shared-pkgs
+      mountPath: /tmp/cloudshellpkgs
+
+  - name: az-sidecar
+    image: azshellsc:latest
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: shared-pkgs
+      mountPath: /tmp/pkgs
