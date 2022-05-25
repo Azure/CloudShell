@@ -1,0 +1,24 @@
+# Inspired from https://github.com/getporter/porter/blob/main/examples/hello/porter.yaml
+version: 0.1.1
+description: "Shell package install manifest"
+
+install:
+  - exec:
+      description: "List of packages to install"
+      command: /helpers.sh install
+      arguments:
+        - puppet
+
+upgrade:
+  - exec:
+      description: "List of packages to upgrade"
+      command: ./helpers.sh upgrade 
+      arguments:
+        - az-cli
+
+uninstall:
+  - exec:
+      description: "List of packages to uninstall"
+      command: ./helpers.sh uninstall
+      arguments:
+        - azure-functions-core-tools
