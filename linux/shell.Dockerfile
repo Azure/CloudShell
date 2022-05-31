@@ -1,9 +1,11 @@
 FROM sbidprod.azurecr.io/quinault
 SHELL ["/bin/bash","-c"] 
 COPY linux/aptinstall.sh .
-COPY linux/watcher.sh .
+COPY linux/watchUpdate.sh .
 COPY linux/entrypoint.sh .
-
+COPY linux/helmInstall.sh .
+COPY linux/draftInstall.sh .
+COPY linux/ansible/ansible*  /usr/local/bin/
 RUN echo "deb https://packages.microsoft.com/repos/cbl-d quinault-universe main" >> /etc/apt/sources.list
 RUN apt-get update && bash ./aptinstall.sh \
   apt-transport-https \
@@ -121,6 +123,6 @@ ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
 ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0
 
 # Start a inotify watcher
-RUN mkdir -p /tmp/cloudshellpkgs && cd / && chmod +x watcher.sh && chmod +x entrypoint.sh
+RUN mkdir -p /tmp/cloudshellpkgs && cd / && chmod +x watchUpdate.sh && chmod +x entrypoint.sh
 #CMD ["cd / && bash -c watcher.sh /tmp/cloudshellpkgs && sleep 4"]
 ENTRYPOINT [ "/entrypoint.sh" ]
