@@ -17,6 +17,8 @@ FROM sbidprod.azurecr.io/quinault
 
 SHELL ["/bin/bash","-c"] 
 
+# Added to fix CELA requirement to enable users to understand where the source of CBL-D packages come from
+COPY SOURCES .
 COPY linux/aptinstall.sh .
 COPY linux/installMaven.sh .
 
