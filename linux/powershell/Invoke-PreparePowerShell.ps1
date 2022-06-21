@@ -18,7 +18,7 @@ $moduleList = @(
     "AzurePSDrive",
     "MicrosoftPowerBIMgmt",
     "Az",
-    "GuestConfiguration",
+    "Az.GuestConfiguration",
     "Microsoft.PowerShell.UnixCompleters"
 )
 

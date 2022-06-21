@@ -321,4 +321,4 @@ RUN curl -sSL https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x6
 
 # Copy and run script to Install powershell modules
 COPY ./linux/powershell/ powershell
-RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && rm -rf ./powershell
+RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base

@@ -190,13 +190,13 @@ Describe "PowerShell Modules" {
 
     }
 
-    It "GuestConfiguration PowerShell Module" {
+    It "Az.GuestConfiguration PowerShell Module" {
 
-        $module = Get-Module -Name GuestConfiguration -ListAvailable
+        $module = Get-Module -Name Az.GuestConfiguration -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
-        # GuestConfiguration module version must be 3.5.4 or greater
-        $module.Version -ge '3.5.4' | Should -Be $true
+        # Az.GuestConfiguration module version must be 0.*.* or greater
+        $module.Version -like "0.*.*" | Should -Be $true
     }
 
     It "MicrosoftTeams PowerShell Module" {
@@ -222,7 +222,7 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "AzureAD.Standard.Preview" }
         @{ ModuleName = "Az" }
         @{ ModuleName = "MicrosoftPowerBIMgmt" }
-        @{ ModuleName = "GuestConfiguration" }
+        @{ ModuleName = "Az.GuestConfiguration" }
         @{ ModuleName = "EXOPSSessionConnector" }
         @{ ModuleName = "MicrosoftTeams" }
         @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }

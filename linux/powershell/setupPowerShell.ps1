@@ -135,7 +135,7 @@ try {
         # Install modules from PSGallery
         Write-Output "Installing modules from production gallery"    
         PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers   
-        PowerShellGet\Install-Module -Name GuestConfiguration -MaximumVersion $script:dockerfileDataObject.GuestConfigurationMaxVersion -ErrorAction SilentlyContinue @prodAllUsers
+        PowerShellGet\Install-Module -Name Az.GuestConfiguration -MaximumVersion $script:dockerfileDataObject.AzGuestConfigurationMaxVersion -ErrorAction SilentlyContinue @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
         PowerShellGet\Install-Module -AllowPreRelease -Force PSReadLine -Repository PSGallery # get psreadline beta
         PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery
