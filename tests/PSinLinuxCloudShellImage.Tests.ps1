@@ -224,6 +224,13 @@ Describe "PowerShell Modules" {
         $module.Version.Minor -ge 5 | Should -Be $true
     }
 
+    It "Az.Tools.Predictor PowerShell Module" {
+        
+        $module = Get-Module -Name Az.Tools.Predictor -ListAvailable
+        $module | Should -Not -BeNullOrEmpty
+
+    }
+
     $importModuleTestCases = @(
         @{ ModuleName = "Microsoft.PowerShell.Management" }
         @{ ModuleName = "PSCloudShellUtility" }
@@ -236,6 +243,7 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "MicrosoftTeams" }
         @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }
         @{ ModuleName = "PSReadline" }
+        @{ ModuleName = "Az.Tools.Predictor" }
     )
 
     It "Import-Module test for <ModuleName>" -TestCases $importModuleTestCases {

@@ -141,6 +141,7 @@ try {
         PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery
         PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.5 -Force
         PowerShellGet\Install-Module -Name PSReadline -Force
+        PowerShellGet\Install-Module -Name Az.Tools.Predictor -Force
 
         # With older base image builds, teams 1.1.6 is already installed 
         if (Get-Module MicrosoftTeams -ListAvailable) {
