@@ -20,6 +20,7 @@ $moduleList = @(
     "Az",
     "Az.GuestConfiguration",
     "Microsoft.PowerShell.UnixCompleters"
+    "PSReadline"
 )
 
 # set SkipAzInstallationChecks to avoid az check for AzInstallationChecks.json

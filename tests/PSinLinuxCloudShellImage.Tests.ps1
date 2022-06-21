@@ -215,6 +215,15 @@ Describe "PowerShell Modules" {
 
     }
 
+    It "PSReadline PowerShell Module" {
+        
+        $module = Get-Module -Name PSReadline
+        $module | Should -Not -BeNullOrEmpty
+        $module.Version.Major -eq 2 | Should -Be $true
+        $module.Version.Minor -ge 2 | Should -Be $true
+        $module.Version.Minor -ge 5 | Should -Be $true
+    }
+
     $importModuleTestCases = @(
         @{ ModuleName = "Microsoft.PowerShell.Management" }
         @{ ModuleName = "PSCloudShellUtility" }
@@ -226,6 +235,7 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "EXOPSSessionConnector" }
         @{ ModuleName = "MicrosoftTeams" }
         @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }
+        @{ ModuleName = "PSReadline" }
     )
 
     It "Import-Module test for <ModuleName>" -TestCases $importModuleTestCases {
