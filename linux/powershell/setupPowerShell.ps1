@@ -137,11 +137,9 @@ try {
         PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers   
         PowerShellGet\Install-Module -Name GuestConfiguration -MaximumVersion $script:dockerfileDataObject.GuestConfigurationMaxVersion -ErrorAction SilentlyContinue @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
-        PowerShellGet\Install-Module -AllowPreRelease -Force PSReadLine -Repository PSGallery # get psreadline beta
-        PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery
+        PowerShellGet\Install-Module -Name PSReadLine -Repository PSGallery  @prodAllUsers
+        PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery  @prodAllUsers
         PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.5 -Force
-        PowerShellGet\Install-Module -Name PSReadline -Force
-        PowerShellGet\Install-Module -Name Az.Tools.Predictor -Force
 
         # With older base image builds, teams 1.1.6 is already installed 
         if (Get-Module MicrosoftTeams -ListAvailable) {

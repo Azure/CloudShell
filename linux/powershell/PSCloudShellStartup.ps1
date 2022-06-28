@@ -414,6 +414,9 @@ finally
 # Note: Set-CloudShellPSReadLineKeyHandler has to be after loading user profiles
 & ($script:PSCloudShellUtilityModuleInfo){Set-CloudShellPSReadLineKeyHandler}
 
+# Enable prediction based on the window size
+Enable-PSReadLinePrediction
+
 Invoke-CloudShellTelemetry -LogLabel "STARTUPTIME" -StartTime $Startuptime
 
 #endregion
