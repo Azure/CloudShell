@@ -1,0 +1,14 @@
+Azure Cloud Shell uses packages from CBL-D:
+- https://packages.microsoft.com/repos/cbl-d/ 
+
+Source for packages in this directory are available at:
+- https://cbldsrc.blob.core.windows.net/quinault/index.html
+- https://cbldsrc.blob.core.windows.net/quinault-universe/index.html
+ 
+Alternately to obtain sources, you may send a check or money order for US $5.00, including the package name, version, and return address to:
+ 
+Source Code Compliance Team
+Microsoft Corporation
+One Microsoft Way
+Redmond, WA 98052
+USA
