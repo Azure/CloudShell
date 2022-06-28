@@ -137,7 +137,7 @@ try {
         PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers   
         PowerShellGet\Install-Module -Name GuestConfiguration -MaximumVersion $script:dockerfileDataObject.GuestConfigurationMaxVersion -ErrorAction SilentlyContinue @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
-        PowerShellGet\Install-Module -Name PSReadLine -Repository PSGallery  @prodAllUsers
+        PowerShellGet\Install-Module -Name PSReadLine -Force -Repository PSGallery  @prodAllUsers
         PowerShellGet\Install-Module -Name Az.Tools.Predictor -Repository PSGallery  @prodAllUsers
         PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.5 -Force
 
