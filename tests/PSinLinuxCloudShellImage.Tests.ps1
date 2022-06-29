@@ -221,7 +221,7 @@ Describe "PowerShell Modules" {
         $module | Should -Not -BeNullOrEmpty
         $module.Version.Major -eq 2 | Should -Be $true
         $module.Version.Minor -ge 2 | Should -Be $true
-        $module.Version.Minor -ge 5 | Should -Be $true
+        $module.Version.Build -ge 5 | Should -Be $true
     }
 
     It "Az.Tools.Predictor PowerShell Module" {
