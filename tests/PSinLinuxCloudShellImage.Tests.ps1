@@ -217,7 +217,7 @@ Describe "PowerShell Modules" {
 
     It "PSReadline PowerShell Module" {
         
-        $module = Get-Module -Name PSReadline
+        $module = Get-Module -Name PSReadline -ListAvailable | Select-Object -first 1
         $module | Should -Not -BeNullOrEmpty
         $module.Version.Major -eq 2 | Should -Be $true
         $module.Version.Minor -ge 2 | Should -Be $true
