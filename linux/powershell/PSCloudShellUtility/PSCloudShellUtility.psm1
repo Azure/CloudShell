@@ -206,9 +206,6 @@ function Enable-PSReadLinePrediction {
         return
     }
 
-    # Enable predictor for PowerShell Cloudshell
-    Enable-AzPredictor
-
     # if window height is less than 15 and width is less than 54, use inline view
     $windowHeight = [Console]::WindowHeight
     $windowWidth = [Console]::WindowWidth
