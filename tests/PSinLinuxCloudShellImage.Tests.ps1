@@ -214,6 +214,20 @@ Describe "PowerShell Modules" {
         $module | Should -Not -BeNullOrEmpty
 
     }
+    
+    It "Microsoft.PowerShell.SecretManagement PowerShell Module" {
+        
+        $module = Get-Module -Name 'Microsoft.PowerShell.SecretManagement' -ListAvailable
+        $module | Should -Not -BeNullOrEmpty
+
+    }
+    
+    It "Microsoft.PowerShell.SecretStore PowerShell Module" {
+        
+        $module = Get-Module -Name 'Microsoft.PowerShell.SecretStore' -ListAvailable
+        $module | Should -Not -BeNullOrEmpty
+
+    }
 
     $importModuleTestCases = @(
         @{ ModuleName = "Microsoft.PowerShell.Management" }
@@ -226,6 +240,8 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "EXOPSSessionConnector" }
         @{ ModuleName = "MicrosoftTeams" }
         @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }
+        @{ ModuleName = "Microsoft.PowerShell.SecretManagement" }
+        @{ ModuleName = "Microsoft.PowerShell.SecretStore" }
     )
 
     It "Import-Module test for <ModuleName>" -TestCases $importModuleTestCases {
