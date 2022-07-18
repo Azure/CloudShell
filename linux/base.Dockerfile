@@ -25,6 +25,10 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   mariner-repos-extended \
   mariner-repos-microsoft-preview
 
+RUN tdnf update -y
+RUN bash ./tdnfinstall.sh curl
+
+
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   curl \
   xz \
@@ -92,7 +96,7 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   net-tools \
   parallel \
   patch \
-  pkg-config \
+#  pkg-config \
   postgresql-libs \
   postgresql \
   python3 \
@@ -113,7 +117,9 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   vim \
   wget \
   zip \
-  zsh
+  powershell \
+  which
+#  zsh
 
 # Install azure-functions-core-tools
 RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.3971/Azure.Functions.Cli.linux-x64.4.0.3971.zip \
@@ -217,18 +223,18 @@ ENV BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Download and Install the latest packer (AMD64)
-RUN PACKER_VERSION=$(curl -sSL https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
-  && wget -nv -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
-  && wget -nv -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
-  && wget -nv -O packer.sha256.sig https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS.sig \
-  && curl -s https://keybase.io/hashicorp/pgp_keys.asc | gpg --import \
-  && gpg --verify packer.sha256.sig packer.sha256 \
-  && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+packer_${PACKER_VERSION}_linux_amd64.zip)" packer.sha256) packer.zip | sha256sum -c \
-  && unzip packer.zip \
-  && mv packer /usr/local/bin \
-  && chmod a+x /usr/local/bin/packer \
-  && rm -f packer packer.zip packer.sha256 packer.sha256.sig \
-  && unset PACKER_VERSION
+# RUN PACKER_VERSION=$(curl -sSL https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
+#   && wget -nv -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+#   && wget -nv -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
+#   && wget -nv -O packer.sha256.sig https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS.sig \
+#   && curl -s https://keybase.io/hashicorp/pgp_keys.asc | gpg --import \
+#   && gpg --verify packer.sha256.sig packer.sha256 \
+#   && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+packer_${PACKER_VERSION}_linux_amd64.zip)" packer.sha256) packer.zip | sha256sum -c \
+#   && unzip packer.zip \
+#   && mv packer /usr/local/bin \
+#   && chmod a+x /usr/local/bin/packer \
+#   && rm -f packer packer.zip packer.sha256 packer.sha256.sig \
+#   && unset PACKER_VERSION
 
 # Install dcos
 RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/latest/dcos \
@@ -239,11 +245,17 @@ RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/latest/
 # Work around to use 2.0 preview repo till we get
 # PowerShell back in Mariner 2.0 prod repo
 # Install PowerShell
-RUN tdnf -y install mariner-repos-preview
+# RUN tdnf -y install mariner-repos-preview
 
-RUN tdnf -y install powershell
+# RUN tdnf -y install powershell
 
-RUN tdnf -y remove mariner-repos-preview
+# RUN tdnf -y remove mariner-repos-preview
+
+RUN curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v7.2.3/powershell-7.2.3-linux-x64.tar.gz \
+  && mkdir -p /opt/microsoft/powershell/7 \
+  && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
+  && chmod +x /opt/microsoft/powershell/7/pwsh \
+  && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
@@ -251,10 +263,10 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 ENV POWERSHELL_UPDATECHECK Off
 
 # Install Chef Workstation
-# RUN wget -nv -O chef-workstation_x86_64.rpm https://packages.chef.io/files/stable/chef-workstation/22.2.807/el/8/chef-workstation-22.2.807-1.el8.x86_64.rpm \
-#  && echo 7b93c2826fca17aace7711c759e7cb0d4b7dd8498f9040f6a544c19ffc9ea679 chef-workstation_x86_64.rpm | sha256sum -c \
-#  && rpm -ivh chef-workstation_x86_64.rpm \
-#  && rm -f chef-workstation_x86_64.rpm
+RUN wget -nv -O chef-workstation_x86_64.rpm https://packages.chef.io/files/stable/chef-workstation/22.2.807/el/8/chef-workstation-22.2.807-1.el8.x86_64.rpm \
+ && echo 7b93c2826fca17aace7711c759e7cb0d4b7dd8498f9040f6a544c19ffc9ea679 chef-workstation_x86_64.rpm | sha256sum -c \
+ && rpm -ivh chef-workstation_x86_64.rpm \
+ && rm -f chef-workstation_x86_64.rpm
 
 # Install ripgrep
 RUN bash ./tdnfinstall.sh \
