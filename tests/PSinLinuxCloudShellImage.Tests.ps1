@@ -212,8 +212,21 @@ Describe "Various programs installed with expected versions" {
 #     }
 
 #     It "Microsoft.PowerShell.UnixCompleters PowerShell Module" {
-        
 #         $module = Get-Module -Name Microsoft.PowerShell.UnixCompleters -ListAvailable
+#         $module | Should -Not -BeNullOrEmpty
+
+#     }
+    
+#     It "Microsoft.PowerShell.SecretManagement PowerShell Module" {
+        
+#         $module = Get-Module -Name 'Microsoft.PowerShell.SecretManagement' -ListAvailable
+#         $module | Should -Not -BeNullOrEmpty
+
+#     }
+    
+#     It "Microsoft.PowerShell.SecretStore PowerShell Module" {
+        
+#         $module = Get-Module -Name 'Microsoft.PowerShell.SecretStore' -ListAvailable
 #         $module | Should -Not -BeNullOrEmpty
 
 #     }
@@ -225,10 +238,12 @@ Describe "Various programs installed with expected versions" {
 #         @{ ModuleName = "AzureAD.Standard.Preview" }
 #         @{ ModuleName = "Az" }
 #         @{ ModuleName = "MicrosoftPowerBIMgmt" }
-#         @{ ModuleName = "Az.GuestConfiguration" }
+#         @{ ModuleName = "GuestConfiguration" }
 #         @{ ModuleName = "EXOPSSessionConnector" }
 #         @{ ModuleName = "MicrosoftTeams" }
 #         @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }
+#         @{ ModuleName = "Microsoft.PowerShell.SecretManagement" }
+#         @{ ModuleName = "Microsoft.PowerShell.SecretStore" }
 #     )
 
 #     It "Import-Module test for <ModuleName>" -TestCases $importModuleTestCases {
