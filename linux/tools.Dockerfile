@@ -5,7 +5,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/azure/cloudshell:1.0.20220308.1.base.master.e4f39539
+ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/azure/cloudshell:1.0.20220720.1.base.mariner_full.d6d09980
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
@@ -32,13 +32,13 @@ RUN az aks install-cli \
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   terraform
 
-# github CLI
-RUN tdnf update -y && bash ./tdnfinstall.sh \
-  gh
-# RUN wget -O /etc/yum.repos.d/gh-cli.repo https://cli.github.com/packages/rpm/gh-cli.repo \
-#   && echo gpgcheck=0 >> /etc/yum.repos.d/gh-cli.repo \
-#   && tdnf repolist --refresh \
-#   && tdnf install -y gh.x86_64
+# # github CLI
+# RUN tdnf update -y && bash ./tdnfinstall.sh \
+#   gh
+RUN wget -O /etc/yum.repos.d/gh-cli.repo https://cli.github.com/packages/rpm/gh-cli.repo \
+  && echo gpgcheck=0 >> /etc/yum.repos.d/gh-cli.repo \
+  && tdnf repolist --refresh \
+  && tdnf install -y gh.x86_64
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
