@@ -65,7 +65,7 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   dotnet-runtime-6.0 \
   dotnet-sdk-6.0 \
   e2fsprogs \
-# emacs \
+  emacs \
   gawk \
   glibc-lang \
   glibc-i18n \
@@ -84,7 +84,6 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   openssl \
   openssl-libs \
   openssl-devel \
-# locales \
   man-db \
 # maven \
   moby-cli \
@@ -96,7 +95,7 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   net-tools \
   parallel \
   patch \
-#  pkg-config \
+  pkg-config \
   postgresql-libs \
   postgresql \
   python3 \
@@ -118,8 +117,8 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   wget \
   zip \
   powershell \
-  which
-#  zsh
+  which \
+  zsh
 
 # Install azure-functions-core-tools
 RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.3971/Azure.Functions.Cli.linux-x64.4.0.3971.zip \
@@ -132,16 +131,21 @@ RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Az
   && rm -r Azure.Functions.Cli.linux-x64.4.0.3971.zip
 
 # Install Jenkins X client
-RUN curl -sSL https://github.com/jenkins-x/jx/releases/download/v1.3.107/jx-linux-amd64.tar.gz > jx.tar.gz \
-  && echo f3e31816a310911c7b79a90281182a77d1ea1c9710b4e0bb29783b78cc99a961 jx.tar.gz | sha256sum -c \
-  && tar -xf jx.tar.gz \
-  && mv jx /usr/local/bin \
-  && rm -rf jx.tar.gz
+RUN tdnf update -y && bash ./tdnfinstall.sh jx
+
+# RUN curl -sSL https://github.com/jenkins-x/jx/releases/download/v1.3.107/jx-linux-amd64.tar.gz > jx.tar.gz \
+#   && echo f3e31816a310911c7b79a90281182a77d1ea1c9710b4e0bb29783b78cc99a961 jx.tar.gz | sha256sum -c \
+#   && tar -xf jx.tar.gz \
+#   && mv jx /usr/local/bin \
+#   && rm -rf jx.tar.gz
 
 # Install CloudFoundry CLI
-RUN wget -nv -O cf-cli_install.rpm https://cli.run.pivotal.io/stable?release=redhat64 \
-  && rpm -ivh cf-cli_install.rpm \
-  && rm -f cf-cli_install.rpm
+RUN tdnf -y install mariner-repos-preview
+RUN tdnf update -y && bash ./tdnfinstall.sh cf-cli
+RUN tdnf -y remove mariner-repos-preview
+# RUN wget -nv -O cf-cli_install.rpm https://cli.run.pivotal.io/stable?release=redhat64 \
+#   && rpm -ivh cf-cli_install.rpm \
+#   && rm -f cf-cli_install.rpm
 
 # Setup locale to en_US.utf8
 RUN echo en_US UTF-8 >> /etc/locale.conf && locale-gen.sh
@@ -223,6 +227,7 @@ ENV BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Download and Install the latest packer (AMD64)
+RUN tdnf update -y && bash ./tdnfinstall.sh packer
 # RUN PACKER_VERSION=$(curl -sSL https://checkpoint-api.hashicorp.com/v1/check/packer | jq -r -M ".current_version") \
 #   && wget -nv -O packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
 #   && wget -nv -O packer.sha256 https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS \
@@ -237,10 +242,13 @@ ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 #   && unset PACKER_VERSION
 
 # Install dcos
-RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/latest/dcos \
-  && echo c79285f23525e21f71473649c742af14917c9da7ee2b707ccc27e92da4838ec4 dcos | sha256sum -c \
-  && mv dcos /usr/local/bin \
-  && chmod +x /usr/local/bin/dcos
+RUN tdnf -y install mariner-repos-preview
+RUN tdnf update -y && bash ./tdnfinstall.sh dcos-cli
+RUN tdnf -y remove mariner-repos-preview
+# RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/latest/dcos \
+#   && echo c79285f23525e21f71473649c742af14917c9da7ee2b707ccc27e92da4838ec4 dcos | sha256sum -c \
+#   && mv dcos /usr/local/bin \
+#   && chmod +x /usr/local/bin/dcos
 
 # Work around to use 2.0 preview repo till we get
 # PowerShell back in Mariner 2.0 prod repo
@@ -251,11 +259,11 @@ RUN wget -nv -O dcos https://downloads.dcos.io/binaries/cli/linux/x86-64/latest/
 
 # RUN tdnf -y remove mariner-repos-preview
 
-RUN curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v7.2.3/powershell-7.2.3-linux-x64.tar.gz \
-  && mkdir -p /opt/microsoft/powershell/7 \
-  && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
-  && chmod +x /opt/microsoft/powershell/7/pwsh \
-  && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
+# RUN curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v7.2.3/powershell-7.2.3-linux-x64.tar.gz \
+#   && mkdir -p /opt/microsoft/powershell/7 \
+#   && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
+#   && chmod +x /opt/microsoft/powershell/7/pwsh \
+#   && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
@@ -292,12 +300,15 @@ RUN npm install -g yo \
   && npm install -g generator-az-terra-module
 
 # Download and install AzCopy SCD of linux-x64
-RUN curl -sSL https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x64.tar.gz \
-  && mkdir azcopy \
-  && tar xf azcopy-netcore_linux_x64.tar.gz -C azcopy --strip-components 1 \
-  && mv azcopy/azcopy /usr/local/bin/azcopy \
-  && chmod a+x /usr/local/bin/azcopy \
-  && rm -f azcopy-netcore_linux_x64.tar.gz && rm -rf azcopy
+RUN tdnf -y install mariner-repos-preview
+RUN tdnf update -y && bash ./tdnfinstall.sh azcopy
+RUN tdnf -y remove mariner-repos-preview
+# RUN curl -sSL https://aka.ms/downloadazcopy-v10-linux -o azcopy-netcore_linux_x64.tar.gz \
+#   && mkdir azcopy \
+#   && tar xf azcopy-netcore_linux_x64.tar.gz -C azcopy --strip-components 1 \
+#   && mv azcopy/azcopy /usr/local/bin/azcopy \
+#   && chmod a+x /usr/local/bin/azcopy \
+#   && rm -f azcopy-netcore_linux_x64.tar.gz && rm -rf azcopy
 
 # Copy and run script to Install powershell modules
 COPY ./linux/powershell/ powershell
