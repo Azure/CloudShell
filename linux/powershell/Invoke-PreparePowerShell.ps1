@@ -22,6 +22,8 @@ $moduleList = @(
     "Microsoft.PowerShell.UnixCompleters"
     "PSReadline"
     "Az.Tools.Predictor"
+    "Microsoft.PowerShell.SecretManagement",
+    "Microsoft.PowerShell.SecretStore"
 )
 
 # set SkipAzInstallationChecks to avoid az check for AzInstallationChecks.json
