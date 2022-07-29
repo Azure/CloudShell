@@ -1885,13 +1885,13 @@ function Get-PackageVersion() {
     
     # Enumerate all APT packages with versions
     $packages = New-Object -TypeName System.Collections.ArrayList
-    apt list --installed 2> /dev/null | % { 
-        Write-Verbose "Apt: $_"
-        if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") { 
-            $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "Apt"
-            $null = $packages.Add($p)
-        }
-    }
+    # apt list --installed 2> /dev/null | % { 
+    #     Write-Verbose "Apt: $_"
+    #     if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") { 
+    #         $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "Apt"
+    #         $null = $packages.Add($p)
+    #     }
+    # }
 
     # enumerate special packages
     $pwsh = New-PackageInfo -Name "PowerShell" -Version $PSVersionTable.PSVersion.ToString() -type "Special"
@@ -1917,7 +1917,6 @@ function Get-PackageVersion() {
 
     $packageVersionDetections = @(
         @{displayname = "Node.JS"; command = "node"; args = "--version"; match = "v(.*)"},
-        @{displayname = "Jenkins X"; command = "jx"; args = "version -n"; match = "jx\s+(.*)"},
         @{displayname = "Cloud Foundry CLI"; command = "cf"; args = "-v"; match = "cf version (.*)"},
         @{displayname = "Blobxfer"; command = "blobxfer"; args = "--version"; match = "blobxfer, version (.*)"},
         @{displayname = "Batch Shipyard"; command = "shipyard"; args = "--version"; match = "shipyard.py, version (.*)"},

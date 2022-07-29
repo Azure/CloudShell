@@ -1,12 +1,12 @@
 Describe "Various programs installed with expected versions" {
  
-    # BeforeAll {
-    #     $script:packages = Get-PackageVersion
-    #     $script:pmap = @{}
-    #     $script:packages | % {
-    #         $script:pmap[$_.Name] = $_
-    #     }
-    # }
+    BeforeAll {
+        $script:packages = Get-PackageVersion
+        $script:pmap = @{}
+        $script:packages | % {
+            $script:pmap[$_.Name] = $_
+        }
+    }
 
     It "Base OS - CBL-Mariner 2.0" {
 
@@ -16,24 +16,23 @@ Describe "Various programs installed with expected versions" {
         $osDetails | Where-Object {$_.Contains('NAME="Common Base Linux Mariner"')} | Should -Not -BeNullOrEmpty
     }
 
-    # It "Static Versions" {
-    #     # These programs are installed explicitly with specific versions
-    #     $script:pmap["Node.JS"].Version | Should -Be '8.16.0'
-    #     $script:pmap["Jenkins X"].Version | Should -Be '1.3.107'
-    #     $script:pmap["PowerShell"].Version | Should -BeLike '7.2*'        
-    # }
+    It "Static Versions" {
+        # These programs are installed explicitly with specific versions
+        $script:pmap["Node.JS"].Version | Should -Be '16.14.2'
+        $script:pmap["PowerShell"].Version | Should -BeLike '7.2*'        
+    }
 
-    # # It "Some Versions Installed" {
-    # #     # These programs are not pinned to exact versions, we just check they are still installed and 
-    # #     # running the version command works
+    It "Some Versions Installed" {
+        # These programs are not pinned to exact versions, we just check they are still installed and 
+        # running the version command works
         
-    # #     $script:packages | ? Type -eq "Special" | % {
-    # #         $name = $_.Name
-    # #         $_.Version | Should -Not -BeNullOrEmpty -Because "$name should be present"
-    # #         $_.Version | Should -Not -Be "Error" -Because "Error occurred running $name to determine version"
-    # #         $_.Version | Should -Not -Be "Unknown" -Because "Could not parse version info for $name"
-    # #     }
-    # # }
+        $script:packages | ? Type -eq "Special" | % {
+            $name = $_.Name
+            $_.Version | Should -Not -BeNullOrEmpty -Because "$name should be present"
+            $_.Version | Should -Not -Be "Error" -Because "Error occurred running $name to determine version"
+            $_.Version | Should -Not -Be "Unknown" -Because "Could not parse version info for $name"
+        }
+    }
 
     It "startupscript" {
         $pwshPath = which pwsh
@@ -187,14 +186,14 @@ Describe "PowerShell Modules" {
 
     }
 
-    # It "Az.GuestConfiguration PowerShell Module" {
+    It "GuestConfiguration PowerShell Module" {
 
-    #     $module = Get-Module -Name Az.GuestConfiguration -ListAvailable
-    #     $module | Should -Not -BeNullOrEmpty
+        $module = Get-Module -Name GuestConfiguration -ListAvailable
+        $module | Should -Not -BeNullOrEmpty
 
-    #     # Az.GuestConfiguration module version must be 0.*.* or greater
-    #     $module.Version -like "0.*.*" | Should -Be $true
-    # }
+        # Az.GuestConfiguration module version must be 0.*.* or greater
+        $module.Version -like "4.*.*" | Should -Be $true
+    }
 
     It "MicrosoftTeams PowerShell Module" {
 
