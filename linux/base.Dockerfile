@@ -85,7 +85,6 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   openssl-libs \
   openssl-devel \
   man-db \
-# maven \
   moby-cli \
   moby-engine \
   msodbcsql17 \
@@ -98,6 +97,7 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   pkg-config \
   postgresql-libs \
   postgresql \
+  powershell \
   python3 \
   python3-pip \
   python3-virtualenv \
@@ -115,10 +115,31 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   util-linux \
   vim \
   wget \
-  zip \
-  powershell \
   which \
+  zip \
   zsh
+
+# Install Maven
+RUN tdnf -y install mariner-repos-preview
+RUN tdnf update -y && bash ./tdnfinstall.sh maven
+RUN tdnf -y remove mariner-repos-preview
+
+# Additional packages required for Mariner to be closer to parity with CBL-D
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  apparmor-parser \
+  apparmor-utils \
+  cronie \
+  ebtables-legacy \
+  fakeroot \
+  file \
+  lsb-release \
+  ncompress \
+  pigz \
+  psmisc \
+  procps \
+  shared-mime-info \
+  sysstat \
+  xauth
 
 # Install azure-functions-core-tools
 RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.3971/Azure.Functions.Cli.linux-x64.4.0.3971.zip \
@@ -279,12 +300,6 @@ RUN wget -nv -O chef-workstation_x86_64.rpm https://packages.chef.io/files/stabl
 # Install ripgrep
 RUN bash ./tdnfinstall.sh \
   ripgrep
-
-# Install docker-machine
-RUN curl -sSL https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-`uname -s`-`uname -m` > /tmp/docker-machine \
-  && echo a7f7cbb842752b12123c5a5447d8039bf8dccf62ec2328853583e68eb4ffb097 /tmp/docker-machine | sha256sum -c \
-  && chmod +x /tmp/docker-machine \
-  && mv /tmp/docker-machine /usr/local/bin/docker-machine
 
 # Install Helm
 RUN bash ./tdnfinstall.sh \

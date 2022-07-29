@@ -40,38 +40,38 @@ Describe "Various programs installed with expected versions" {
         Test-Path $startupScriptPath | Should -Be $true
     }
 
-    # It "az cli extensions" {
-    #     az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
-    # }
+    It "az cli extensions" {
+        az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
+    }
 
-    # It "Compare bash commands to baseline" {
-    #     # command_list contains a list of all the files which should be installed
-    #     $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff -w /tests/command_list /tests/installed_commands"
-    #     #$command_diffs = bash -c "diff -w /tests/command_list /tests/installed_commands"
-    #     # these may or may not be present depending on how tests were invoked
-    #     $special = @(
-    #         "profile.ps1", 
-    #         "PSCloudShellStartup.ps1", 
-    #         "dh_pypy", 
-    #         "dh_python3", 
-    #         "pybuild", 
-    #         "python3-config", 
-    #         "python3m-config", 
-    #         "x86_64-linux-gnu-python3-config", 
-    #         "x86_64-linux-gnu-python3m-config",
-    #         "linkerd-stable.*",
-    #         "pwsh-preview"
-    #     )
+    It "Compare bash commands to baseline" {
+        # command_list contains a list of all the files which should be installed
+        $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff -w /tests/command_list /tests/installed_commands"
+        #$command_diffs = bash -c "diff -w /tests/command_list /tests/installed_commands"
+        # these may or may not be present depending on how tests were invoked
+        $special = @(
+            "profile.ps1", 
+            "PSCloudShellStartup.ps1", 
+            "dh_pypy", 
+            "dh_python3", 
+            "pybuild", 
+            "python3-config", 
+            "python3m-config", 
+            "x86_64-linux-gnu-python3-config", 
+            "x86_64-linux-gnu-python3m-config",
+            "linkerd-stable.*",
+            "pwsh-preview"
+        )
 
-    #     $specialmatcher = ($special | % { "($_)"}) -join "|"
+        $specialmatcher = ($special | % { "($_)"}) -join "|"
 
-    #     $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","        
-    #     $missing | Should -Be "" -Because "$aaa Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
+        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","        
+        $missing | Should -Be "" -Because "$aaa Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
-    #     # $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","
-    #     # $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
+        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","
+        $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
-    # }
+    }
 
     It "has local paths in `$PATH" {
         $paths = ($env:PATH).split(":")

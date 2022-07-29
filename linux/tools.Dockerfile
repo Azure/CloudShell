@@ -14,7 +14,9 @@ ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
-RUN tdnf install -y azure-cli
+RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
+    && tdnf install -y ./azure-cli-latest-mariner2.0.rpm \
+    && rm azure-cli-latest-mariner2.0.rpm
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y
@@ -71,6 +73,10 @@ RUN ltarget=$(readlink /usr/local/linkerd/bin/linkerd) && \
 RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
     && /opt/ansible/bin/python -m pip install -r requirements-azure.txt \
     && rm requirements-azure.txt
+
+#Add soft links
+RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN ln -s /usr/bin/node /usr/bin/nodejs
 
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults

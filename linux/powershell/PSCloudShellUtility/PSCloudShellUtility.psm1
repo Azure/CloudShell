@@ -1928,7 +1928,6 @@ function Get-PackageVersion() {
         @{displayname = "DC/OS CLI"; command = "dcos"; args = "--version"; match = "dcoscli.version=(.*)"},
         @{displayname = "Chef Workstation"; command = "chef"; args = "-v"; match = "Chef Workstation version: (.*)"},
         @{displayname = "Ripgrep"; command = "rg"; args = "--help | head"; match = "ripgrep ([\d\.]+)$"},
-        @{displayname = "Docker-machine"; command = "docker-machine"; args = "version"; match = "docker-machine version ([\d\.]+),"},
         @{displayname = "Helm"; command = "helm"; args = "version --short"; match = "v(.+)"},
         @{displayname = "Draft"; command = "draft"; args = "version --short"; match = "v(.+)"},
         @{displayname = "AZCopy"; command = "azcopy"; args = "--version"; match = "azcopy version (.+)"},
