@@ -963,7 +963,11 @@ ping6
 pinky
 pip
 pip3
+<<<<<<< HEAD
 pip3.9
+=======
+pip3.7
+>>>>>>> master
 pivot_root
 pkcs1-conv
 pkgconf
