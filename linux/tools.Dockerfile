@@ -34,13 +34,9 @@ RUN az aks install-cli \
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   terraform
 
-# # github CLI
-# RUN tdnf update -y && bash ./tdnfinstall.sh \
-#   gh
-RUN wget -O /etc/yum.repos.d/gh-cli.repo https://cli.github.com/packages/rpm/gh-cli.repo \
-  && echo gpgcheck=0 >> /etc/yum.repos.d/gh-cli.repo \
-  && tdnf repolist --refresh \
-  && tdnf install -y gh.x86_64
+# github CLI
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  gh
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
