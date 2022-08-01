@@ -18,16 +18,8 @@ SHELL ["/bin/bash","-c"]
 
 COPY linux/tdnfinstall.sh .
 
-# Use mariner-repos-microsoft-preview
-# till msodbcsql and sql-tools publish to
-# Mariner 2.0 prod Microsoft repo
 RUN tdnf update -y && bash ./tdnfinstall.sh \
-  mariner-repos-extended \
-  mariner-repos-microsoft-preview
-
-RUN tdnf update -y
-RUN bash ./tdnfinstall.sh curl
-
+  mariner-repos-extended
 
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   curl \
@@ -122,6 +114,8 @@ RUN tdnf -y install mariner-repos-preview
 RUN tdnf update -y && bash ./tdnfinstall.sh maven
 RUN tdnf -y remove mariner-repos-preview
 
+RUN tdnf clean all
+
 # Additional packages required for Mariner to be closer to parity with CBL-D
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   apparmor-parser \
@@ -153,9 +147,7 @@ RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Az
 RUN tdnf update -y && bash ./tdnfinstall.sh jx
 
 # Install CloudFoundry CLI
-RUN tdnf -y install mariner-repos-preview
 RUN tdnf update -y && bash ./tdnfinstall.sh cf-cli
-RUN tdnf -y remove mariner-repos-preview
 
 
 # Setup locale to en_US.utf8
@@ -222,13 +214,16 @@ RUN bash ./tdnfinstall.sh \
 ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
 
-RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
-  && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-  && ln -sf INSTALL_DIRECTORY/dep /usr/bin/dep \
-  && unset INSTALL_DIRECTORY
+# RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
+#   && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+#   && ln -sf INSTALL_DIRECTORY/dep /usr/bin/dep \
+#   && unset INSTALL_DIRECTORY
 
-RUN gem update --system 3.3.3 \
-  && gem install bundler --version 1.16.4 --force \
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  ruby \
+  rubygems
+
+RUN gem install bundler --version 1.16.4 --force \
   && gem install rake --version 12.3.0 --no-document --force \
   && gem install colorize --version 0.8.1 --no-document --force \
   && gem install rspec --version 3.7.0 --no-document --force
@@ -241,20 +236,12 @@ ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 RUN tdnf update -y && bash ./tdnfinstall.sh packer
 
 # Install dcos
-RUN tdnf -y install mariner-repos-preview
 RUN tdnf update -y && bash ./tdnfinstall.sh dcos-cli
-RUN tdnf -y remove mariner-repos-preview
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 # don't tell users to upgrade, they can't
 ENV POWERSHELL_UPDATECHECK Off
-
-# Install Chef Workstation
-RUN wget -nv -O chef-workstation_x86_64.rpm https://packages.chef.io/files/stable/chef-workstation/22.2.807/el/8/chef-workstation-22.2.807-1.el8.x86_64.rpm \
- && echo 7b93c2826fca17aace7711c759e7cb0d4b7dd8498f9040f6a544c19ffc9ea679 chef-workstation_x86_64.rpm | sha256sum -c \
- && rpm -ivh chef-workstation_x86_64.rpm \
- && rm -f chef-workstation_x86_64.rpm
 
 # Install ripgrep
 RUN bash ./tdnfinstall.sh \
@@ -274,9 +261,7 @@ RUN npm install -g yo \
   && npm install -g generator-az-terra-module
 
 # Download and install AzCopy SCD of linux-x64
-RUN tdnf -y install mariner-repos-preview
 RUN tdnf update -y && bash ./tdnfinstall.sh azcopy
-RUN tdnf -y remove mariner-repos-preview
 
 
 # Copy and run script to Install powershell modules
