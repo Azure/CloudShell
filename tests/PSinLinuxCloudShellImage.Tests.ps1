@@ -190,7 +190,7 @@ Describe "PowerShell Modules" {
         $module = Get-Module -Name GuestConfiguration -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
-        # Az.GuestConfiguration module version must be 0.*.* or greater
+        # GuestConfiguration module version must be 0.*.* or greater
         $module.Version -like "4.*.*" | Should -Be $true
     }
 
