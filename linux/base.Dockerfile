@@ -40,8 +40,6 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   nodejs
 
-COPY linux/mariner-microsoft-dotnetcore.repo /etc/yum.repos.d
-
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_VERSION 8.16.0
 ENV NODE_ENV production
