@@ -11,7 +11,6 @@ id -u csuser 2> /dev/null
 if [ $? != 0 ]
 then
   echo "Creating user"
-#  adduser --disabled-login --gecos "" --uid 9527 csuser
   adduser -m --uid 9527 csuser
 fi
 

@@ -1885,6 +1885,8 @@ function Get-PackageVersion() {
     
     # Enumerate all APT packages with versions
     $packages = New-Object -TypeName System.Collections.ArrayList
+
+    # TODO - find the regular expression to seperate the package name from the package version
     # apt list --installed 2> /dev/null | % { 
     #     Write-Verbose "Apt: $_"
     #     if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") { 
