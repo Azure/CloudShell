@@ -18,6 +18,8 @@ SHELL ["/bin/bash","-c"]
 
 COPY linux/tdnfinstall.sh .
 
+RUN tdnf repolist --refresh
+
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   mariner-repos-extended
 
@@ -40,7 +42,6 @@ ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   autoconf \
   ansible \
-  azure-cli \
 # azure-functions-core-tools \
   bash-completion \
   build-essential \

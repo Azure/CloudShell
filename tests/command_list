@@ -100,7 +100,6 @@ basenc
 bash
 bashbug
 bcp
-berks
 bg
 bicep
 bind
@@ -151,17 +150,6 @@ chage
 chattr
 chcon
 chcpu
-chef
-chef-analyze
-chef-apply
-chef-cli
-chef-client
-chef-run
-chef-shell
-chef-solo
-chef-vault
-chef-workstation-app
-chef-zero
 chem
 chfn
 chgpasswd
@@ -205,7 +193,6 @@ containerd-shim-runc-v1
 containerd-shim-runc-v2
 containerd-stress
 continue
-cookstyle
 coproc
 coredumpctl
 corelist
@@ -250,10 +237,8 @@ ddns-confgen
 debugfs
 debuginfod-find
 declare
-delivery
 delpart
 delv
-dep
 depmod
 derb
 devlink
@@ -360,7 +345,6 @@ fakeroot-sysv
 fakeroot-tcp
 fallocate
 false
-fauxhai
 fc
 fc-cache
 fc-cat
@@ -382,10 +366,12 @@ fincore
 find
 findfs
 findmnt
+fish
+fish_indent
+fish_key_reader
 flock
 fmt
 fold
-foodcritic
 for
 free
 fsck
@@ -534,7 +520,6 @@ gzexe
 gzip
 h2ph
 h2xs
-hab
 halt
 hardlink
 hash
@@ -545,7 +530,6 @@ hexdump
 hiera
 history
 hmac256
-hocon
 host
 hostid
 hostname
@@ -574,7 +558,6 @@ init
 initdb
 innochecksum
 insmod
-inspec
 install
 instmodsh
 ionice
@@ -655,10 +638,8 @@ keytool
 kill
 killall
 kinit
-kitchen
 klist
 kmod
-knife
 kpasswd
 kprop
 kpropd
@@ -776,7 +757,6 @@ mdig
 mesg
 microsoft365
 mii-tool
-mixlib-install
 mk_cmds
 mkdict
 mkdir
@@ -890,7 +870,6 @@ ocsptool
 od
 odbc_config
 odbcinst
-ohai
 oid2name
 oomctl
 openssl
@@ -963,11 +942,7 @@ ping6
 pinky
 pip
 pip3
-<<<<<<< HEAD
 pip3.9
-=======
-pip3.7
->>>>>>> master
 pivot_root
 pkcs1-conv
 pkgconf
@@ -1265,7 +1240,6 @@ terraform
 test
 tfmtodit
 then
-thor
 tic
 time
 timedatectl
@@ -1331,7 +1305,6 @@ update-alternatives
 update-ca-trust
 updatedb
 update-mime-database
-update_rubygems
 uptime
 useradd
 userdbctl
