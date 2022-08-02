@@ -11,11 +11,13 @@ id -u csuser 2> /dev/null
 if [ $? != 0 ]
 then
   echo "Creating user"
-  adduser --disabled-login --gecos "" --uid 9527 csuser
+  adduser -m --uid 9527 csuser
 fi
 
 echo "running root-level tests"
 pwsh /tests/root-tests.ps1
+
+pwsh -c "Install-Module Pester -Force -Scope AllUsers"
 
 echo "running tests as csuser"
 runuser -u csuser pwsh /tests/test.ps1

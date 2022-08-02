@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# wrapper around apt-get install which retries on failure
+# wrapper around tdnf install which retries on failure
 
 max_tries=4
 count=0
-while [ $count -lt $max_tries ]; do 
-    ACCEPT_EULA=Y apt-get install -y $*        
+while [ $count -lt $max_tries ]; do
+    ACCEPT_EULA=Y tdnf install -y $*
     if [ $? -eq 0 ];  then
         exit 0
     fi

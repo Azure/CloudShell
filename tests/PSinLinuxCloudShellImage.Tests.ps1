@@ -1,6 +1,3 @@
-
-
-
 Describe "Various programs installed with expected versions" {
  
     BeforeAll {
@@ -11,18 +8,17 @@ Describe "Various programs installed with expected versions" {
         }
     }
 
-    It "Base OS - CBL-D 10" {
+    It "Base OS - CBL-Mariner 2.0" {
 
         [System.Environment]::OSVersion.Platform | Should -Be 'Unix'
         $osDetails = Get-Content /etc/*release
-        $osDetails | Where-Object {$_.Contains('VERSION_ID="10"')} | Should -Not -BeNullOrEmpty
-        $osDetails | Where-Object {$_.Contains('NAME="Common Base Linux Delridge"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('VERSION_ID="2.0"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('NAME="Common Base Linux Mariner"')} | Should -Not -BeNullOrEmpty
     }
 
     It "Static Versions" {
         # These programs are installed explicitly with specific versions
-        $script:pmap["Node.JS"].Version | Should -Be '8.16.0'
-        $script:pmap["Jenkins X"].Version | Should -Be '1.3.107'
+        $script:pmap["Node.JS"].Version | Should -Be '16.14.2'
         $script:pmap["PowerShell"].Version | Should -BeLike '7.2*'        
     }
 
@@ -50,8 +46,7 @@ Describe "Various programs installed with expected versions" {
 
     It "Compare bash commands to baseline" {
         # command_list contains a list of all the files which should be installed
-        $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff /tests/command_list /tests/installed_commands"
-
+        $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff -w /tests/command_list /tests/installed_commands"
         # these may or may not be present depending on how tests were invoked
         $special = @(
             "profile.ps1", 
@@ -195,8 +190,8 @@ Describe "PowerShell Modules" {
         $module = Get-Module -Name GuestConfiguration -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
-        # GuestConfiguration module version must be 3.5.4 or greater
-        $module.Version -ge '3.5.4' | Should -Be $true
+        # GuestConfiguration module version must be 0.*.* or greater
+        $module.Version -like "4.*.*" | Should -Be $true
     }
 
     It "MicrosoftTeams PowerShell Module" {
@@ -209,7 +204,6 @@ Describe "PowerShell Modules" {
     }
 
     It "Microsoft.PowerShell.UnixCompleters PowerShell Module" {
-        
         $module = Get-Module -Name Microsoft.PowerShell.UnixCompleters -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 

@@ -1885,13 +1885,15 @@ function Get-PackageVersion() {
     
     # Enumerate all APT packages with versions
     $packages = New-Object -TypeName System.Collections.ArrayList
-    apt list --installed 2> /dev/null | % { 
-        Write-Verbose "Apt: $_"
-        if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") { 
-            $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "Apt"
-            $null = $packages.Add($p)
-        }
-    }
+
+    # TODO - find the regular expression to seperate the package name from the package version
+    # apt list --installed 2> /dev/null | % { 
+    #     Write-Verbose "Apt: $_"
+    #     if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") { 
+    #         $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "Apt"
+    #         $null = $packages.Add($p)
+    #     }
+    # }
 
     # enumerate special packages
     $pwsh = New-PackageInfo -Name "PowerShell" -Version $PSVersionTable.PSVersion.ToString() -type "Special"
@@ -1917,7 +1919,6 @@ function Get-PackageVersion() {
 
     $packageVersionDetections = @(
         @{displayname = "Node.JS"; command = "node"; args = "--version"; match = "v(.*)"},
-        @{displayname = "Jenkins X"; command = "jx"; args = "version -n"; match = "jx\s+(.*)"},
         @{displayname = "Cloud Foundry CLI"; command = "cf"; args = "-v"; match = "cf version (.*)"},
         @{displayname = "Blobxfer"; command = "blobxfer"; args = "--version"; match = "blobxfer, version (.*)"},
         @{displayname = "Batch Shipyard"; command = "shipyard"; args = "--version"; match = "shipyard.py, version (.*)"},
@@ -1927,9 +1928,7 @@ function Get-PackageVersion() {
         @{displayname = "Go"; command = "go"; args = "version"; match = "go version go(\S+) .*"},
         @{displayname = "Packer"; command = "packer"; args = "version"; match = "Packer v(.+)"},
         @{displayname = "DC/OS CLI"; command = "dcos"; args = "--version"; match = "dcoscli.version=(.*)"},
-        @{displayname = "Chef Workstation"; command = "chef"; args = "-v"; match = "Chef Workstation version: (.*)"},
         @{displayname = "Ripgrep"; command = "rg"; args = "--help | head"; match = "ripgrep ([\d\.]+)$"},
-        @{displayname = "Docker-machine"; command = "docker-machine"; args = "version"; match = "docker-machine version ([\d\.]+),"},
         @{displayname = "Helm"; command = "helm"; args = "version --short"; match = "v(.+)"},
         @{displayname = "Draft"; command = "draft"; args = "version --short"; match = "v(.+)"},
         @{displayname = "AZCopy"; command = "azcopy"; args = "--version"; match = "azcopy version (.+)"},
