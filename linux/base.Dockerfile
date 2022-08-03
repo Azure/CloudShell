@@ -111,9 +111,7 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   zsh
 
 # Install Maven
-RUN tdnf -y install mariner-repos-preview
 RUN tdnf update -y && bash ./tdnfinstall.sh maven
-RUN tdnf -y remove mariner-repos-preview
 
 RUN tdnf clean all
 
