@@ -15,4 +15,4 @@ Tooling has been updated to reflect the new base image CBL-Mariner and should ha
 customers. If your scenario has been affected by these changes, please contact Azure support, or
 create an issue in the [Cloud Shell repository](https://github.com/Azure/CloudShell/issues).
 
-For a full list of the package versions installed via APT, you can run `apt list --installed`.
+For a full list of the package versions installed, you can run `tdnf list installed`.
