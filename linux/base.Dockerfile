@@ -86,6 +86,7 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   parallel \
   patch \
   pkg-config \
+  postgresql-devel \
   postgresql-libs \
   postgresql \
   powershell \
