@@ -13,6 +13,7 @@ FROM ${IMAGE_LOCATION}
 ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 RUN tdnf repolist --refresh
+RUN tdnf -y upgrade
 
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
@@ -65,8 +66,8 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
   && bicep --help
 
 # Upgrade Helm here for faster release - TODO move helm installation from base to tools
-RUN tdnf repolist --refresh
-RUN tdnf update helm -y
+#RUN tdnf repolist --refresh
+#RUN tdnf update helm -y
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
