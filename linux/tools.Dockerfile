@@ -64,6 +64,10 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
   && mv ./bicep /usr/local/bin/bicep \
   && bicep --help
 
+# Upgrade Helm here for faster release - TODO move helm installation from base to tools
+RUN tdnf repolist --refresh
+RUN tdnf update helm -y
+
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 
