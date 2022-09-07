@@ -25,7 +25,7 @@ RUN az extension add --system --name ai-examples -y
 RUN az extension add --system --name ssh -y
 
 # EY: get an error when we try to install this.
-RUN az extension add --system --name azure-cli-ml -y
+RUN az extension add --system --name ml -y
 
 # Install postgresql-devel for azure-cli extension rdbms-connect
 RUN tdnf update -y && bash ./tdnfinstall.sh \
