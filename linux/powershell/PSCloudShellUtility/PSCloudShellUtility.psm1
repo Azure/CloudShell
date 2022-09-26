@@ -1817,7 +1817,8 @@ function Get-PackageVersion() {
         @{displayname = "Azure CLI"; command = "az"; args = "version "; match = "`"azure-cli`": `"(.+)`""},
         @{displayname = "Kubectl"; command = "kubectl"; args = "version --client=true --short=true"; match = "Client Version: v(.+)"}
         @{displayname = "Terraform"; command = "terraform"; args = "version"; match = "Terraform v(.+)"},
-        @{displayname = "GitHub CLI"; command = "gh"; args = "--version"; match = "gh version (.+) \(.*"}
+        @{displayname = "GitHub CLI"; command = "gh"; args = "--version"; match = "gh version (.+) \(.*"},
+        @{displayname = "Azure Developer CLI"; command = "azd"; args = "version"; match = "azd version \d+\.\d+\.\d+(-[\w\d\.]*)?"}
     )
 
     foreach ($package in $packageVersionDetections) {

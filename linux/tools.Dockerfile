@@ -29,6 +29,9 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
+# Install azure-developer-cli (azd)
+RUN curl -fsSL https://aka.ms/install-azd.sh | bash
+
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 
