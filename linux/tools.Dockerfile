@@ -77,8 +77,7 @@ RUN ltarget=$(readlink /usr/local/linkerd/bin/linkerd) && \
 
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
 RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
-    && /opt/ansible/bin/python -m pip install -r requirements-azure.txt \
-    && rm requirements-azure.txt
+    && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt 
 
 #Add soft links
 RUN ln -s /usr/bin/python3 /usr/bin/python
