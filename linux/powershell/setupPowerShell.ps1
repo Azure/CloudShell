@@ -142,6 +142,8 @@ try {
         PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.5 -Force
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretManagement @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretStore @prodAllUsers
+        PowerShellGet\Install-Module -Name PSReadLine -Repository PSGallery
+        PowerShellGet\Install-Module -Name Az.Accounts -Repository PSGallery
 
         # With older base image builds, teams 1.1.6 is already installed 
         if (Get-Module MicrosoftTeams -ListAvailable) {
@@ -172,6 +174,9 @@ try {
         Write-Output "Installing powershell profile to $($PROFILE.AllUsersAllHosts)"
         Microsoft.PowerShell.Management\Copy-Item -Path $psStartupScript -Destination $PROFILE.AllUsersAllHosts -Verbose
         Write-Output "Installed powershell profile."
+        Write-Output "Updating PowerShell Profile"
+        Add-Content -path $profile -value "Set-PSReadLineOption -Colors @{ InLinePrediction = '#2F7004'}","Import-Module AZ.Tools.Predictor"
+
         
         # Update PowerShell Core help files in the image, ensure any errors that result in help not being updated does not interfere with the build process
         # We want the image to have latest help files when shipped.
