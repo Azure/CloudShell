@@ -61,7 +61,6 @@ arp
 arpaname
 arping
 as
-aserver
 asn1Coding
 asn1Decoding
 asn1Parser
@@ -346,15 +345,6 @@ fakeroot-tcp
 fallocate
 false
 fc
-fc-cache
-fc-cat
-fc-conflist
-fc-list
-fc-match
-fc-pattern
-fc-query
-fc-scan
-fc-validate
 fdisk
 fg
 fgrep
@@ -953,8 +943,6 @@ pl2pm
 pldd
 plipconfig
 pmap
-pngfix
-png-fix-itxt
 pod2html
 pod2man
 pod2text
@@ -1401,7 +1389,6 @@ zipgrep
 zipinfo
 zipnote
 zipsplit
-zless
 zlib_decompress
 zmore
 znew
