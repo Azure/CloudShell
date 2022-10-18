@@ -18,13 +18,12 @@ SHELL ["/bin/bash","-c"]
 
 COPY linux/tdnfinstall.sh .
 
-RUN tdnf clean all
 RUN tdnf repolist --refresh
-RUN tdnf update -y
 
-RUN bash ./tdnfinstall.sh mariner-repos-extended
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  mariner-repos-extended
 
-RUN bash ./tdnfinstall.sh \
+RUN tdnf update -y && bash ./tdnfinstall.sh \
   curl \
   xz \
   git \
@@ -32,14 +31,18 @@ RUN bash ./tdnfinstall.sh \
   gnupg2
 
 # Install nodejs
-RUN bash ./tdnfinstall.sh nodejs
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  nodejs
 
 ENV NPM_CONFIG_LOGLEVEL warn
+ENV NODE_VERSION 8.16.0
 ENV NODE_ENV production
+ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
-RUN bash ./tdnfinstall.sh \
+RUN tdnf update -y && bash ./tdnfinstall.sh \
   autoconf \
   ansible \
+# azure-functions-core-tools \
   bash-completion \
   build-essential \
   binutils \
@@ -108,10 +111,12 @@ RUN bash ./tdnfinstall.sh \
   zsh
 
 # Install Maven
-RUN bash ./tdnfinstall.sh maven
+RUN tdnf update -y && bash ./tdnfinstall.sh maven
+
+RUN tdnf clean all
 
 # Additional packages required for Mariner to be closer to parity with CBL-D
-RUN bash ./tdnfinstall.sh \
+RUN tdnf update -y && bash ./tdnfinstall.sh \
   apparmor-parser \
   apparmor-utils \
   cronie \
@@ -138,10 +143,10 @@ RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Az
   && rm -r Azure.Functions.Cli.linux-x64.4.0.3971.zip
 
 # Install Jenkins X client
-RUN bash ./tdnfinstall.sh jx
+RUN tdnf update -y && bash ./tdnfinstall.sh jx
 
 # Install CloudFoundry CLI
-RUN bash ./tdnfinstall.sh cf-cli
+RUN tdnf update -y && bash ./tdnfinstall.sh cf-cli
 
 
 # Setup locale to en_US.utf8
@@ -208,7 +213,12 @@ RUN bash ./tdnfinstall.sh \
 ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
 
-RUN bash ./tdnfinstall.sh \
+# RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
+#   && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
+#   && ln -sf INSTALL_DIRECTORY/dep /usr/bin/dep \
+#   && unset INSTALL_DIRECTORY
+
+RUN tdnf update -y && bash ./tdnfinstall.sh \
   ruby \
   rubygems
 
@@ -222,10 +232,10 @@ ENV BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Download and Install the latest packer (AMD64)
-RUN bash ./tdnfinstall.sh packer
+RUN tdnf update -y && bash ./tdnfinstall.sh packer
 
 # Install dcos
-RUN bash ./tdnfinstall.sh dcos-cli
+RUN tdnf update -y && bash ./tdnfinstall.sh dcos-cli
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
@@ -250,7 +260,7 @@ RUN npm install -g yo \
   && npm install -g generator-az-terra-module
 
 # Download and install AzCopy SCD of linux-x64
-RUN bash ./tdnfinstall.sh azcopy
+RUN tdnf update -y && bash ./tdnfinstall.sh azcopy
 
 
 # Copy and run script to Install powershell modules
