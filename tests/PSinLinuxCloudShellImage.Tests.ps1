@@ -25,7 +25,6 @@ Describe "Various programs installed with expected versions" {
     It "Some Versions Installed" {
         # These programs are not pinned to exact versions, we just check they are still installed and 
         # running the version command works
-        
         $script:packages | ? Type -eq "Special" | % {
             $name = $_.Name
             $_.Version | Should -Not -BeNullOrEmpty -Because "$name should be present"
