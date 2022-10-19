@@ -1,4 +1,3 @@
-
 # IMAGE_LOCATION refers to a Microsoft-internal container registry which stores a cached version
 # of the image built from base.Dockerfile. If you are building this file outside Microsoft, you 
 # won't be able to reach this location, but don't worry!
@@ -10,9 +9,9 @@ ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/az
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
-ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
-
+RUN tdnf clean all
 RUN tdnf repolist --refresh
+RUN tdnf update -y
 
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
@@ -28,8 +27,7 @@ RUN az extension add --system --name ssh -y
 RUN az extension add --system --name ml -y
 
 # Install postgresql-devel for azure-cli extension rdbms-connect
-RUN tdnf update -y && bash ./tdnfinstall.sh \
-  postgresql-devel
+RUN bash ./tdnfinstall.sh postgresql-devel
 
 # Install kubectl
 RUN az aks install-cli \
@@ -37,12 +35,10 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubelogin
 
 # Install terraform
-RUN tdnf update -y && bash ./tdnfinstall.sh \
-  terraform
+RUN bash ./tdnfinstall.sh terraform
 
 # github CLI
-RUN tdnf update -y && bash ./tdnfinstall.sh \
-  gh
+RUN bash ./tdnfinstall.sh gh
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
@@ -63,10 +59,6 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
   && chmod +x ./bicep \
   && mv ./bicep /usr/local/bin/bicep \
   && bicep --help
-
-# Upgrade Helm here for faster release - TODO move helm installation from base to tools
-RUN tdnf repolist --refresh
-RUN tdnf update helm -y
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
