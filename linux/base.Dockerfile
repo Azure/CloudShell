@@ -250,10 +250,8 @@ RUN bash ./tdnfinstall.sh \
 RUN bash ./tdnfinstall.sh \
   helm
 
-# Copy and run the Draft install script, which fetches the latest release of Draft with
-# optimizations for running inside cloud shell.
-COPY ./linux/draftInstall.sh .
-RUN bash ./draftInstall.sh && rm -f ./draftInstall.sh
+# Install Azure draft
+RUN curl -fsSL https://raw.githubusercontent.com/Azure/draft/main/scripts/install.sh | bash
 
 # Install Yeoman Generator and predefined templates
 RUN npm install -g yo \
