@@ -97,6 +97,7 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   puppet \
   rpm \
   rsync \
+  screen \
   sed \
   sudo \
   tar \
