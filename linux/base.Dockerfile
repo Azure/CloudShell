@@ -18,31 +18,28 @@ SHELL ["/bin/bash","-c"]
 
 COPY linux/tdnfinstall.sh .
 
-RUN tdnf repolist --refresh
-
-RUN tdnf update -y && bash ./tdnfinstall.sh \
+RUN bash ./tdnfinstall.sh \
   mariner-repos-extended
 
-RUN tdnf update -y && bash ./tdnfinstall.sh \
+RUN bash ./tdnfinstall.sh \
   curl \
   xz \
   git \
   gpgme \
   gnupg2
 
-# Install nodejs
-RUN tdnf update -y && bash ./tdnfinstall.sh \
-  nodejs
+# Install nodejs 16.17.1
+RUN bash ./tdnfinstall.sh \
+  nodejs-16.17.1 
 
 ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_VERSION 8.16.0
+ENV NODE_VERSION 16.17.1
 ENV NODE_ENV production
 ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
-RUN tdnf update -y && bash ./tdnfinstall.sh \
+RUN bash ./tdnfinstall.sh \
   autoconf \
   ansible \
-# azure-functions-core-tools \
   bash-completion \
   build-essential \
   binutils \
@@ -111,12 +108,21 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   zsh
 
 # Install Maven
-RUN tdnf update -y && bash ./tdnfinstall.sh maven
-
-RUN tdnf clean all
+RUN bash ./tdnfinstall.sh \
+  maven \
+  jx \
+  cf-cli \
+  golang \
+  ruby \
+  rubygems \
+  packer \
+  dcos-cli \
+  ripgrep \
+  helm \
+  azcopy
 
 # Additional packages required for Mariner to be closer to parity with CBL-D
-RUN tdnf update -y && bash ./tdnfinstall.sh \
+RUN bash ./tdnfinstall.sh \
   apparmor-parser \
   apparmor-utils \
   cronie \
@@ -142,12 +148,6 @@ RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Az
   && ln -sf /opt/azure-functions-cli/gozip /usr/bin/gozip \
   && rm -r Azure.Functions.Cli.linux-x64.4.0.3971.zip
 
-# Install Jenkins X client
-RUN tdnf update -y && bash ./tdnfinstall.sh jx
-
-# Install CloudFoundry CLI
-RUN tdnf update -y && bash ./tdnfinstall.sh cf-cli
-
 
 # Setup locale to en_US.utf8
 RUN echo en_US UTF-8 >> /etc/locale.conf && locale-gen.sh
@@ -155,8 +155,7 @@ ENV LANG="en_US.utf8"
 
 # Update pip and Install Service Fabric CLI
 # Install mssql-scripter
-RUN pip3 install --upgrade pip \
-  && pip3 install --upgrade sfctl \
+RUN pip3 install --upgrade sfctl \
   && pip3 install --upgrade mssql-scripter
 
 # Install Blobxfer and Batch-Shipyard in isolated virtualenvs
@@ -206,21 +205,9 @@ RUN export INSTALLROOT=/usr/local/linkerd \
   && curl -sSL https://run.linkerd.io/install | sh - 
 ENV PATH $PATH:/usr/local/linkerd/bin
 
-# install go
-RUN bash ./tdnfinstall.sh \
-  golang
-
 ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
 
-# RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
-#   && curl -sSL https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-#   && ln -sf INSTALL_DIRECTORY/dep /usr/bin/dep \
-#   && unset INSTALL_DIRECTORY
-
-RUN tdnf update -y && bash ./tdnfinstall.sh \
-  ruby \
-  rubygems
 
 RUN gem install bundler --version 1.16.4 --force \
   && gem install rake --version 12.3.0 --no-document --force \
@@ -231,24 +218,10 @@ ENV GEM_HOME=~/bundle
 ENV BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
-# Download and Install the latest packer (AMD64)
-RUN tdnf update -y && bash ./tdnfinstall.sh packer
-
-# Install dcos
-RUN tdnf update -y && bash ./tdnfinstall.sh dcos-cli
-
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 # don't tell users to upgrade, they can't
 ENV POWERSHELL_UPDATECHECK Off
-
-# Install ripgrep
-RUN bash ./tdnfinstall.sh \
-  ripgrep
-
-# Install Helm
-RUN bash ./tdnfinstall.sh \
-  helm
 
 # Install Azure draft
 RUN curl -fsSL https://raw.githubusercontent.com/Azure/draft/main/scripts/install.sh | bash
@@ -256,9 +229,6 @@ RUN curl -fsSL https://raw.githubusercontent.com/Azure/draft/main/scripts/instal
 # Install Yeoman Generator and predefined templates
 RUN npm install -g yo \
   && npm install -g generator-az-terra-module
-
-# Download and install AzCopy SCD of linux-x64
-RUN tdnf update -y && bash ./tdnfinstall.sh azcopy
 
 
 # Copy and run script to Install powershell modules
