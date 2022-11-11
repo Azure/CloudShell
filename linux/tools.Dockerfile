@@ -59,10 +59,6 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 
-# Temp: fix linkerd symlink if it points nowhere. This can be removed after next base image update
-RUN ltarget=$(readlink /usr/local/linkerd/bin/linkerd) && \
-    if [ ! -f $ltarget ] ; then rm /usr/local/linkerd/bin/linkerd ; ln -s /usr/local/linkerd/bin/linkerd-stable* /usr/local/linkerd/bin/linkerd ; fi
-
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
 RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
     && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt 

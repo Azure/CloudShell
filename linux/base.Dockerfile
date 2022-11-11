@@ -16,6 +16,8 @@ FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
 
 SHELL ["/bin/bash","-c"]
 
+RUN tdnf update -y --refresh
+
 COPY linux/tdnfinstall.sh .
 
 RUN bash ./tdnfinstall.sh \
