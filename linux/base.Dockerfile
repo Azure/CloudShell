@@ -23,13 +23,6 @@ COPY linux/tdnfinstall.sh .
 RUN bash ./tdnfinstall.sh \
   mariner-repos-extended
 
-RUN bash ./tdnfinstall.sh \
-  curl \
-  xz \
-  git \
-  gpgme \
-  gnupg2
-
 # Install nodejs 16.17.1
 RUN bash ./tdnfinstall.sh \
   nodejs-16.17.1 
@@ -40,6 +33,11 @@ ENV NODE_ENV production
 ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 RUN bash ./tdnfinstall.sh \
+  curl \
+  xz \
+  git \
+  gpgme \
+  gnupg2 \
   autoconf \
   ansible \
   bash-completion \
@@ -107,10 +105,7 @@ RUN bash ./tdnfinstall.sh \
   wget \
   which \
   zip \
-  zsh
-
-# Install Maven
-RUN bash ./tdnfinstall.sh \
+  zsh \
   maven \
   jx \
   cf-cli \
@@ -121,10 +116,7 @@ RUN bash ./tdnfinstall.sh \
   dcos-cli \
   ripgrep \
   helm \
-  azcopy
-
-# Additional packages required for Mariner to be closer to parity with CBL-D
-RUN bash ./tdnfinstall.sh \
+  azcopy \
   apparmor-parser \
   apparmor-utils \
   cronie \
