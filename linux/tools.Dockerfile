@@ -9,10 +9,6 @@ ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/az
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
-RUN tdnf clean all
-RUN tdnf repolist --refresh
-RUN tdnf update -y
-
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
 RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
@@ -20,24 +16,18 @@ RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli
     && rm azure-cli-latest-mariner2.0.rpm
 
 # Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ai-examples -y
-RUN az extension add --system --name ssh -y
-
-# EY: get an error when we try to install this.
-RUN az extension add --system --name ml -y
-
-# Install postgresql-devel for azure-cli extension rdbms-connect
-RUN bash ./tdnfinstall.sh postgresql-devel
+RUN az extension add --system --name ai-examples -y \
+&& az extension add --system --name ssh -y \
+&& az extension add --system --name ml -y
 
 # Install kubectl
 RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
-# Install terraform
+# Remove after base image gets updated
+RUN bash ./tdnfinstall.sh postgresql-devel
 RUN bash ./tdnfinstall.sh terraform
-
-# github CLI
 RUN bash ./tdnfinstall.sh gh
 
 RUN mkdir -p /usr/cloudshell
@@ -62,10 +52,6 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
 
 # Remove su so users don't have su access by default. 
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
-
-# Temp: fix linkerd symlink if it points nowhere. This can be removed after next base image update
-RUN ltarget=$(readlink /usr/local/linkerd/bin/linkerd) && \
-    if [ ! -f $ltarget ] ; then rm /usr/local/linkerd/bin/linkerd ; ln -s /usr/local/linkerd/bin/linkerd-stable* /usr/local/linkerd/bin/linkerd ; fi
 
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
 RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
