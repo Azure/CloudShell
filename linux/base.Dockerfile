@@ -23,9 +23,9 @@ COPY linux/tdnfinstall.sh .
 RUN bash ./tdnfinstall.sh \
   mariner-repos-extended
 
-# Install nodejs 16.17.1
+# Install nodejs
 RUN bash ./tdnfinstall.sh \
-  nodejs-16.17.1 
+  nodejs
 
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_VERSION 16.17.1
@@ -131,7 +131,10 @@ RUN bash ./tdnfinstall.sh \
   shared-mime-info \
   sysstat \
   xauth \
-  screen
+  screen \
+  postgresql-devel \
+  terraform \
+  gh
 
 # Install azure-functions-core-tools
 RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.3971/Azure.Functions.Cli.linux-x64.4.0.3971.zip \

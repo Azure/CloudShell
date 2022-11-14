@@ -16,24 +16,18 @@ RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli
     && rm azure-cli-latest-mariner2.0.rpm
 
 # Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ai-examples -y
-RUN az extension add --system --name ssh -y
-
-# EY: get an error when we try to install this.
-RUN az extension add --system --name ml -y
-
-# Install postgresql-devel for azure-cli extension rdbms-connect
-RUN bash ./tdnfinstall.sh postgresql-devel
+RUN az extension add --system --name ai-examples -y \
+&& az extension add --system --name ssh -y \
+&& az extension add --system --name ml -y
 
 # Install kubectl
 RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
-# Install terraform
+# Remove after base image gets updated
+RUN bash ./tdnfinstall.sh postgresql-devel
 RUN bash ./tdnfinstall.sh terraform
-
-# github CLI
 RUN bash ./tdnfinstall.sh gh
 
 RUN mkdir -p /usr/cloudshell
