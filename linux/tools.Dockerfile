@@ -9,6 +9,10 @@ ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/az
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
+RUN tdnf clean all
+RUN tdnf repolist --refresh
+RUN tdnf update -y
+
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
 RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
