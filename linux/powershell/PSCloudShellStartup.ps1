@@ -13,10 +13,6 @@ $script:SkipMSIAuth = [System.Environment]::GetEnvironmentVariable('SkipMSIAuth'
 Microsoft.PowerShell.Core\Import-Module -Name PSCloudShellUtility
 $script:PSCloudShellUtilityModuleInfo = Microsoft.PowerShell.Core\Get-Module PSCloudShellUtility
 
-# For the Az.Tools.Predictor
-Set-PSReadLineOption -Colors @{ InLinePrediction = '#2F7004'}
-Import-Module Az.Tools.Predictor -Force
-
 $script:CloudEnvironmentMap = @{
     PROD = 'AzureCloud'; 
     Fairfax = 'AzureUSGovernment'; 
@@ -24,6 +20,10 @@ $script:CloudEnvironmentMap = @{
     BlackForest = 'AzureGermanCloud';
     dogfood = 'dogfood'
 }
+
+# For the Az.Tools.Predictor
+PSReadline\Set-PSReadLineOption -Colors @{ InLinePrediction = '#2F7004'}
+Microsoft.PowerShell.Core\Import-Module Az.Tools.Predictor -Force
 
 # Using the new set of az cmdlets
 Microsoft.PowerShell.Core\Import-Module Az.Accounts
