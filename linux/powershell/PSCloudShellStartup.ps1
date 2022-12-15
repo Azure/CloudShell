@@ -22,7 +22,7 @@ $script:CloudEnvironmentMap = @{
 }
 
 # For the Az.Tools.Predictor
-PSReadline\Set-PSReadLineOption -Colors @{ InLinePrediction = '#2F7004'}
+PSReadline\Set-PSReadLineOption -Colors @{ InLinePrediction = '#8d8d8d'}
 Microsoft.PowerShell.Core\Import-Module Az.Tools.Predictor -Force
 
 # Using the new set of az cmdlets
