@@ -37,14 +37,6 @@ RUN bash ./tdnfinstall.sh gh
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 
-# Copy and run script to Install powershell modules and setup Powershell machine profile
-COPY ./linux/powershell/PSCloudShellUtility/ /usr/local/share/powershell/Modules/PSCloudShellUtility/
-COPY ./linux/powershell/ powershell
-RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./powershell
-
-# install powershell warmup script
-COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
-
 # Install Office 365 CLI templates
 RUN npm install -q -g @pnp/cli-microsoft365
 
@@ -54,12 +46,24 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
   && mv ./bicep /usr/local/bin/bicep \
   && bicep --help
 
-# Remove su so users don't have su access by default. 
-RUN rm -f ./linux/Dockerfile && rm -f /bin/su
-
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
 RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
     && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt 
+    
+# Copy and run script to Install powershell modules and setup Powershell machine profile
+COPY ./linux/powershell/PSCloudShellUtility/ /usr/local/share/powershell/Modules/PSCloudShellUtility/
+COPY ./linux/powershell/ powershell
+RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./powershell
+
+# install powershell warmup script
+COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
+
+
+
+# Remove su so users don't have su access by default. 
+RUN rm -f ./linux/Dockerfile && rm -f /bin/su
+
+
 
 #Add soft links
 RUN ln -s /usr/bin/python3 /usr/bin/python

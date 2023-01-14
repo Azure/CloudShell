@@ -21,6 +21,10 @@ $script:CloudEnvironmentMap = @{
     dogfood = 'dogfood'
 }
 
+# For the Az.Tools.Predictor
+PSReadline\Set-PSReadLineOption -Colors @{ InLinePrediction = '#8d8d8d'}
+Microsoft.PowerShell.Core\Import-Module Az.Tools.Predictor -Force
+
 # Using the new set of az cmdlets
 Microsoft.PowerShell.Core\Import-Module Az.Accounts
 Az.Accounts\Enable-AzureRmAlias
