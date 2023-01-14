@@ -9,7 +9,6 @@
     "Manage Azure Active Directory: Get-Command -Module AzureAD*",
     "Customize your experience: save your profile to $HOME/.config/PowerShell",
     "To edit files in the shell, type: code, vim, emacs, vi or nano",
-    "Connect to a remote Azure VM: Enter-AzVM",
     "Save files to $home/clouddrive for persistence across sessions",
     "Download files or directories from the cloudshell: Export-File",
     "Read more about PowerShell in CloudShell: https://aka.ms/pscloudshell/docs",
