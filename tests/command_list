@@ -1014,6 +1014,7 @@ readonly
 readprofile
 realpath
 reboot
+redis-cli
 refer
 register-python-argcomplete
 reindexdb

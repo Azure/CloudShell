@@ -33,6 +33,7 @@ RUN az aks install-cli \
 RUN bash ./tdnfinstall.sh postgresql-devel
 RUN bash ./tdnfinstall.sh terraform
 RUN bash ./tdnfinstall.sh gh
+RUN bash ./tdnfinstall.sh redis
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
