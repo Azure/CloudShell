@@ -1014,7 +1014,6 @@ readonly
 readprofile
 realpath
 reboot
-redis
 redis-benchmark
 redis-check-aof
 redis-check-rdb
