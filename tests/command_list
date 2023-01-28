@@ -1017,6 +1017,7 @@ reboot
 redis-benchmark
 redis-check-aof
 redis-check-rdb
+redis-cli
 redis-sentinel
 redis-server
 refer
