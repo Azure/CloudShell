@@ -11,7 +11,7 @@ FROM ${IMAGE_LOCATION}
 
 RUN tdnf clean all
 RUN tdnf repolist --refresh
-RUN tdnf update -y
+RUN ACCEPT_EULA=Y tdnf update -y
 
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
