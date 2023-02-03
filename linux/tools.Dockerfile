@@ -13,6 +13,10 @@ RUN tdnf clean all
 RUN tdnf repolist --refresh
 RUN ACCEPT_EULA=Y tdnf update -y
 
+RUN tdnf remove -y msodbcsql17 mssql-tools
+RUN ACCEPT_EULA=Y tdnf install -y msodbcsql18 mssql-tools18
+ENV PATH $PATH:/opt/mssql-tools18/bin
+
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
 RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
