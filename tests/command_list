@@ -356,9 +356,6 @@ fincore
 find
 findfs
 findmnt
-fish
-fish_indent
-fish_key_reader
 flock
 fmt
 fold
