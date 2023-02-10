@@ -75,8 +75,8 @@ RUN bash ./tdnfinstall.sh \
   man-db \
   moby-cli \
   moby-engine \
-  msodbcsql17 \
-  mssql-tools \
+  msodbcsql18 \
+  mssql-tools18 \
   mysql \
   nano \
   net-tools \
@@ -205,7 +205,7 @@ RUN export INSTALLROOT=/usr/local/linkerd \
 ENV PATH $PATH:/usr/local/linkerd/bin
 
 ENV GOROOT="/usr/lib/golang"
-ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools/bin"
+ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
 
 
 RUN gem install bundler --version 1.16.4 --force \
