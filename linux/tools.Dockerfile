@@ -4,7 +4,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/azure/cloudshell:1.0.20221130.1.base.master.f5906848
+ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cloudshell:base.master.07b1ffd5.20230210.1
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
