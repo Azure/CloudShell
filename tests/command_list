@@ -994,7 +994,6 @@ python3.9
 python3.9-config
 python3-config
 python-argcomplete-check-easy-install-script
-python-argcomplete-tcsh
 racc
 rake
 ranlib
@@ -1075,6 +1074,8 @@ rview
 rvim
 sadf
 sar
+sasldblistusers2
+saslpasswd2
 sclient
 scp
 screen
