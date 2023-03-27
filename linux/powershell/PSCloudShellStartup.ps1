@@ -33,8 +33,14 @@ Az.Accounts\Enable-AzureRmAlias
 # For Pwsh profile, see https://docs.microsoft.com/en-us/powershell/scripting/whats-new/what-s-new-in-powershell-core-60?view=powershell-6#filesystem
     
 $script:UserDefaultPath = $HOME
-$script:CurrentHostProfilePath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/PowerShell/Microsoft.PowerShell_profile.ps1')
-$script:AllHostsProfilePath    = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/PowerShell/profile.ps1') 
+$script:CurrentHostProfilePath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/powershell/Microsoft.PowerShell_profile.ps1')
+$script:AllHostsProfilePath    = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/powershell/profile.ps1') 
+
+#Added to help migration from a breaking change of fixing incorrectly cased powershell profile paths
+$legacyUpperCaseProfilePath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/PowerShell')
+if (Test-Path $legacyUpperCaseProfilePath) {
+    Write-Warning "We detected you have a profile folder at $upperProfilePath. Please move these files to .config/powershell instead of .config/PowerShell (case sensitive difference) in your home folder to re-enable your profile files."
+}
 
 # To ensure that the installed script is immediately usable, we need to add the scope path to the PATH enviroment variable.
 $scriptPath = Microsoft.PowerShell.Management\Join-Path $env:HOME '.local/share/powershell/Scripts'
