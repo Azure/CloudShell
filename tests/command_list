@@ -294,7 +294,6 @@ elfedit
 elif
 else
 emacs
-emacs-28.1
 emacsclient
 enable
 enc2xs
