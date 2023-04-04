@@ -294,7 +294,7 @@ elfedit
 elif
 else
 emacs
-emacs-28.1
+emacs-28.2
 emacsclient
 enable
 enc2xs
@@ -576,7 +576,6 @@ isosize
 isql
 istioctl
 iusql
-jaotc
 jar
 jarsigner
 java
@@ -593,7 +592,6 @@ jfr
 jhsdb
 jimage
 jinfo
-jjs
 jlink
 jmap
 jmod
@@ -862,7 +860,6 @@ oomctl
 openssl
 p11-kit
 p11tool
-pack200
 packer
 pam_namespace_helper
 pam_timestamp_check
@@ -1034,8 +1031,6 @@ rg
 ri
 rm
 rmdir
-rmic
-rmid
 rmiregistry
 rmmod
 rnano
@@ -1285,7 +1280,6 @@ unix_update
 unlink
 unlz4
 unlzma
-unpack200
 unpigz
 unset
 unshare

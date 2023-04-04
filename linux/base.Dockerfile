@@ -62,7 +62,7 @@ RUN bash ./tdnfinstall.sh \
   initscripts \
   iptables \
   iputils \
-  msopenjdk-11 \
+  msopenjdk-17 \
   jq \
   less \
   libffi \
@@ -106,7 +106,7 @@ RUN bash ./tdnfinstall.sh \
   which \
   zip \
   zsh \
-  maven \
+  maven3 \
   jx \
   cf-cli \
   golang \
