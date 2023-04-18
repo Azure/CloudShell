@@ -6,6 +6,6 @@
     "AzMaxVersion": "99.999.999",
     "AzureADMaxVersion": "2.9999.9999.9999",
     "AzureADStandardMaxVersion": "0.0.9999.9999",
-    "SQLServerModuleMaxVersion": "21.9999.99999",
+    "SQLServerModuleMaxVersion": "22.9999.99999",
     "PowerBIMaxVersion": "1.9999.9999"
 }
