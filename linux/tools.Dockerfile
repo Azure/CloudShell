@@ -1,5 +1,5 @@
 # IMAGE_LOCATION refers to a Microsoft-internal container registry which stores a cached version
-# of the image built from base.Dockerfile. If you are building this file outside Microsoft, you 
+# of the image built from base.Dockerfile. If you are building this file outside Microsoft, you
 # won't be able to reach this location, but don't worry!
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
@@ -33,6 +33,15 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
+# Install kubectl-ai
+RUN curl -LO https://github.com/sozercan/kubectl-ai/releases/latest/download/kubectl-ai_linux_amd64.tar.gz && \
+    curl -LO https://github.com/sozercan/kubectl-ai/releases/latest/download/kubectl-ai_checksums.txt && \
+    CHECKSUM=$(grep kubectl-ai_linux_amd64.tar.gz kubectl-ai_checksums.txt | awk '{print $1}') && \
+    echo "$CHECKSUM  kubectl-ai_linux_amd64.tar.gz" | sha256sum -c - && \
+    tar xzf kubectl-ai_linux_amd64.tar.gz && \
+    mv kubectl-ai /usr/local/bin/kubectl-ai && \
+    rm -rf kubectl-ai_linux_amd64.tar.gz kubectl-ai_checksums.txt
+
 # Remove after base image gets updated
 RUN bash ./tdnfinstall.sh postgresql-devel
 RUN bash ./tdnfinstall.sh terraform
@@ -52,8 +61,8 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
 
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
 RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
-    && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt 
-    
+    && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
+
 # Copy and run script to Install powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/PSCloudShellUtility/ /usr/local/share/powershell/Modules/PSCloudShellUtility/
 COPY ./linux/powershell/ powershell
@@ -62,12 +71,8 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && rm -rf ./
 # install powershell warmup script
 COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1
 
-
-
-# Remove su so users don't have su access by default. 
+# Remove su so users don't have su access by default.
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
-
-
 
 #Add soft links
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -78,5 +83,5 @@ RUN ln -s /usr/bin/node /usr/bin/nodejs
 # Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
 ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
 
-# Set AZUREPS_HOST_ENVIRONMENT 
+# Set AZUREPS_HOST_ENVIRONMENT
 ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0

@@ -636,6 +636,7 @@ ksba-config
 kswitch
 ktutil
 kubectl
+kubectl-ai
 kubelogin
 kvno
 last
