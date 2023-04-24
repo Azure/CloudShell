@@ -1,13 +1,9 @@
 
 # Microsoft Azure Cloud Shell Image
 
-Azure Cloud Shell is a browser-based shell environment which enables Azure customers to manage and configure their Azure services. It provides a [host of tools](https://docs.microsoft.com/azure/cloud-shell/features), including Azure CLI, Azure PowerShell, Ansible, Terraform, Chef, Puppet Bolt, kubectl, and many more.
+Azure Cloud Shell is a browser-based shell environment which enables Azure customers to manage and configure their Azure services. It provides a [host of tools](https://docs.microsoft.com/azure/cloud-shell/features), including Azure CLI, Azure PowerShell, Ansible, Terraform, Puppet Bolt, kubectl, and many more.
 
 For more details, check out [Overview of Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/overview#:~:text=Features%201%20Browser-based%20shell%20experience.%20...%202%20Choice,7%20Connect%20your%20Microsoft%20Azure%20Files%20storage.%20).
-
-Try out Cloud Shell by clicking the button below.
-
-[![](https://shell.azure.com/images/launchcloudshell.png "Launch Azure Cloud Shell")](https://shell.azure.com)
 
 
 # About this repository
@@ -28,16 +24,6 @@ This repository has several uses:
 The repository does *not* provide an out-of-the-box replacement for the Cloud Shell service. In addition to the container image here, Azure Cloud Shell consists of a user interface integrated into the portal, a web service which manages the infrastructure on which the containers run, and some additional code used inside the container to connect the shell process to the user interface via websocket.
 
 ## Running the Cloud Shell image locally
-
-```bash
-docker pull mcr.microsoft.com/azure-cloudshell:latest
-
-# for bash
-docker run -it mcr.microsoft.com/azure-cloudshell /bin/bash
-
-# for powershell
-docker run -it mcr.microsoft.com/azure-cloudshell /usr/bin/pwsh
-```
 
 ### Differences between running locally and in Cloud Shell
 
@@ -134,6 +120,7 @@ For a tool to be included in Cloud Shell, it has to be:
 Please:
 - support fetching tokens from Managed Identity if a tool authenticates to Azure services
 - add basic tests to the test suite run by GitHub Actions
+- consume the tools from the [Mariner package repo](https://packages.microsoft.com/cbl-mariner/2.0/)
 
 In general we avoid:
 - alpha, beta, preview or unstable versions of software. 
