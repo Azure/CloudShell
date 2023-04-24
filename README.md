@@ -120,7 +120,7 @@ For a tool to be included in Cloud Shell, it has to be:
 Please:
 - support fetching tokens from Managed Identity if a tool authenticates to Azure services
 - add basic tests to the test suite run by GitHub Actions
-- consume the tools from the [Mariner repo](https://packages.microsoft.com/cbl-mariner/2.0/)
+- consume the tools from the [Mariner package repo](https://packages.microsoft.com/cbl-mariner/2.0/)
 
 In general we avoid:
 - alpha, beta, preview or unstable versions of software. 
