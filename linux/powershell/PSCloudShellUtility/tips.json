@@ -1,5 +1,6 @@
 {
   "items": [
-    "Azure Cloud Shell now includes Predictive IntelliSense! Learn more: https://aka.ms/CloudShell/IntelliSense"
+    "Azure Cloud Shell now includes Predictive IntelliSense! Learn more: https://aka.ms/CloudShell/IntelliSense",
+    "SqlServer has been updated to Version 22!"
   ]
 }
