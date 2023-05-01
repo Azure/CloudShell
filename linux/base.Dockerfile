@@ -28,7 +28,6 @@ RUN bash ./tdnfinstall.sh \
   nodejs
 
 ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_VERSION 16.17.1
 ENV NODE_ENV production
 ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
@@ -50,8 +49,8 @@ RUN bash ./tdnfinstall.sh \
   curl \
   bind-utils \
   dos2unix \
-  dotnet-runtime-6.0 \
-  dotnet-sdk-6.0 \
+  dotnet-runtime-7.0 \
+  dotnet-sdk-7.0 \
   e2fsprogs \
   emacs \
   gawk \
@@ -138,14 +137,14 @@ RUN bash ./tdnfinstall.sh \
   redis
 
 # Install azure-functions-core-tools
-RUN wget -nv -O Azure.Functions.Cli.linux-x64.4.0.3971.zip https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.3971/Azure.Functions.Cli.linux-x64.4.0.3971.zip \
-  && unzip -d azure-functions-cli Azure.Functions.Cli.linux-x64.4.0.3971.zip \
+RUN wget -nv -O Azure.Functions.Cli.zip `curl -fSsL https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest | grep "url.*linux-x64" | grep -v "sha2" | cut -d '"' -f4` \
+  && unzip -d azure-functions-cli Azure.Functions.Cli.zip \
   && chmod +x azure-functions-cli/func \
   && chmod +x azure-functions-cli/gozip \
-  && mv azure-functions-cli /opt \
+  && mv -v azure-functions-cli /opt \
   && ln -sf /opt/azure-functions-cli/func /usr/bin/func \
   && ln -sf /opt/azure-functions-cli/gozip /usr/bin/gozip \
-  && rm -r Azure.Functions.Cli.linux-x64.4.0.3971.zip
+  && rm -r Azure.Functions.Cli.zip
 
 
 # Setup locale to en_US.utf8
@@ -208,10 +207,10 @@ ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
 
 
-RUN gem install bundler --version 1.16.4 --force \
-  && gem install rake --version 12.3.0 --no-document --force \
-  && gem install colorize --version 0.8.1 --no-document --force \
-  && gem install rspec --version 3.7.0 --no-document --force
+RUN gem install bundler --force \
+  && gem install rake --no-document --force \
+  && gem install colorize --no-document --force \
+  && gem install rspec --no-document --force
 
 ENV GEM_HOME=~/bundle
 ENV BUNDLE_PATH=~/bundle
