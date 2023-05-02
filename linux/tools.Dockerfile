@@ -4,7 +4,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/buddy/cloudshell:base.dt_update_pkgs_4.30.2023.d23573df.20230501.1
+ARG IMAGE_LOCATION=IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cloudshell:base.master.8d9a9c35.20230404.2
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
