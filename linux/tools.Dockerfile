@@ -29,15 +29,6 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
-# Install kubectl-ai
-RUN curl -LO https://github.com/sozercan/kubectl-ai/releases/latest/download/kubectl-ai_linux_amd64.tar.gz && \
-    curl -LO https://github.com/sozercan/kubectl-ai/releases/latest/download/kubectl-ai_checksums.txt && \
-    CHECKSUM=$(grep kubectl-ai_linux_amd64.tar.gz kubectl-ai_checksums.txt | awk '{print $1}') && \
-    echo "$CHECKSUM  kubectl-ai_linux_amd64.tar.gz" | sha256sum -c - && \
-    tar xzf kubectl-ai_linux_amd64.tar.gz && \
-    mv kubectl-ai /usr/local/bin/kubectl-ai && \
-    rm -rf kubectl-ai_linux_amd64.tar.gz kubectl-ai_checksums.txt
-
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 

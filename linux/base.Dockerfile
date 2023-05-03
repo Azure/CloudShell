@@ -221,9 +221,6 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 # don't tell users to upgrade, they can't
 ENV POWERSHELL_UPDATECHECK Off
 
-# Install Azure draft
-RUN curl -fsSL https://raw.githubusercontent.com/Azure/draft/main/scripts/install.sh | bash
-
 # Install Yeoman Generator and predefined templates
 RUN npm install -g yo \
   && npm install -g generator-az-terra-module
