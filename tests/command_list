@@ -262,7 +262,6 @@ domainname
 done
 dos2unix
 dotnet
-draft
 dropdb
 dropuser
 du
@@ -636,7 +635,6 @@ ksba-config
 kswitch
 ktutil
 kubectl
-kubectl-ai
 kubelogin
 kvno
 last
