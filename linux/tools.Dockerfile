@@ -13,10 +13,6 @@ RUN tdnf clean all
 RUN tdnf repolist --refresh
 RUN ACCEPT_EULA=Y tdnf update -y
 
-RUN tdnf remove -y msodbcsql17 mssql-tools
-RUN ACCEPT_EULA=Y tdnf install -y msodbcsql18 mssql-tools18
-ENV PATH $PATH:/opt/mssql-tools18/bin
-
 # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
 # We don't support using this location elsewhere - it may be removed or updated without notice
 RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
@@ -32,20 +28,6 @@ RUN az extension add --system --name ai-examples -y \
 RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
-
-# Install kubectl-ai
-RUN curl -LO https://github.com/sozercan/kubectl-ai/releases/latest/download/kubectl-ai_linux_amd64.tar.gz && \
-    curl -LO https://github.com/sozercan/kubectl-ai/releases/latest/download/kubectl-ai_checksums.txt && \
-    CHECKSUM=$(grep kubectl-ai_linux_amd64.tar.gz kubectl-ai_checksums.txt | awk '{print $1}') && \
-    echo "$CHECKSUM  kubectl-ai_linux_amd64.tar.gz" | sha256sum -c - && \
-    tar xzf kubectl-ai_linux_amd64.tar.gz && \
-    mv kubectl-ai /usr/local/bin/kubectl-ai && \
-    rm -rf kubectl-ai_linux_amd64.tar.gz kubectl-ai_checksums.txt
-
-# Remove after base image gets updated
-RUN bash ./tdnfinstall.sh postgresql-devel
-RUN bash ./tdnfinstall.sh terraform
-RUN bash ./tdnfinstall.sh gh
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
