@@ -1813,7 +1813,6 @@ function Get-PackageVersion() {
         @{displayname = "DC/OS CLI"; command = "dcos"; args = "--version"; match = "dcoscli.version=(.*)"},
         @{displayname = "Ripgrep"; command = "rg"; args = "--help | head"; match = "ripgrep ([\d\.]+)$"},
         @{displayname = "Helm"; command = "helm"; args = "version --short"; match = "v(.+)"},
-        @{displayname = "Draft"; command = "draft"; args = "version"; match = "version:  (.+)"},
         @{displayname = "AZCopy"; command = "azcopy"; args = "--version"; match = "azcopy version (.+)"},
         @{displayname = "Azure CLI"; command = "az"; args = "version "; match = "`"azure-cli`": `"(.+)`""},
         @{displayname = "Kubectl"; command = "kubectl"; args = "version --client=true --short=true"; match = "Client Version: v(.+)"}
