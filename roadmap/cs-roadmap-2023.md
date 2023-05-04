@@ -8,10 +8,8 @@ through automation
 
 ## FY2023 roadmap
 
-Azure Cloud Shell currently plans to release the following features and updates in the Sept-Oct 2023
+The Azure Cloud Shell team plans to release the following features and updates in the Sept-Oct 2023
 timeframe.
-
-We plan to focus and achieve these goals:
 
 - Increase active user satisfaction and adoption with improvement’s to UX
 - Decrease customer issues and increase adoption of VNET scenarios
@@ -46,15 +44,14 @@ functionality of Cloud Shell. This will make it easier for users to navigate and
 resources they need. Benefits include:
 
 - Improved user interface to be more modern and intuitive.
-- Accessibility improvements for users who may have disabilities or impairments by improving color
-  contrast, adjusting font sizes and other accessibility improvements.
+- Update color contrast and font sizes to improve accessibility for user that may have vision impairments.
 - Support for enhanced functionality
 
 ### Ephemeral Sessions
 
-Ephemeral sessions allow users to manage azure resources faster without the overhead of creating and
+Ephemeral sessions allow users to manage Azure resources faster without the overhead of creating and
 associating Azure storage accounts. These temporary and disposable sessions are best for scenarios
-where customers need to perform ad-hoc tasks without the need to persist and data or files between
+where customers need to perform ad-hoc tasks without the need to persist data or files between
 sessions. In addition, this provides a layer of security to scenarios to ensure that data or files
 created during the session are not accessible to other users or processes after the session ends.
 
@@ -81,7 +78,8 @@ The VNET refresh will address these issues by making improvements:
 
 ## FY2024 Investments, Investigations and discussions
 
-Working with customers, we are investigating and discussing future areas of imporvmeent and new features.  These investigation are greatly impacted and enhanced with customer feedback. We welcome your feedback as we progress through these discussions by adding issues or discussions to our repository.
+We are working with customers to investigate and discuss areas of improvement and new features.
+We welcome your feedback. Please add issues or discussions to our repository.
 
 - Multiple saved storage accounts
 - Multiple/Custom images

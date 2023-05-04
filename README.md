@@ -25,11 +25,13 @@ Cloud Shell team respects and enjoys engaging with our customers, please share o
 When you connect to Azure Cloud Shell, we start a container hosting a wide variety of tools, and
 
 connect your browser to a shell process running inside that container. This repository contains the
-Docker files used to build that image. It does _not_ contain all of the code used for the rest of
+Docker files used to build that container image. It does _not_ contain the code used for the rest of
+
 the Azure Cloud Shell service. The code in this repository may not match exactly to what is running
 in the Cloud Shell service at any given time. The service is updated periodically and changes are
-gradually rolled out to different regions over time, so there may be a lag of up to 3-4 weeks
-between a change being made here and being reflected in all Cloud Shell regions.
+gradually rolled out to different regions over time.
+There may be a lag of up to 3-4 weeks
+for changes made here to be reflected in all Cloud Shell regions.
 
 This repository has several uses:
 
@@ -41,11 +43,10 @@ This repository has several uses:
    Shell, you can create an issue or submit a Pull Request to request the tool be added. Please
    ensure that the PR actually builds within GitHub Actions.
 
-The repository does *not* provide an out-of-the-box replacement for the Cloud Shell service. In
-addition to the container image here, Azure Cloud Shell consists of a user interface integrated into
-the portal, a web service which manages the infrastructure on which the containers run, and some
-additional code used inside the container to connect the shell process to the user interface via
-websocket.
+The repository does _not_ provide an out-of-the-box replacement for the Azure Cloud Shell service.
+Azure Cloud Shell provide a user interface integrated into the Azure portal, a web service that
+manages the infrastructure on which the containers run, and some additional code used inside the
+container to connect the shell process to the user interface via a websocket.
 
 ## Running the Cloud Shell image locally
 
@@ -64,14 +65,14 @@ websocket.
 
 ### Understanding the base.Dockerfile and tools.Dockerfile
 
-The repository contains two Dockerfile, 'base' and 'tools'. Tools is built on top of the base file,
-so normally you would just have one Dockerfile and rely on the container registry to cache all the
-layers that haven't changed. However we need to cache the base image explicitly to ensure fast
-startup time. So the image is split into these two files, and the tools layer starts FROM an
-internal repository where the base image is cached, so that we know when we need to update the base.
+The repository contains two Docker configuration files: `base` and `tools`. Normally you just have
+one Dockerfile and rely on the container registry to cache the layers that haven't changed.
+However, we need to cache the base image explicitly to ensure a fast startup time. Tools is built
+on top of the base file and starts from an internal repository where the base image is cached, so
+that we know when we need to update the base.
 
 When building or using the image locally, you don't need to worry about that. Just build using the
-instructions below, and be aware that changes the the base layer will take longer to release than
+instructions below, and be aware that changes to the base layer will take longer to release than
 changes to the tools.
 
 | Layer        | Job           |
@@ -116,9 +117,9 @@ Testing the Cloud Shell image
 docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell /tests/test.sh
 ```
 
-For more information about bind mounts, please go onto the
-[Docker documentation](https://docs.docker.com/storage/bind-mounts/). We do expect all the test
-cases to pass if you would like your changes to be merged.
+For more information about bind mounts, please see the
+[Docker documentation](https://docs.docker.com/storage/bind-mounts/). We do expect all test cases
+to pass if you want your changes to be merged.
 
 ## Contribution Guidelines
 
@@ -132,12 +133,14 @@ cases to pass if you would like your changes to be merged.
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
 | Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
-| Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://docs.microsoft.com/azure/active-directory/fundamentals/active-directory-troubleshooting-support-howto#:~:text=How%20to%20open%20a%20support%20ticket%20for%20Azure,Troubleshooting%20%2B%20Support%20and%20select%20New%20support%20request.) |
+| Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-get-support) |
 
-\* For example, if you have an issue within Azure CLI, don't open up an issue with the Cloud Shell
-repo, open an issue within the Azure CLI repo. Azure PowerShell is
-[here](https://github.com/Azure/azure-powershell/issues) and Azure CLI is
-[here](https://github.com/Azure/azure-cli/issues)
+
+<sup>*</sup> For example, if you have an issue within Azure CLI, don't open up an issue in the Cloud Shell
+repo, open an issue within the Azure CLI repo.
+
+- [Azure PowerShell issues](https://github.com/Azure/azure-powershell/issues)
+- [Azure CLI issues](https://github.com/Azure/azure-cli/issues)
 
 ### Types of tools
 
@@ -168,15 +171,17 @@ In general we avoid:
 
 ## Cloud Shell Documentation
 
-Please see the [Microsoft Azure Documentation](https://github.com/MicrosoftDocs/azure-docs) for a
-guide to add to the Azure docs repo. The Cloud Shell documentation can be found
-[here](https://github.com/MicrosoftDocs/azure-docs/tree/master/articles/cloud-shell).
+The Cloud Shell documentation can be found at
+[https://learn.microsoft.com/azure/cloud-shell/overview](https://learn.microsoft.com/azure/cloud-shell/overview).
+If you wish to contribute to The Cloud Shell documentation, see the Microsoft Learn
+[Contributors Guide](https://learn.microsoft.com/contribute/).
 
 ## Legal
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+the rights to use your contribution. For details, see 
+[https://cla.microsoft.com](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
