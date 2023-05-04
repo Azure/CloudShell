@@ -61,7 +61,6 @@ Benefits include:
 - Any saved files will be deleted with the container session
 - Can be leveraged by partners to ensure that a customer can obtain a Cloud Shell session even if a
   storage account has never been configured
-- Benefits command injection scenarios
 
 ### Improving VNET Configuration
 
@@ -78,8 +77,9 @@ The VNET refresh will address these issues by making improvements:
 
 ## FY2024 Investments, Investigations and discussions
 
-We are working with customers to investigate and discuss areas of improvement and new features.
-We welcome your feedback. Please add issues or discussions to our repository.
+We are working with customers to investigate and discuss areas of improvement and new features as we
+plan our roadmap for FY2024. Below are areas of investigation - We welcome your feedback! Please add
+issues or discussions to our repository.
 
 - Multiple saved storage accounts
 - Multiple/Custom images
