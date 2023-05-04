@@ -22,7 +22,8 @@ Cloud Shell team respects and enjoys engaging with our customers, please share o
 
 ## About this repository
 
-When you connect to Azure Cloud Shell, we start a container containing a wide variety of tools, and
+When you connect to Azure Cloud Shell, we start a container hosting a wide variety of tools, and
+
 connect your browser to a shell process running inside that container. This repository contains the
 Docker files used to build that image. It does _not_ contain all of the code used for the rest of
 the Azure Cloud Shell service. The code in this repository may not match exactly to what is running
