@@ -8,7 +8,7 @@ device with a network connection. Azure Cloud Shell provides a
 PowerShell, Ansible, Terraform, Puppet Bolt, kubectl, and many more.
 
 For more details, check out
-[Overview of Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/overview#:~:text=Features%201%20Browser-based%20shell%20experience.%20...%202%20Choice,7%20Connect%20your%20Microsoft%20Azure%20Files%20storage.%20).
+[Overview of Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/overview).
 
 ## Roadmap of planned development
 
