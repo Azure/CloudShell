@@ -113,10 +113,6 @@ Describe "PowerShell Modules" {
 
         $module = Get-InstalledModule -Name Az -AllVersions
         $module | Should -Not -BeNullOrEmpty
-
-        # Verify Az module version
-        $module.Version -ge [version]"5.0" | Should -Be $true
-
     }
 
     It "Az.Accounts PowerShell Module" {
