@@ -159,6 +159,10 @@ try {
 
         if (Microsoft.PowerShell.Management\Test-Path $tempDirectory) {
             Write-Output ('Temp Directory: {0}' -f $tempDirectory)
+
+            # Install the Exchange modules from the Azure storage
+            Install-PSCloudShellFile -Source $tempDirectory -FileName 'EXOPSSessionConnector.zip' -Destination $modulePath -FileHash $script:dockerfileDataObject.ExoConnectorFileHash
+            Write-Output "Installed Exchange Package."
         }
 
         # Copy the startup script to the all-users profile 
