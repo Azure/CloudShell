@@ -1221,7 +1221,6 @@ taskset
 tbl
 tc
 tdnf
-tdnf-config
 tdnf-cache-updateinfo
 tdnfj
 tee
