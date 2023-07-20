@@ -722,6 +722,7 @@ lzmadec
 lzmainfo
 lzmore
 m365
+m365_chili
 m365_comp
 m4
 mac2unix
@@ -1220,7 +1221,9 @@ taskset
 tbl
 tc
 tdnf
+tdnf-config
 tdnf-cache-updateinfo
+tdnfj
 tee
 telinit
 terraform
