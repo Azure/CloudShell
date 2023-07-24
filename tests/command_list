@@ -61,6 +61,7 @@ arp
 arpaname
 arping
 as
+aserver
 asn1Coding
 asn1Decoding
 asn1Parser
@@ -344,6 +345,15 @@ fakeroot-tcp
 fallocate
 false
 fc
+fc-cache
+fc-cat
+fc-conflist
+fc-list
+fc-match
+fc-pattern
+fc-query
+fc-scan
+fc-validate
 fdisk
 fg
 fgrep
@@ -597,6 +607,7 @@ jmod
 jobs
 join
 journalctl
+jpackage
 jp.py
 jps
 jq
@@ -722,6 +733,7 @@ lzmadec
 lzmainfo
 lzmore
 m365
+m365_chili
 m365_comp
 m4
 mac2unix
@@ -936,6 +948,8 @@ pl2pm
 pldd
 plipconfig
 pmap
+pngfix
+png-fix-itxt
 pod2html
 pod2man
 pod2text
@@ -1221,6 +1235,8 @@ tbl
 tc
 tdnf
 tdnf-cache-updateinfo
+tdnf-config
+tdnfj
 tee
 telinit
 terraform

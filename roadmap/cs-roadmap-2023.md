@@ -84,7 +84,7 @@ issues or discussions to our repository.
 - Multiple saved storage accounts
 - Multiple/Custom images
 - Improved editor experience
-- Tenent/Subscription Administrative controls to manage Cloud Shell access.
+- Tenant/Subscription Administrative controls to manage Cloud Shell access.
 - Toolbar tabs
 - Improvements to Cloud Shell timeout values
 
