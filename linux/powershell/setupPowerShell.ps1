@@ -139,7 +139,7 @@ try {
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
         PowerShellGet\Install-Module -Force PSReadLine @prodAllUsers
         PowerShellGet\Install-Module -Name Az.Tools.Predictor @prodAllUsers
-        PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 2.0.5 -Force
+        PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 3.2.0 -Force
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretManagement @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretStore @prodAllUsers
 
@@ -159,10 +159,6 @@ try {
 
         if (Microsoft.PowerShell.Management\Test-Path $tempDirectory) {
             Write-Output ('Temp Directory: {0}' -f $tempDirectory)
-
-            # Install the Exchange modules from the Azure storage
-            Install-PSCloudShellFile -Source $tempDirectory -FileName 'EXOPSSessionConnector.zip' -Destination $modulePath -FileHash $script:dockerfileDataObject.ExoConnectorFileHash
-            Write-Output "Installed Exchange Package."
         }
 
         # Copy the startup script to the all-users profile 

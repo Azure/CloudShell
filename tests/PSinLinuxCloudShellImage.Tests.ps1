@@ -162,15 +162,6 @@ Describe "PowerShell Modules" {
 
     }
 
-    It "EXOConnector PowerShell Module" {
-
-        $module = Get-Module -Name EXOPSSessionConnector -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
-
-        # EXOPSSessionConnector module should have at least one command
-        (Get-Command * -Module EXOPSSessionConnector).Count -ge 1 | Should -Be $true        
-    }
-
     It "PowerBI PowerShell Module" {
 
         $module = Get-Module -Name MicrosoftPowerBIMgmt -ListAvailable
@@ -227,7 +218,6 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "Az" }
         @{ ModuleName = "MicrosoftPowerBIMgmt" }
         @{ ModuleName = "GuestConfiguration" }
-        @{ ModuleName = "EXOPSSessionConnector" }
         @{ ModuleName = "MicrosoftTeams" }
         @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }
         @{ ModuleName = "Microsoft.PowerShell.SecretManagement" }
