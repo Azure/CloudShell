@@ -49,7 +49,7 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
 RUN wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt
 RUN ls -l /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
-RN /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
+RUN /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
 
 # Copy and run script to Install powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/PSCloudShellUtility/ /usr/local/share/powershell/Modules/PSCloudShellUtility/
