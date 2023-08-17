@@ -47,6 +47,7 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
   && bicep --help
 
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
+RUN mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/
 RUN wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt
 RUN ls -l /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
 RUN /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
