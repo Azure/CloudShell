@@ -4,7 +4,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cloudshell:base.master.55fe0a50.20230503.1
+ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cloudshell:base.master.3479fc9b.20230808.1
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
@@ -47,7 +47,8 @@ RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep
   && bicep --help
 
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
-RUN wget -nv -q https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
+RUN mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/ \
+    && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt \
     && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
 
 # Copy and run script to Install powershell modules and setup Powershell machine profile
