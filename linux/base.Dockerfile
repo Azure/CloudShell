@@ -134,7 +134,8 @@ RUN bash ./tdnfinstall.sh \
   postgresql-devel \
   terraform \
   gh \
-  redis
+  redis \
+  cpio
 
 # Install azure-functions-core-tools
 RUN wget -nv -O Azure.Functions.Cli.zip `curl -fSsL https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest | grep "url.*linux-x64" | grep -v "sha2" | cut -d '"' -f4` \
