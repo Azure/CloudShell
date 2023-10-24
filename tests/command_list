@@ -82,6 +82,7 @@ autoheader
 autom4te
 automake
 automake-1.16
+autopoint
 autoreconf
 autoscan
 autoupdate
@@ -302,6 +303,7 @@ enable
 enc2xs
 encguess
 env
+envsubst
 eqn
 eqn2graph
 erb
@@ -387,7 +389,7 @@ fuser
 futurize
 g++
 gawk
-gawk-5.1.0
+gawk-5.1.1
 gcc
 gcc-ar
 gcc-nm
@@ -427,6 +429,9 @@ getpcaps
 getpidcon
 getsebool
 getseuser
+gettext
+gettextize
+gettext.sh
 gh
 gindxbib
 git
@@ -684,7 +689,7 @@ libtool
 libtoolize
 link
 linkerd
-linkerd-stable-2.11.4
+linkerd-stable-2.14.1
 linux32
 linux64
 lkbib
@@ -782,6 +787,20 @@ mountpoint
 mount.smb3
 mpicalc
 mpstat
+msgattrib
+msgcat
+msgcmp
+msgcomm
+msgconv
+msgen
+msgexec
+msgfilter
+msgfmt
+msggrep
+msginit
+msgmerge
+msgunfmt
+msguniq
 mssql-scripter
 mssql-scripter.bat
 mt
@@ -841,6 +860,7 @@ newgidmap
 newgrp
 newuidmap
 newusers
+ngettext
 nice
 niceload
 ninfod
@@ -1023,6 +1043,7 @@ readonly
 readprofile
 realpath
 reboot
+recode-sr-latin
 redis-benchmark
 redis-check-aof
 redis-check-rdb
@@ -1366,6 +1387,7 @@ x86_64-pc-linux-gnu-gcc-nm
 x86_64-pc-linux-gnu-gcc-ranlib
 xargs
 xauth
+xgettext
 xml2-config
 xmlcatalog
 xmllint
