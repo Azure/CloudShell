@@ -121,7 +121,18 @@ try {
         PowerShellGet\Install-Module -Name SHiPS @prodAllUsers    
         PowerShellGet\Install-Module -Name SQLServer -MaximumVersion $script:dockerfileDataObject.SQLServerModuleMaxVersion @prodAllUsers
         PowerShellGet\Install-Module -Name MicrosoftPowerBIMgmt -MaximumVersion $script:dockerfileDataObject.PowerBIMaxVersion @prodAllUsers
-        PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers           
+        PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers     
+
+        # MS Graph packages
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Authentication @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Users.Actions @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Users.Functions @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Groups @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Identity.DirectoryManagement @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Identity.Governance @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Identity.SignIns @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Applications @prodAllUsers
+
     }
     else {
         # update libmi.so
