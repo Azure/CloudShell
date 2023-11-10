@@ -139,7 +139,7 @@ try {
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
         PowerShellGet\Install-Module -Force PSReadLine @prodAllUsers
         PowerShellGet\Install-Module -Name Az.Tools.Predictor @prodAllUsers
-        PowerShellGet\Install-Module -Name ExchangeOnlineManagement -RequiredVersion 3.2.0 -Force
+        PowerShellGet\Install-Module -Name ExchangeOnlineManagement @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretManagement @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretStore @prodAllUsers
 
