@@ -132,11 +132,22 @@ RUN bash ./tdnfinstall.sh \
   xauth \
   screen \
   postgresql-devel \
-  terraform \
   gh \
   redis \
   cpio \
   gettext
+
+# Install Terraform
+
+RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
+  && wget -nv -O terraform.zip "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" \
+  && wget -nv -O terraform.sha256 "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" \
+  && echo "$(grep "${TF_VERSION}_linux_amd64.zip" terraform.sha256 | awk '{print $1}')  terraform.zip" | sha256sum -c \
+  && unzip terraform.zip \
+  && mv terraform /usr/local/bin/terraform \
+  && rm -f terraform.zip terraform.sha256 \
+  && unset TF_VERSION
+
 
 # Install azure-functions-core-tools
 RUN wget -nv -O Azure.Functions.Cli.zip `curl -fSsL https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest | grep "url.*linux-x64" | grep -v "sha2" | cut -d '"' -f4` \
