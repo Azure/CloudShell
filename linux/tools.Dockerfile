@@ -66,10 +66,10 @@ RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN ln -s /usr/bin/node /usr/bin/nodejs
 
-# Add user's home directories to PATH at the front so they can install tools which
-# override defaults
-# Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
-ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
+# Add custom environment variables to /etc/skel/.bashrc so they will be
+# available to users any time they open a new shell.
+COPY ./linux/bash/bashrc linux/bashrc
+RUN cat linux/bashrc >> /etc/skel/.bashrc && rm linux/bashrc
 
 # Set AZUREPS_HOST_ENVIRONMENT
 ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0
