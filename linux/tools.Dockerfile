@@ -71,5 +71,7 @@ RUN ln -s /usr/bin/node /usr/bin/nodejs
 # Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
 ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
 
+ENV AZURE_CORE_SHOW_SECRETS_WARNING True
+
 # Set AZUREPS_HOST_ENVIRONMENT
 ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0
