@@ -69,7 +69,7 @@ RUN ln -s /usr/bin/node /usr/bin/nodejs
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
 # Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
-ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
+ENV PATH $HOME/.local/bin:$HOME/bin:$HOME/.dotnet/tools:$PATH
 
 # Set AZUREPS_HOST_ENVIRONMENT
 ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0

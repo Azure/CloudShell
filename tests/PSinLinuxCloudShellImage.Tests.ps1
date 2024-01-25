@@ -74,8 +74,8 @@ Describe "Various programs installed with expected versions" {
 
     It "has local paths in `$PATH" {
         $paths = ($env:PATH).split(":")
-        $paths | Should -Contain "~/bin"
-        $paths | Should -Contain "~/.local/bin"
+        $paths | Should -Contain "$HOME/bin"
+        $paths | Should -Contain "$HOME/.local/bin"
     }
 
     It "Ansible pwsh has modules" {
