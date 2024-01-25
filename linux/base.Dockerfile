@@ -201,7 +201,7 @@ RUN chmod 755 /usr/local/bin/ansible* \
   && cd /opt \
   && virtualenv -p python3 ansible \
   && /bin/bash -c "source ansible/bin/activate && pip3 install ansible && pip3 install pywinrm\>\=0\.2\.2 && deactivate" \
-  && ansible-galaxy collection install azure.azcollection -p /usr/share/ansible/collections
+  && ansible-galaxy collection install azure.azcollection --force -p /usr/share/ansible/collections
 
 # Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest
