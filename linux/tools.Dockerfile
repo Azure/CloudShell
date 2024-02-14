@@ -29,6 +29,12 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
+# Install vscode
+RUN wget -nv -O vscode.rpm "https://go.microsoft.com/fwlink/?LinkID=760867" \
+    && tdnf install -y vscode.rpm \
+    && mv /bin/code /bin/vscode \
+    && rm vscode.rpm
+
 # Install azure-developer-cli (azd)
 ENV AZD_IN_CLOUDSHELL 1
 ENV AZD_SKIP_UPDATE_CHECK 1
