@@ -30,10 +30,10 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubelogin
 
 # Install vscode
-RUN wget -nv -O vscode.rpm "https://go.microsoft.com/fwlink/?LinkID=760867" \
-    && tdnf install -y vscode.rpm \
-    && mv /bin/code /bin/vscode \
-    && rm vscode.rpm
+RUN wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" \
+    && tar -xvzf vscode.tar.gz \
+    && mv ./code /bin/vscode \
+    && rm vscode.tar.gz
 
 # Install azure-developer-cli (azd)
 ENV AZD_IN_CLOUDSHELL 1
