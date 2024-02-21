@@ -210,12 +210,6 @@ RUN curl -sSL https://git.io/getLatestIstio | sh - \
   && chmod -R 755 $ISTIO_ROOT
 ENV PATH $PATH:$ISTIO_ROOT/bin
 
-# Install latest version of Linkerd
-RUN export INSTALLROOT=/usr/local/linkerd \
-  && mkdir -p $INSTALLROOT \
-  && curl -sSL https://run.linkerd.io/install | sh - 
-ENV PATH $PATH:/usr/local/linkerd/bin
-
 ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
 

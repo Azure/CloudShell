@@ -147,7 +147,6 @@ try {
         Write-Output "Installing modules from production gallery"    
         PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers   
         PowerShellGet\Install-Module -Name GuestConfiguration -MaximumVersion $script:dockerfileDataObject.GuestConfigurationMaxVersion -ErrorAction SilentlyContinue @prodAllUsers
-        PowerShellGet\Install-Module -Name Microsoft.PowerShell.UnixCompleters @prodAllUsers
         PowerShellGet\Install-Module -Force PSReadLine @prodAllUsers
         PowerShellGet\Install-Module -Name Az.Tools.Predictor @prodAllUsers
         PowerShellGet\Install-Module -Name ExchangeOnlineManagement @prodAllUsers

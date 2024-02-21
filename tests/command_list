@@ -688,8 +688,6 @@ libssl.so.1.0.0
 libtool
 libtoolize
 link
-linkerd
-linkerd-stable-2.14.1
 linux32
 linux64
 lkbib
