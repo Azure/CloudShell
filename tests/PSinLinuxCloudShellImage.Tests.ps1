@@ -58,7 +58,6 @@ Describe "Various programs installed with expected versions" {
             "python3m-config", 
             "x86_64-linux-gnu-python3-config", 
             "x86_64-linux-gnu-python3m-config",
-            "linkerd-stable.*",
             "pwsh-preview"
         )
 
@@ -213,7 +212,6 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "MicrosoftPowerBIMgmt" }
         @{ ModuleName = "GuestConfiguration" }
         @{ ModuleName = "MicrosoftTeams" }
-        @{ ModuleName = "Microsoft.PowerShell.UnixCompleters" }
         @{ ModuleName = "Microsoft.PowerShell.SecretManagement" }
         @{ ModuleName = "Microsoft.PowerShell.SecretStore" }
     )
