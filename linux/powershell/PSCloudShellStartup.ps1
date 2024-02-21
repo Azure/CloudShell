@@ -374,19 +374,6 @@ finally
 # Set PSDefaultParameterValues for cmdlets
 $PSDefaultParameterValues = @{'Install-Module:Scope' = 'CurrentUser'; 'Install-Script:Scope' = 'CurrentUser'}
 
-#Initialize Microsoft.PowerShell.UnixCompleters module
-
-$startLoadingMicrosoftPowerShellUnixCompleters = [System.DateTime]::Now
-try
-{
-    Microsoft.PowerShell.Core\Import-Module -Name Microsoft.PowerShell.UnixCompleters -ErrorAction SilentlyContinue
-}
-finally
-{
-    Invoke-CloudShellTelemetry -LogLabel "LOADMicrosoftPowerShellUnixCompleters" -StartTime $startLoadingMicrosoftPowerShellUnixCompleters
-}
-#endregion
-
 #region Initialize AzurePSDrive
 
 $startLoadingModules = [System.DateTime]::Now

@@ -19,7 +19,6 @@ $moduleList = @(
     "MicrosoftPowerBIMgmt",
     "Az",
     "GuestConfiguration",
-    "Microsoft.PowerShell.UnixCompleters",
     "Microsoft.PowerShell.SecretManagement",
     "Microsoft.PowerShell.SecretStore"
 )

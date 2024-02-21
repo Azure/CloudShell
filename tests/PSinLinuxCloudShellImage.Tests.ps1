@@ -189,12 +189,6 @@ Describe "PowerShell Modules" {
         # MicrosoftTeams module should have at least one command
         (Get-Command * -Module MicrosoftTeams).Count -ge 1 | Should -Be $true        
     }
-
-    It "Microsoft.PowerShell.UnixCompleters PowerShell Module" {
-        $module = Get-Module -Name Microsoft.PowerShell.UnixCompleters -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
-
-    }
     
     It "Microsoft.PowerShell.SecretManagement PowerShell Module" {
         
