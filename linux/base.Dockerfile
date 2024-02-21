@@ -25,7 +25,7 @@ RUN bash ./tdnfinstall.sh \
 
 # Install nodejs
 RUN bash ./tdnfinstall.sh \
-  nodejs
+  nodejs18
 
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_ENV production

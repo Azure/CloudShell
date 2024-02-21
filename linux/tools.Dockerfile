@@ -29,6 +29,12 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
+# Install vscode
+RUN wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" \
+    && tar -xvzf vscode.tar.gz \
+    && mv ./code /bin/vscode \
+    && rm vscode.tar.gz
+
 # Install azure-developer-cli (azd)
 ENV AZD_IN_CLOUDSHELL 1
 ENV AZD_SKIP_UPDATE_CHECK 1
