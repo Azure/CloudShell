@@ -101,6 +101,7 @@ RUN bash ./tdnfinstall.sh \
   unzip \
   util-linux \
   vim \
+  vim-extra \
   wget \
   which \
   zip \
