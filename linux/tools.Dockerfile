@@ -30,9 +30,9 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubelogin
 
 # Install vscode
-RUN wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" \
+RUN wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=insider&os=cli-alpine-x64" \
     && tar -xvzf vscode.tar.gz \
-    && mv ./code /bin/vscode \
+    && mv ./code-insiders /bin/vscode \
     && rm vscode.tar.gz
 
 # Install azure-developer-cli (azd)
