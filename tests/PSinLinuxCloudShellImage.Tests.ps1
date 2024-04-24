@@ -77,12 +77,6 @@ Describe "Various programs installed with expected versions" {
         $paths | Should -Contain "~/.local/bin"
     }
 
-    It "Ansible pwsh has modules" {
-        Test-Path -Path "/usr/share/ansible/collections/ansible_collections/azure/azcollection/" | Should -Be $true
-        $process = Start-Process -FilePath /opt/ansible/bin/python -ArgumentList "-c `"import msrest`"" -Wait -PassThru
-        $process.ExitCode | Should -Be 0
-    }
-
     It "Has various environment vars" {
         $env:AZUREPS_HOST_ENVIRONMENT | Should -Be "cloud-shell/1.0"
     }
