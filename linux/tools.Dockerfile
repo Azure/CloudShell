@@ -9,15 +9,16 @@ ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cl
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
-RUN tdnf clean all
-RUN tdnf repolist --refresh
-RUN ACCEPT_EULA=Y tdnf update -y
-
-# Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
-# We don't support using this location elsewhere - it may be removed or updated without notice
-RUN wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
+RUN tdnf clean all && \
+    tdnf repolist --refresh && \
+    ACCEPT_EULA=Y tdnf update -y && \
+    # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
+    # We don't support using this location elsewhere - it may be removed or updated without notice
+    wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
     && tdnf install -y ./azure-cli-latest-mariner2.0.rpm \
-    && rm azure-cli-latest-mariner2.0.rpm
+    && rm azure-cli-latest-mariner2.0.rpm && \
+    tdnf clean all && \
+    rm -rf /var/cache/tdnf/*
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y \

@@ -21,17 +21,10 @@ RUN tdnf update -y --refresh
 COPY linux/tdnfinstall.sh .
 
 RUN bash ./tdnfinstall.sh \
-  mariner-repos-extended
-
-# Install nodejs
-RUN bash ./tdnfinstall.sh \
-  nodejs18
-
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_ENV production
-ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
-
-RUN bash ./tdnfinstall.sh \
+  mariner-repos-extended && \
+  tdnf repolist --refresh && \
+  bash ./tdnfinstall.sh \
+  nodejs18 \
   curl \
   xz \
   git \
@@ -135,7 +128,13 @@ RUN bash ./tdnfinstall.sh \
   gh \
   redis \
   cpio \
-  gettext
+  gettext && \
+  tdnf clean all && \
+  rm -rf /var/cache/tdnf/*
+
+ENV NPM_CONFIG_LOGLEVEL warn
+ENV NODE_ENV production
+ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 # Get latest version of Terraform.
 # Customers require the latest version of Terraform.
