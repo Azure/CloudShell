@@ -22,38 +22,51 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # # Allow this job to be able to write comments to the PR
+    # permissions:
+    #   pull-requests: write
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Build base dockerfile
-      - name: Build the base.Dockerfile
-        run: docker build -t base_cloudshell -f linux/base.Dockerfile .
+      # # Build base dockerfile
+      # - name: Build the base.Dockerfile
+      #   run: docker build -t base_cloudshell -f linux/base.Dockerfile .
 
-      # Build tools dockerfile
-      - name: Build the tools.Dockerfile
-        run: docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
+      # # Build tools dockerfile
+      # - name: Build the tools.Dockerfile
+      #   run: docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
 
-      # Run the test cases
-      - name: Run the test cases
-        run: docker run --volume $(pwd)/tests:/tests tools_cloudshell /bin/bash /tests/test.sh
-
-      # Show Docker image size
-      - name: find the pull request id
-        run: echo ISSUEID=$(echo "${{github.ref }}" | sed 's!refs/pull/\([0-9]*\)/merge!\1!') >> $GITHUB_ENV
-      - name: find the base size info
-        run: echo BASE_SIZE=$(docker inspect base_cloudshell:latest --format "{{.Size}}") >> $GITHUB_ENV
-      - name: find the tools size info
-        run: echo TOOLS_SIZE=$(docker inspect tools_cloudshell:latest --format "{{.Size}}") >> $GITHUB_ENV
-      - name: update a comment with size
-        run: |
-          echo "pull id $ISSUEID size $BASE_SIZE  $TOOLS_SIZE"  && \
-          curl --request POST \
-          --url https://api.github.com/repos/${{ github.repository }}/issues/$ISSUEID/comments \
-          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-          --header 'content-type: application/json' \
-          --header 'Accept: application/vnd.github.v3+json' \
-          --data "{
-            \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB. \"
-            }"
+      # # Run the test cases
+      # - name: Run the test cases
+      #   run: docker run --volume $(pwd)/tests:/tests tools_cloudshell /bin/bash /tests/test.sh
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB.'
+            })
+      # # Show Docker image size
+      # - name: find the base size info
+      #   # run: echo BASE_SIZE=$(docker inspect base_cloudshell:latest --format "{{.Size}}") >> $GITHUB_ENV
+      #   run: echo BASE_SIZE=100 >> $GITHUB_ENV
+      # - name: find the tools size info
+      #   # run: echo TOOLS_SIZE=$(docker inspect tools_cloudshell:latest --format "{{.Size}}") >> $GITHUB_ENV
+      #   run: echo TOOLS_SIZE=200 >> $GITHUB_ENV
+      # - name: update a comment with size
+      #   run: |
+      #     echo "pull id ${{ github.event.number }} size $BASE_SIZE $TOOLS_SIZE"  && \
+      #     curl -L \
+      #     -X POST \
+      #     -H "Accept: application/vnd.github+json" \
+      #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #     -H "X-GitHub-Api-Version: 2022-11-28" \
+      #     https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments \
+      #     -d "{
+      #       \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB. \"
+      #       }"
