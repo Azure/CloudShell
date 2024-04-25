@@ -1,0 +1,41 @@
+name: Build & Push Cloudshell Images
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Base image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: linux/base.Dockerfile
+        push: true
+        tags: ghcr.io/cloudshell/base:${{ github.sha }},ghcr.io/cloudshell/base:latest
+
+    - name: Tools image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: linux/tools.Dockerfile
+        push: true
+        tags: ghcr.io/cloudshell/tools:${{ github.sha }},ghcr.io/cloudshell/tools:latest
+        build-args: IMAGE_LOCATION=ghcr.io/cloudshell/base:${{ github.sha }}

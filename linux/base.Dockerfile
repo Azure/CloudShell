@@ -13,6 +13,7 @@
 # ability to stay current on Linux updates.
 # https://github.com/microsoft/CBL-Mariner
 FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
+LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
 SHELL ["/bin/bash","-c"]
 COPY linux/tdnfinstall.sh .
