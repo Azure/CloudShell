@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-source /opt/blobxfer/bin/activate
-blobxfer $*
-deactivate
