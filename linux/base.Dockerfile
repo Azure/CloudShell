@@ -1,5 +1,5 @@
-# base.Dockerfile contains components which are large and change less frequently. 
-# tools.Dockerfile contains the smaller, more frequently-updated components. 
+# base.Dockerfile contains components which are large and change less frequently.
+# tools.Dockerfile contains the smaller, more frequently-updated components.
 
 # Within Azure, the image layers
 # built from this file are cached in a number of locations to speed up container startup time. A manual
@@ -175,23 +175,6 @@ RUN chmod 755 /usr/local/bin/blobxfer \
   && cd /opt \
   && virtualenv -p python3 blobxfer \
   && /bin/bash -c "source blobxfer/bin/activate && pip3 install blobxfer && deactivate"
-
-# Mariner distro required patch
-# mariner-batch-shipyard.patch
-# python3 is default in CBL-Mariner
-# Some hacks to install.sh install-tweaked.sh
-RUN curl -fSsL `curl -fSsL https://api.github.com/repos/Azure/batch-shipyard/releases/latest | grep tarball_url | cut -d'"' -f4` | tar -zxvpf - \
-  && mkdir /opt/batch-shipyard \
-  && mv Azure-batch-shipyard-*/* /opt/batch-shipyard \
-  && rm -r Azure-batch-shipyard-* \
-  && cd /opt/batch-shipyard \
-  && sed 's/rhel/mariner/' < install.sh > install-tweaked.sh \
-  && sed -i '/$PYTHON == /s/".*"/"python3"/' install-tweaked.sh \
-  && sed -i 's/rsync $PYTHON_PKGS/rsync python3-devel/' install-tweaked.sh \
-  && chmod +x ./install-tweaked.sh \
-  && ./install-tweaked.sh -c \
-  && /bin/bash -c "source cloudshell/bin/activate && python3 -m compileall -f /opt/batch-shipyard/shipyard.py /opt/batch-shipyard/convoy && deactivate" \
-  && ln -sf /opt/batch-shipyard/shipyard /usr/local/bin/shipyard
 
 # # BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/

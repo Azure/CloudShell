@@ -1804,7 +1804,6 @@ function Get-PackageVersion() {
         @{displayname = "Node.JS"; command = "node"; args = "--version"; match = "v(.*)"},
         @{displayname = "Cloud Foundry CLI"; command = "cf"; args = "-v"; match = "cf version (.*)"},
         @{displayname = "Blobxfer"; command = "blobxfer"; args = "--version"; match = "blobxfer, version (.*)"},
-        @{displayname = "Batch Shipyard"; command = "shipyard"; args = "--version"; match = "shipyard.py, version (.*)"},
         @{displayname = "Ansible"; command = "ansible"; args = "--version"; match = "ansible \[core ([\d\.]+)\]"},
         @{displayname = "Istio"; command = "istioctl"; args = "version -s --remote=false"; match = "(.+)"},
         @{displayname = "Go"; command = "go"; args = "version"; match = "go version go(\S+) .*"},
