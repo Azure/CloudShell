@@ -171,7 +171,6 @@ RUN pip3 install --upgrade sfctl \
 # # BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
-  && pip3 install virtualenv \
   && cd /opt \
   && virtualenv -p python3 ansible \
   && /bin/bash -c "source ansible/bin/activate && pip3 install ansible && pip3 install pywinrm\>\=0\.2\.2 && deactivate" \
