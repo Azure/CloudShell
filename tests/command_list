@@ -381,7 +381,6 @@ fsck.ext4
 fsck.minix
 fsfreeze
 fstrim
-func
 function
 funzip
 fuser
@@ -449,7 +448,6 @@ gnutls-cli-debug
 gnutls-serv
 go
 gofmt
-gozip
 gpasswd
 gperl
 gpg
