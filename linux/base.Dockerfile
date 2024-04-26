@@ -168,14 +168,6 @@ ENV LANG="en_US.utf8"
 RUN pip3 install --upgrade sfctl \
   && pip3 install --upgrade mssql-scripter
 
-# Install Blobxfer and Batch-Shipyard in isolated virtualenvs
-COPY ./linux/blobxfer /usr/local/bin
-RUN chmod 755 /usr/local/bin/blobxfer \
-  && pip3 install virtualenv \
-  && cd /opt \
-  && virtualenv -p python3 blobxfer \
-  && /bin/bash -c "source blobxfer/bin/activate && pip3 install blobxfer && deactivate"
-
 # # BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
