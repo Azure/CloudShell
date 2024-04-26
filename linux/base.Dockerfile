@@ -202,9 +202,8 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 # don't tell users to upgrade, they can't
 ENV POWERSHELL_UPDATECHECK Off
 
-# Install Yeoman Generator and predefined templates
-RUN npm install -g yo \
-  && npm install -g generator-az-terra-module
+# Install Yeoman Generator
+RUN npm install -g yo
 
 
 # Copy and run script to Install powershell modules
