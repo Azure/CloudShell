@@ -190,10 +190,6 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
 # don't tell users to upgrade, they can't
 ENV POWERSHELL_UPDATECHECK Off
 
-# Install Yeoman Generator
-RUN npm install -g yo
-
-
 # Copy and run script to Install powershell modules
 COPY ./linux/powershell/ powershell
 RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && rm -rf ./powershell
