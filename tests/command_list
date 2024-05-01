@@ -260,7 +260,6 @@ do
 docker
 dockerd
 docker-init
-docker-proxy
 domainname
 done
 dos2unix
