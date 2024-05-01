@@ -175,11 +175,12 @@ ENV PATH $PATH:$ISTIO_ROOT/bin
 ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
 
-
-RUN gem install bundler --force \
-  && gem install rake --no-document --force \
-  && gem install colorize --no-document --force \
-  && gem install rspec --no-document --force
+RUN gem install bundler --no-document --clear-sources --force \
+  && bundle config set without 'development test' \
+  && gem install rake --no-document --clear-sources --force \
+  && gem install colorize --no-document --clear-sources --force \
+  && gem install rspec --no-document --clear-sources --force \
+  && rm -rf $(gem env gemdir)/cache/*.gem
 
 ENV GEM_HOME=~/bundle
 ENV BUNDLE_PATH=~/bundle
