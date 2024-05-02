@@ -184,12 +184,3 @@ RUN gem install bundler --no-document --clear-sources --force \
 ENV GEM_HOME=~/bundle
 ENV BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
-
-# PowerShell telemetry
-ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
-# don't tell users to upgrade, they can't
-ENV POWERSHELL_UPDATECHECK Off
-
-# Copy and run script to Install powershell modules
-COPY ./linux/powershell/ powershell
-RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && rm -rf ./powershell
