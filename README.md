@@ -85,8 +85,9 @@ changes to the tools.
 ### Building the images
 
 > [!NOTE]
-> If you would like to use the image that is built on each pull-request merge, then
-> You can skip this step and use a pre-built image. You can find the pre-built base image at `ghcr.io/cloudshell/base:latest` and `ghcr.io/cloudshell/tools:latest`.
+> Cloud Shell publishes an image on each update to the master branch. If you would like to use the pre-built image, then
+> you can skip this step by downloading the latest [base image layer here](ghcr.io/cloudshell/base:latest)
+> and the latest [tools image layer here](ghcr.io/cloudshell/tools:latest). You can find all previously built image layers [here](https://github.com/orgs/Azure/packages?repo_name=CloudShell).
 
 Required software:
 
