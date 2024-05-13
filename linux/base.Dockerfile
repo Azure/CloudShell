@@ -149,10 +149,8 @@ RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform
 RUN echo en_US UTF-8 >> /etc/locale.conf && locale-gen.sh
 ENV LANG="en_US.utf8"
 
-# Update pip and Install Service Fabric CLI
-# Install mssql-scripter
+# Install Service Fabric CLI
 RUN pip3 install --upgrade sfctl \
-  && pip3 install --upgrade mssql-scripter \
   && rm -rf ~/.cache/pip/
 
 # # BEGIN: Install Ansible in isolated Virtual Environment

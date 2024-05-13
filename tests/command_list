@@ -796,8 +796,6 @@ msginit
 msgmerge
 msgunfmt
 msguniq
-mssql-scripter
-mssql-scripter.bat
 mt
 mv
 mvn
@@ -1363,7 +1361,6 @@ wc
 wdctl
 wget
 whatis
-wheel
 whereis
 which
 while
