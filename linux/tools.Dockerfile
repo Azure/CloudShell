@@ -8,6 +8,8 @@ ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cl
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
+LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
+
 RUN tdnf clean all && \
     tdnf repolist --refresh && \
     ACCEPT_EULA=Y tdnf update -y && \
@@ -21,8 +23,8 @@ RUN tdnf clean all && \
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ai-examples -y \
-&& az extension add --system --name ssh -y \
-&& az extension add --system --name ml -y
+    && az extension add --system --name ssh -y \
+    && az extension add --system --name ml -y
 
 # Install kubectl
 RUN az aks install-cli \
@@ -48,9 +50,9 @@ RUN npm install -q -g @pnp/cli-microsoft365
 
 # Install Bicep CLI
 RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 \
-  && chmod +x ./bicep \
-  && mv ./bicep /usr/local/bin/bicep \
-  && bicep --help
+    && chmod +x ./bicep \
+    && mv ./bicep /usr/local/bin/bicep \
+    && bicep --help
 
 # Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
 RUN mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/ \

@@ -82,7 +82,14 @@ changes to the tools.
 
 ## Building and Testing the image
 
-Required software
+### Building the images
+
+> [!NOTE]
+> Cloud Shell publishes an image on each update to the master branch. If you would like to use the pre-built image, then
+> you can skip this step by downloading the latest [base image layer here](ghcr.io/cloudshell/base:latest)
+> and the latest [tools image layer here](ghcr.io/cloudshell/tools:latest). You can find all previously built image layers [here](https://github.com/orgs/Azure/packages?repo_name=CloudShell).
+
+Required software:
 
 - Docker
 - Bash terminal / Powershell
@@ -96,22 +103,24 @@ docker build -t base_cloudshell -f linux/base.Dockerfile .
 Building tools.Dockerfile image
 
 ```bash
-docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
+docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
 ```
 
-Running bash in the tools.Dockerfile image
+### Testing the images
+
+Running `bash` in the `tools.Dockerfile` based image:
 
 ```bash
 docker run -it tools_cloudshell /bin/bash
 ```
 
-Running pwsh in the tools.Dockerfile image
+Running `pwsh` in the `tools.Dockerfile` based image:
 
 ```bash
 docker run -it tools_cloudshell /usr/bin/pwsh
 ```
 
-Testing the Cloud Shell image
+Testing the Cloud Shell image:
 
 ```bash
 docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell /tests/test.sh
@@ -152,7 +161,7 @@ _every_ Cloud Shell admin to have the tool available.
 For a tool to be included in Cloud Shell, it has to be:
 
 - widely useful to Azure administrators
-- well-maintained and supported,  
+- well-maintained and supported,
 - released under a license which permits us to include it
 - lightweight in terms of CPU requirements, size on disk, and memory
 
@@ -180,7 +189,7 @@ If you wish to contribute to The Cloud Shell documentation, see the Microsoft Le
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, see 
+the rights to use your contribution. For details, see
 [https://cla.microsoft.com](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
