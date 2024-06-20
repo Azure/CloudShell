@@ -148,10 +148,6 @@ RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform
 RUN echo en_US UTF-8 >> /etc/locale.conf && locale-gen.sh
 ENV LANG="en_US.utf8"
 
-# Install Service Fabric CLI
-RUN pip3 install --upgrade sfctl \
-  && rm -rf ~/.cache/pip/
-
 # # BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
