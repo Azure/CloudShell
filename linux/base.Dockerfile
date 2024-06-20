@@ -64,8 +64,6 @@ RUN tdnf update -y --refresh && \
   openssl-libs \
   openssl-devel \
   man-db \
-  moby-cli \
-  moby-engine \
   msodbcsql18 \
   mssql-tools18 \
   mysql \
