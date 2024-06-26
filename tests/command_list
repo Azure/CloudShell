@@ -39,17 +39,6 @@ agetty
 alias
 alternatives
 anacron
-ansible
-ansible-config
-ansible-connection
-ansible-console
-ansible-doc
-ansible-galaxy
-ansible-inventory
-ansible-playbook
-ansible-pull
-ansible-test
-ansible-vault
 apparmor_parser
 apparmor_status
 applygnupgdefaults
