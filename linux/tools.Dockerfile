@@ -69,6 +69,8 @@ COPY ./linux/powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-Pre
 
 # Remove su so users don't have su access by default.
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
+# cleanup tmp files left behind by installation
+RUN find /tmp/ -mindepth 1 -delete
 
 #Add soft links
 RUN ln -s /usr/bin/python3 /usr/bin/python
