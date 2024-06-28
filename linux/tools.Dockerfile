@@ -19,23 +19,27 @@ RUN tdnf clean all && \
     && tdnf install -y ./azure-cli-latest-mariner2.0.rpm \
     && rm azure-cli-latest-mariner2.0.rpm && \
     tdnf clean all && \
-    rm -rf /var/cache/tdnf/*
-
-# Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ai-examples -y \
+    rm -rf /var/cache/tdnf/* \
+    #
+    # Install any Azure CLI extensions that should be included by default.
+    #
+    && az extension add --system --name ai-examples -y \
     && az extension add --system --name ssh -y \
-    && az extension add --system --name ml -y
-
-# Install kubectl
-RUN az aks install-cli \
+    && az extension add --system --name ml -y \
+    #
+    # Install kubectl
+    #
+    && az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubelogin
-
-# Install vscode
-RUN wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=insider&os=cli-alpine-x64" \
+    && chmod +x /usr/local/bin/kubelogin \
+    #
+    # Install vscode
+    #
+    && wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=insider&os=cli-alpine-x64" \
     && tar -xvzf vscode.tar.gz \
     && mv ./code-insiders /bin/vscode \
-    && rm vscode.tar.gz
+    && rm vscode.tar.gz \
+    && rm -rf /tmp/* /var/tmp/*
 
 # Install azure-developer-cli (azd)
 ENV AZD_IN_CLOUDSHELL 1
@@ -46,16 +50,15 @@ RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 
 # Install Office 365 CLI templates
-RUN npm install -q -g @pnp/cli-microsoft365
-
-# Install Bicep CLI
-RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 \
+RUN npm install -q -g @pnp/cli-microsoft365 && \
+    #
+    # Install Bicep CLI
+    #
+    curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 \
     && chmod +x ./bicep \
     && mv ./bicep /usr/local/bin/bicep \
-    && bicep --help
-
-# Temp: fix ansible modules. Proper fix is to update base layer to use regular python for Ansible.
-RUN mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/ \
+    && bicep --help \
+    && mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/ \
     && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements.txt \
     && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
@@ -72,18 +75,20 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
     # Install Powershell warmup script
     mkdir -p linux/powershell && \
     cp powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1 && \
-    rm -rf ./powershell
+    rm -rf ./powershell && \
+    #
+    # Remove su so users don't have su access by default.
+    #
+    rm -f ./linux/Dockerfile && \
+    rm -f /bin/su && \
+    #
+    # Add soft links
+    #
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    ln -s /usr/bin/node /usr/bin/nodejs
 
-# Remove su so users don't have su access by default.
-RUN rm -f ./linux/Dockerfile && rm -f /bin/su
-
-#Add soft links
-RUN ln -s /usr/bin/python3 /usr/bin/python
-RUN ln -s /usr/bin/node /usr/bin/nodejs
-
-# Add user's home directories to PATH at the front so they can install tools which
-# override defaults
-# Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
+# Add user's home directories to PATH at the front so they can install tools which override defaults.
+# Also add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory.
 ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
 
 ENV AZURE_CLIENTS_SHOW_SECRETS_WARNING True
