@@ -28,7 +28,7 @@ jobs:
       with:
         context: .
         file: linux/base.Dockerfile
-        push: true
+        push: false
         tags: ghcr.io/cloudshell/base:${{ github.sha }},ghcr.io/cloudshell/base:latest
 
     - name: Tools image
@@ -36,6 +36,34 @@ jobs:
       with:
         context: .
         file: linux/tools.Dockerfile
-        push: true
+        push: false
         tags: ghcr.io/cloudshell/tools:${{ github.sha }},ghcr.io/cloudshell/tools:latest
         build-args: IMAGE_LOCATION=ghcr.io/cloudshell/base:${{ github.sha }}
+
+    - name: Scan Base image with Trivy
+      id: scan_base
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        image-ref: ghcr.io/cloudshell/base:${{ github.sha }}
+        severity: HIGH,CRITICAL
+        exit-code: 1
+
+    - name: Scan Tools image with Trivy
+      id: scan_tools
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        image-ref: ghcr.io/cloudshell/tools:${{ github.sha }}
+        severity: HIGH,CRITICAL
+        exit-code: 1
+
+    - name: Push Base image
+      if: success()
+      run: |
+        docker push ghcr.io/cloudshell/base:${{ github.sha }}
+        docker push ghcr.io/cloudshell/base:latest
+
+    - name: Push Tools image
+      if: success()
+      run: |
+        docker push ghcr.io/cloudshell/tools:${{ github.sha }}
+        docker push ghcr.io/cloudshell/tools:latest
