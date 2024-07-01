@@ -1,0 +1,43 @@
+name: Trivy Scan
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Base image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: linux/base.Dockerfile
+        push: false
+        tags: base:latest
+
+    - name: Build Tools image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: linux/tools.Dockerfile
+        push: false
+        tags: tools:latest
+        build-args: IMAGE_LOCATION=base:latest
+
+    - name: Scan Base image with Trivy
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        image-ref: base:latest
+        exit-code: 1
+
+    - name: Scan Tools image with Trivy
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        image-ref: tools:latest
+        exit-code: 1
