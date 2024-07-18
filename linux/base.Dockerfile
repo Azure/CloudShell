@@ -66,7 +66,6 @@ RUN tdnf update -y --refresh && \
   man-db \
   msodbcsql18 \
   mssql-tools18 \
-  mysql \
   nano \
   net-tools \
   parallel \
