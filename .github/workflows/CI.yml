@@ -21,9 +21,19 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: '16384'
+          temp-reserve-mb: '100'
+          swap-size-mb: '8192'
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
@@ -31,9 +41,35 @@ jobs:
       - name: Build the base.Dockerfile
         run: docker build -t base_cloudshell -f linux/base.Dockerfile .
 
+      - name: Create temporary trivy directories
+        run: |
+          sudo mkdir $GITHUB_WORKSPACE/trivy-tmp
+          sudo mkdir $GITHUB_WORKSPACE/trivy-tmp/.cache
+          echo "TMPDIR=$GITHUB_WORKSPACE/trivy-tmp" >> $GITHUB_ENV
+          echo "TRIVY_CACHE_DIR=$GITHUB_WORKSPACE/trivy-tmp/.cache" >> $GITHUB_ENV
+
+      - name: Scan base image with Trivy
+        id: trivy-base-scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'image'
+          image-ref: base_cloudshell
+          scanners: 'vuln,config'
+          severity: 'HIGH,CRITICAL'
+
       # Build tools dockerfile
       - name: Build the tools.Dockerfile
-        run: docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
+        run: |
+          docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
+
+      - name: Scan Tools image with Trivy
+        id: trivy-tools-scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'image'
+          image-ref: tools_cloudshell
+          scanners: 'vuln,config'
+          severity: 'HIGH,CRITICAL'
 
       # Run the test cases
       - name: Run the test cases
