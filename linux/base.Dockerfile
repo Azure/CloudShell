@@ -60,6 +60,7 @@ RUN tdnf update -y --refresh && \
   libffi-devel \
   libtool \
   lz4 \
+  mariadb \
   openssl \
   openssl-libs \
   openssl-devel \
