@@ -75,10 +75,10 @@ When building or using the image locally, you don't need to worry about that. Ju
 instructions below, and be aware that changes to the base layer will take longer to release than
 changes to the tools.
 
-| Layer        | Job           |
-| ---|---|
-| Base      | Contains large, infrequently changing packages. Changes every 3-4 months. |
-| Tools      | Contains frequently changing packages. Changes every 2-3 weeks |
+| Layer | Job                                                                       |
+|-------|---------------------------------------------------------------------------|
+| Base  | Contains large, infrequently changing packages. Changes every 3-4 months. |
+| Tools | Contains frequently changing packages. Changes every 2-3 weeks            |
 
 ## Building and Testing the image
 
@@ -97,13 +97,18 @@ Required software:
 Building base.Dockerfile image from the root repository
 
 ```bash
-docker build -t base_cloudshell -f linux/base.Dockerfile .
+docker build \
+   -t base_cloudshell \
+   -f linux/base.Dockerfile .
 ```
 
 Building tools.Dockerfile image
 
 ```bash
-docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
+docker build \
+   -t tools_cloudshell \
+   --build-arg IMAGE_LOCATION=base_cloudshell \
+   -f linux/tools.Dockerfile .
 ```
 
 ### Testing the images
@@ -123,7 +128,10 @@ docker run -it tools_cloudshell /usr/bin/pwsh
 Testing the Cloud Shell image:
 
 ```bash
-docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell /tests/test.sh
+docker run \
+   --volume $(pwd)/tests:/tests \
+   -it tools_cloudshell \
+   /tests/test.sh
 ```
 
 For more information about bind mounts, please see the
@@ -134,14 +142,14 @@ to pass if you want your changes to be merged.
 
 ### Types of issues
 
-| Issue Type        | Action           |
-| ---|---|
-| Package is out of date      | Create a Pull Request or Issue |
-| New desired package     | Create a Pull Request or Issue |
-| New desired Cloud Shell feature | Create an [Discussion](https://github.com/Azure/CloudShell/discussions) |
-| Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
-| Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
-| Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
+| Issue Type                                                         | Action                                                                                                      |
+|--------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| Package is out of date                                             | Create a Pull Request or Issue                                                                              |
+| New desired package                                                | Create a Pull Request or Issue                                                                              |
+| New desired Cloud Shell feature                                    | Create an [Discussion](https://github.com/Azure/CloudShell/discussions)                                     |
+| Issue with one of the packages*                                    | Talk to package owner & create a PR on their repo.                                                          |
+| Issue with how package interacts with Cloud Shell                  | Create a Pull Request OR GitHub Issue                                                                       |
+| Security bug                                                       | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue                                               |
 | Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-get-support) |
 
 
