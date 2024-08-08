@@ -1,0 +1,11 @@
+# Start: Define custom environment variables
+
+# Add dotnet tools to PATH so users can install a tool using dotnet tools and
+# can execute that command from any directory
+export PATH=$HOME/.dotnet/tools:$PATH
+
+# Add user's home directories to PATH at the front so they can install tools
+# which override defaults
+export PATH=$HOME/.local/bin:$HOME/bin:$PATH
+
+# End: Define custom environment variables
