@@ -20,7 +20,9 @@ rm -rf oras_${VERSION}_*.tar.gz oras-install/
 ```
 Reference: https://oras.land/docs/installation#linux
 
-If you mount a storage account and have the package stored within your HOME directory (or any subfolders from HOME), you can store it for future use. In the example above, since the package is stored within `~/.local/bin`, it will be available for you on the next time you use Cloud Shell.  
+For persistence of your packages across multiple Cloud Shell sessions, it is recommended you enable the persistent storage with the "storage account" feature of Cloud Shell. In addition, install these packages in any directory in `$HOME`, since the `$HOME` directory is stored in the storage account.
+
+In our above example you can see that the package is installed in the `~/.local/bin` directory.
 
 ## Requesting the package
 
