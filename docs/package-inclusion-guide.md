@@ -10,8 +10,8 @@ There are millions (or potentially billions) of Linux packages. This guide goes 
 
 1. Useful for Azure users and administrators 
 2. Available on [Azure Linux Operating System](https://github.com/microsoft/azurelinux) 
-3. Vulnerability free 
-    - No unfixed CVEs for the package on Azure Linux OS past 30 days 
+3. Is consistently vulnerability free:
+    - Does not have unfixed CVE lingering around. 
 4. Has appropriate license:
     - Azure Cloud Shell (or Microsoft) should be allowed to both consume and distribute the package freely.
 5. Well-maintained and supported 
