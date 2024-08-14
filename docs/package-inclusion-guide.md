@@ -36,7 +36,7 @@ Due to secure supply chain compliance that Cloud Shell abides to, we are require
 
 3. Vulnerability free 
 
-Due to new Microsoft security initiatives, we are striving to ship Cloud Shell with no vulnerabilities in all packages. The compliance rule that has been set on Cloud Shell is to not ship packages with unfixed vulnerabilities of over 30 days. Via the [Trivy software](https://trivy.dev/) for example, if a CVE has been detected on Jan 1st, we expect the package to be fixed and available in Azure Linux before Jan 31. 
+Due to Microsoft security initiatives, we are striving to ship Cloud Shell with no vulnerabilities in all packages. The compliance rule that has been set on Cloud Shell is to not ship packages with unfixed vulnerabilities of over 30 days. Via the [Trivy software](https://trivy.dev/) for example, if a CVE has been detected on Jan 1st, we expect the package to be fixed and available in Azure Linux before Jan 31. 
 
 4. Appropriate licensing 
 
