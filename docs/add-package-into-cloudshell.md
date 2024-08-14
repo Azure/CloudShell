@@ -35,7 +35,7 @@ The below instructions is assuming Azure Linux 2.0. Please note that Azure linux
 Please check if the package is available here - 
 https://packages.microsoft.com/cbl-mariner/2.0/prod/base/x86_64/Packages/
 
-You can also check via entering the below command.
+Alternatively, you can use `docker` to check if a package exists in Azure Linux. Run the following command in your terminal:
 
 ```
 docker run mcr.microsoft.com/cbl-mariner/base/core:2.0 bash -c "tdnf list | grep <package name>"
