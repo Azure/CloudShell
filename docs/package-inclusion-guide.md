@@ -7,7 +7,8 @@ There are millions (or potentially billions) of Linux packages. This guide goes 
 ## General Principles
 
 1. Useful for Azure users and administrators 
-2. Available on [Azure Linux Operating System](https://github.com/microsoft/azurelinux) 
+2. Is available on [Azure Linux](https://github.com/microsoft/azurelinux):
+    - Find out which packages are available on Azure Linux by following [this guide](add-package-into-cloudshell.md/#Check-if-package-is-available-in-Azure-Linux).
 3. Is consistently vulnerability free:
     - Does not have unfixed CVE lingering around. 
 4. Has appropriate license:
