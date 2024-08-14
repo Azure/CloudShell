@@ -14,10 +14,10 @@ There are millions (or potentially billions) of Linux packages. This guide goes 
     - Does not have unfixed CVE lingering around. 
 4. Has appropriate license:
     - Azure Cloud Shell (or Microsoft) should be allowed to both consume and distribute the package freely.
-5. Well-maintained and supported 
-    - Package should NOT be deprecated or archived 
-    - Package repo should have a contribution/commit within the last 120 days 
-    - The package should be of a stable version. The package should not be in alpha or beta version. 
+5. Is well-maintained and supported:
+    - It should NOT be deprecated or archived.
+    - The code repository should have a contribution / commit within the last 120 days.
+    - It should be of a stable version, not an alpha or beta version. 
 
 6. Reasonable package size 
 
