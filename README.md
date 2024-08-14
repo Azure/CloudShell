@@ -5,7 +5,7 @@ Azure Cloud Shell is an interactive, authenticated, browser-accessible shell for
 resources. As a web-based environment, Cloud Shell provides immediate management access to any
 device with a network connection. Azure Cloud Shell provides a
 [host of tools](https://docs.microsoft.com/azure/cloud-shell/features), including Azure CLI, Azure
-PowerShell, Ansible, Terraform, Puppet Bolt, kubectl, and many more.
+PowerShell, Ansible, Terraform, kubectl, and many more.
 
 For more details, check out
 [Overview of Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/overview).
@@ -137,7 +137,7 @@ to pass if you want your changes to be merged.
 | Issue Type        | Action           |
 | ---|---|
 | Package is out of date      | Create a Pull Request or Issue |
-| New desired package     | Create a Pull Request or Issue |
+| New desired package     | Follow [Package Inclusion Guide](./docs/package-inclusion-guide.md) |
 | New desired Cloud Shell feature | Create an [Discussion](https://github.com/Azure/CloudShell/discussions) |
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
@@ -150,33 +150,6 @@ repo, open an issue within the Azure CLI repo.
 
 - [Azure PowerShell issues](https://github.com/Azure/azure-powershell/issues)
 - [Azure CLI issues](https://github.com/Azure/azure-cli/issues)
-
-### Types of tools
-
-Cloud Shell aims to provide a core set of tools for Azure and Microsoft 365 devops scenarios, but we
-can't include everything. If you just want to use a tool yourself, you can install most utilities
-into your own home directory inside Cloud Shell. You only need to update the image if you want
-_every_ Cloud Shell admin to have the tool available.
-
-For a tool to be included in Cloud Shell, it has to be:
-
-- widely useful to Azure administrators
-- well-maintained and supported,
-- released under a license which permits us to include it
-- lightweight in terms of CPU requirements, size on disk, and memory
-
-Please:
-
-- support fetching tokens from Managed Identity if a tool authenticates to Azure services
-- add basic tests to the test suite run by GitHub Actions
-- consume the tools from the [Mariner package repo](https://packages.microsoft.com/cbl-mariner/2.0/)
-
-In general we avoid:
-
-- alpha, beta, preview or unstable versions of software.
-- tools primarily useful for extensive software development, as opposed to DevOps. Consider
-  [Visual Studio Codespaces](https://visualstudio.microsoft.com/services/visual-studio-codespaces/)
-  for that.
 
 ## Cloud Shell Documentation
 
