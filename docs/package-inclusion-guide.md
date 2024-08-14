@@ -4,8 +4,6 @@
 
 There are millions (or potentially billions) of Linux packages. This guide goes through the principles of what the Azure Cloud Shell team uses to consider what gets included in the service.
 
-
-
 ## General Principles
 
 1. Useful for Azure users and administrators 
