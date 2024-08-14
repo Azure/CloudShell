@@ -32,7 +32,7 @@ jobs:
         context: .
         file: linux/base.Dockerfile
         push: true
-        tags: ghcr.io/cloudshell/base:${{ github.sha }},ghcr.io/cloudshell/base:latest
+        tags: ghcr.io/azure/cloudshell/base:${{ github.sha }},ghcr.io/azure/cloudshell/base:latest
 
     - name: Tools image
       uses: docker/build-push-action@v6
@@ -40,5 +40,5 @@ jobs:
         context: .
         file: linux/tools.Dockerfile
         push: true
-        tags: ghcr.io/cloudshell/tools:${{ github.sha }},ghcr.io/cloudshell/tools:latest
-        build-args: IMAGE_LOCATION=ghcr.io/cloudshell/base:${{ github.sha }}
+        tags: ghcr.io/azure/cloudshell/tools:${{ github.sha }},ghcr.io/azure/cloudshell/tools:latest
+        build-args: IMAGE_LOCATION=ghcr.io/azure/cloudshell/base:${{ github.sha }}
