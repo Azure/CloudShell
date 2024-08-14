@@ -28,7 +28,7 @@ As per security & compliance requirements, we are striving to have all our packa
 
 The below instructions is assuming Azure Linux 2.0. Please note that Azure linux 3.0 is coming out soon.
 
-Please check if the package is available on here - 
+Please check if the package is available here - 
 https://packages.microsoft.com/cbl-mariner/2.0/prod/base/x86_64/Packages/
 
 You can also check via entering the below command.
