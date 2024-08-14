@@ -4,7 +4,9 @@ One of the main features of Cloud Shell is that it serves many different package
 
 ## An installation work around
 
-For all packages that does not require root permissions, you are free to install it yourself. This includes python, powershell, nodejs packages. Here's an example as to how you can install a package like ORAS yourself.
+For all packages that does not require root permissions, you are free to install it yourself. This includes, but not limited to, Python, Powershell, Nodejs packages.
+
+Here's an example as to how you can install a package like ORAS yourself:
 
 ```
 cd ~
