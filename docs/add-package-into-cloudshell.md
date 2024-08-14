@@ -39,7 +39,7 @@ docker run mcr.microsoft.com/cbl-mariner/base/core:2.0 bash -c "tdnf list | grep
 
 ### Requesting Azure Linux for the package
 
-You can skip this if the package is already available in Azure Linux
+You can skip this if the package is already available in Azure Linux.
 
 To start the process of adding your package to Azure Linux, please open an issue via [Azure Linux GitHub](https://github.com/microsoft/azurelinux/issues).
 ### Create a pull request on Azure Cloud Shell GitHub
