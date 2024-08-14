@@ -49,7 +49,7 @@ You can skip this if the package is already available in Azure Linux.
 To start the process of adding your package to Azure Linux, please open an issue via [Azure Linux GitHub](https://github.com/microsoft/azurelinux/issues).
 ### Create a pull request on Azure Cloud Shell GitHub
 
-Create a pull request on [Cloud Shell GitHub](https://github.com/Azure/CloudShell) for adding the package in. Please add the package within [base.Dockerfile](https://github.com/Azure/CloudShell/blob/master/linux/base.Dockerfile). 
+Finally create a pull request on [Cloud Shell repository](https://github.com/Azure/CloudShell) to add the package. Please add the package in [base.Dockerfile](https://github.com/Azure/CloudShell/blob/master/linux/base.Dockerfile)'s package list as shown below: 
 
 Please add the package at the end of the long tdnf update + installation.
 
