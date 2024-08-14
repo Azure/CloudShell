@@ -12,8 +12,8 @@ There are millions (or potentially billions) of Linux packages. This guide goes 
 2. Available on [Azure Linux Operating System](https://github.com/microsoft/azurelinux) 
 3. Vulnerability free 
     - No unfixed CVEs for the package on Azure Linux OS past 30 days 
-4. Appropriate Licensing 
-    - Azure Cloud Shell should be allowed to both consume and distribute the package 
+4. Has appropriate license:
+    - Azure Cloud Shell (or Microsoft) should be allowed to both consume and distribute the package freely.
 5. Well-maintained and supported 
     - Package should NOT be deprecated or archived 
     - Package repo should have a contribution/commit within the last 120 days 
