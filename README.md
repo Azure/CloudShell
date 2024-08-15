@@ -86,8 +86,8 @@ changes to the tools.
 
 > [!NOTE]
 > Cloud Shell publishes an image on each update to the master branch. If you would like to use the pre-built image, then
-> you can skip this step by downloading the latest [base image layer here](ghcr.io/cloudshell/base:latest)
-> and the latest [tools image layer here](ghcr.io/cloudshell/tools:latest). You can find all previously built image layers [here](https://github.com/orgs/Azure/packages?repo_name=CloudShell).
+> you can skip this step by downloading the latest [base image layer here](ghcr.io/azure/cloudshell/base:latest)
+> and the latest [tools image layer here](ghcr.io/azure/cloudshell/tools:latest). You can find all previously built image layers [here](https://github.com/orgs/Azure/packages?repo_name=CloudShell).
 
 Required software:
 
@@ -141,9 +141,8 @@ to pass if you want your changes to be merged.
 | New desired Cloud Shell feature | Create an [Discussion](https://github.com/Azure/CloudShell/discussions) |
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
-| Security bug | See https://www.microsoft.com/en-us/msrc/faqs-report-an-issue |
+| Security bug | See <https://www.microsoft.com/en-us/msrc/faqs-report-an-issue> |
 | Issue with Cloud Shell in Azure Portal (can't log in, for example) | Open a [support ticket](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-get-support) |
-
 
 <sup>*</sup> For example, if you have an issue within Azure CLI, don't open up an issue in the Cloud Shell
 repo, open an issue within the Azure CLI repo.
