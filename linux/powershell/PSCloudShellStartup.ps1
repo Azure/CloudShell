@@ -18,7 +18,9 @@ $script:CloudEnvironmentMap = @{
     Fairfax = 'AzureUSGovernment'; 
     Mooncake = 'AzureChinaCloud';
     BlackForest = 'AzureGermanCloud';
-    dogfood = 'dogfood'
+    dogfood = 'dogfood';
+    USNat = 'AzureUSGovernment2';
+    USSec = 'AzureUSGovernment3';
 }
 
 # For the Az.Tools.Predictor
