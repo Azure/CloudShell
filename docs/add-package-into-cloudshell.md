@@ -4,7 +4,7 @@ One of the main features of Cloud Shell is that it serves many different package
 
 ## An installation work around
 
-For all packages that does not require root permissions, you are free to install it yourself. This includes, but not limited to, Python, Powershell, Nodejs packages.
+For all packages that do not require root permissions, you are free to install it yourself. This includes, but not limited to, Python, Powershell, Nodejs packages.
 
 Here's an example as to how you can install a package like ORAS yourself:
 
@@ -22,7 +22,7 @@ Reference: https://oras.land/docs/installation#linux
 
 For persistence of your packages across multiple Cloud Shell sessions, it is recommended you enable the persistent storage with the "storage account" feature of Cloud Shell. In addition, install these packages in any directory in `$HOME`, since the `$HOME` directory is stored in the storage account.
 
-In our above example you can see that the package is installed in the `~/.local/bin` directory.
+In our above example you can see that the package is installed in the `~/.local/bin` directory. Since it is within a directory within `$HOME`, the ORAS package will persistent across Cloud Shell sessions (assuming you are using a storage mount).
 
 ## Requesting the package
 
