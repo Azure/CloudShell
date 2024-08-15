@@ -24,7 +24,12 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.GHCR_BUILD_PUSH_TOKEN }}
+
+    - name: Generate Tag
+      id: tag
+      run: |
+        echo "image_tag=${{ github.sha }}-$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
 
     - name: Base image
       uses: docker/build-push-action@v6
@@ -32,7 +37,7 @@ jobs:
         context: .
         file: linux/base.Dockerfile
         push: true
-        tags: ghcr.io/azure/cloudshell/base:${{ github.sha }},ghcr.io/azure/cloudshell/base:latest
+        tags: ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/base:latest
 
     - name: Tools image
       uses: docker/build-push-action@v6
@@ -40,5 +45,5 @@ jobs:
         context: .
         file: linux/tools.Dockerfile
         push: true
-        tags: ghcr.io/azure/cloudshell/tools:${{ github.sha }},ghcr.io/azure/cloudshell/tools:latest
-        build-args: IMAGE_LOCATION=ghcr.io/azure/cloudshell/base:${{ github.sha }}
+        tags: ghcr.io/azure/cloudshell/tools:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/tools:latest
+        build-args: IMAGE_LOCATION=ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }}
