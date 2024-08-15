@@ -20,7 +20,7 @@ $script:CloudEnvironmentMap = @{
     BlackForest = 'AzureGermanCloud';
     dogfood = 'dogfood';
     USNat = 'AzureUSGovernment2';
-    USSec = 'AzureUSGovernment3';
+    USSec = 'AzureUSGovernment3'
 }
 
 # For the Az.Tools.Predictor
