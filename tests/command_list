@@ -665,6 +665,7 @@ let
 lexgrog
 libassuan-config
 libgcrypt-config
+libmi.so
 libnetcfg
 libssl.so.1.0.0
 libtool

@@ -18,6 +18,12 @@ RUN tdnf clean all && \
     wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
     && tdnf install -y ./azure-cli-latest-mariner2.0.rpm \
     && rm azure-cli-latest-mariner2.0.rpm && \
+    # A build of LibMI.so compatible with OpenSSL 1.1 is required for PowerShell.
+    # TODO: Parameterize the versios here.
+    curl -LO https://github.com/microsoft/omi/releases/download/v1.9.0-0/omi-1.9.0-0.ssl_110.ulinux.s.x64.rpm && \
+    rpm -Uvh omi-1.9.0-0.ssl_110.ulinux.s.x64.rpm && \
+    rm omi-1.9.0-0.ssl_110.ulinux.s.x64.rpm && \
+    cp /opt/omi/lib/libmi.so /opt/microsoft/powershell/7/libmi.so && \
     tdnf clean all && \
     rm -rf /var/cache/tdnf/*
 

@@ -7,6 +7,7 @@ param(
     $Image
 )
 
+$ErrorActionPreference = "Stop"
 $ProgressPreference = 'SilentlyContinue' # Suppresses progress, which doesn't render correctly in docker
 
 # PowerShellGallery PROD site
@@ -35,21 +36,6 @@ function Get-DockerfileData {
     $pscloudshellVer = $script:dockerfileDataObject.PSCloudShellVersion
     $script:pscloudshellBlob = "https://pscloudshellbuild.blob.core.windows.net/$pscloudshellVer"
     Write-Output "pscloudshellVersion= $pscloudshellVer; pscloudshellBlob=$script:pscloudshellBlob"
-}
-
-# A build of LibMI.so compatible with OpenSSL 1.1 is stored in the blob. This has not yet been tested in any other
-# situation than running in Cloud Shell
-function Install-LibMIFile {
-    $libmiversion = $script:dockerfileDataObject.libmiversion
-    $FileHash = $script:dockerfileDataObject.libmifilehash
-    $libmiBlob = "https://pscloudshellbuild.blob.core.windows.net/$libmiversion/a/debian10-libmi/libmi.so"
-    $FullPath = "/opt/microsoft/powershell/7/libmi.so"
-    Write-Output "Updating libmi.so with $($libmiBlob)"
-    Microsoft.PowerShell.Utility\Invoke-WebRequest -Uri $libmiBlob -UseBasicParsing -OutFile $FullPath
-    $hash = (Microsoft.PowerShell.Utility\Get-FileHash $FullPath).Hash
-    if ($hash -ne $FileHash) {
-        throw "Hash mismatch for $FullPath. Expected: $FileHash Actual:$hash."
-    }
 }
 
 # Install Azure and AzureAD (Active Directory) modules
@@ -135,10 +121,6 @@ try {
 
     }
     else {
-        # update libmi.so
-        Write-Output "Updating libmi.so"
-        Install-LibMIFile
-
         # Installing modules from Azure Powershell and AzureAD
         Write-Output "Installing modules from Azure Powershell and AzureAD"
         Install-AzAndAzAdModules
