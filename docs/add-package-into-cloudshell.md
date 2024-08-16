@@ -1,32 +1,29 @@
-# Add a package into Cloud Shell
+# Requesting the Addition of a Package to the Cloud Shell image
 
 One of the main features of Cloud Shell is that it serves many different packages to its users. Users don't have to go through the hassle of installing packages themselves when using Cloud Shell.
 
-## An installation work around
+## Adding a package for yourself
 
-For all packages that do not require root permissions, you are free to install it yourself. This includes, but not limited to, Python, Powershell, Nodejs packages.
+You are free to install packages that do not require root permissions, such as Python and PowerShell packages, on your own. However, please note that the `tdnf` package manager cannot be used since you do not have access to root.
 
 Here's an example as to how you can install a package like ORAS yourself:
 
 ```
-cd ~
 VERSION="1.2.0"
 curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
-mkdir -p ~/oras-install/
 mkdir -p ~/.local/bin/
-tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
-mv ~/oras-install/oras ~/.local/bin/oras
-rm -rf oras_${VERSION}_*.tar.gz oras-install/
+tar -zxf oras_${VERSION}_*.tar.gz -C ~/.local/bin/ oras
+rm oras_${VERSION}_*.tar.gz
 ```
 Reference: https://oras.land/docs/installation#linux
+> [!NOTE]
+> If you would like your package to persist across multiple Cloud Shell sessions, a storage account is required.
 
-For persistence of your packages across multiple Cloud Shell sessions, it is recommended you enable the persistent storage with the "storage account" feature of Cloud Shell. In addition, install these packages in any directory in `$HOME`, since the `$HOME` directory is stored in the storage account.
+## Adding a package for everyone in using Cloud Shell
 
-In our above example you can see that the package is installed in the `~/.local/bin` directory. Since it is within a directory within `$HOME`, the ORAS package will persistent across Cloud Shell sessions (assuming you are using a storage mount).
+If you have a need for a package in the base Cloud Shell image we encourage you to make the request. We cannot include everything, but where there is sufficient demand we will seek to satisfy that need. The sections below describe how to request the addition of a package to Cloud Shell.
 
-## Requesting the package
-
-As per security & compliance requirements, we are striving to have all our packages installed from Azure Linux (a.k.a Mariner). Azure Linux is a compliant Microsoft Linux Operating System. If you want your package to be available in Cloud Shell, we expect to have it downloadable from Azure Linux OS. 
+To meet security and compliance requirements, we aim to have all packages installed from Azure Linux (Mariner), a compliant Microsoft Linux OS. To include your package in Cloud Shell, ensure it's available for download from Azure Linux.
 
 ### Check if package is available in Azure Linux
 
