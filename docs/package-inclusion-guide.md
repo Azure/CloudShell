@@ -21,7 +21,7 @@ There are millions (or potentially billions) of Linux packages. This guide goes 
 6. **Reasonable package size**
 
 > [!NOTE]
-> After these principles have been satisfied, the Azure Cloud Shell team reserves the right to make final decisions on package inclusion at their discretion.
+> After these principles have been satisfied, the Azure Cloud Shell maintainers reserves the right to make final decisions on package inclusion at their discretion.
 
 ## Discussion of Principles
 
