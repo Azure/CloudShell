@@ -24,7 +24,6 @@ RUN tdnf update -y --refresh && \
   tdnf repolist --refresh && \
   bash ./tdnfinstall.sh \
   nodejs18 \
-  curl \
   xz \
   git \
   gpgme \
