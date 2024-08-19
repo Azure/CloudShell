@@ -137,7 +137,8 @@ to pass if you want your changes to be merged.
 | Issue Type        | Action           |
 | ---|---|
 | Package is out of date      | Create a Pull Request or Issue |
-| New desired package     | Follow [Package Inclusion Guide](./docs/package-inclusion-guide.md) |
+| Add a package to my Cloud Shell | Follow [Cloud Shell package addition](./docs/add-package-into-cloudshell.md) |
+| Add a package to everyone's Cloud Shell | Follow [Package Inclusion Guide](./docs/package-inclusion-guide.md) |
 | New desired Cloud Shell feature | Create an [Discussion](https://github.com/Azure/CloudShell/discussions) |
 | Issue with one of the packages*     | Talk to package owner & create a PR on their repo.  |
 | Issue with how package interacts with Cloud Shell     | Create a Pull Request OR GitHub Issue |
