@@ -8,6 +8,9 @@ on:
     branches:
       - master
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
@@ -22,10 +25,18 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    - name: Sanitize repo slug
+      uses: actions/github-script@v7
+      id: repo_slug
+      with:
+        result-encoding: string
+        script: return '${{ env.REGISTRY }}/${{ github.repository }}'.toLowerCase()
+
+
     - name: Login to GHCR
       uses: docker/login-action@v3
       with:
-        registry: ghcr.io
+        registry: ${{ env.REGISTRY }}
         username: ${{ github.actor}}
         password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -34,11 +45,11 @@ jobs:
       run: |
         echo "image_tag=${{ github.sha }}-$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
 
-    - name: Extract metadata labels for base image
-      id: base-meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ghcr.io/azure/cloudshell/base
+    # - name: Extract metadata labels for base image
+    #   id: base-meta
+    #   uses: docker/metadata-action@v5
+    #   with:
+    #     images: ${{ steps.repo_slug.outputs.result }}/base
 
     - name: Base image
       uses: docker/build-push-action@v6
@@ -46,21 +57,21 @@ jobs:
         context: .
         file: linux/base.Dockerfile
         push: true
-        tags: ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/base:latest
-        labels: ${{ steps.base-meta.outputs.labels }}
+        tags: ${{ steps.repo_slug.outputs.result }}/base:${{ steps.tag.outputs.image_tag }},${{ steps.repo_slug.outputs.result }}/base:latest
+        # labels: ${{ steps.base-meta.outputs.labels }}
 
-    - name: Extract metadata labels for tools image
-      id: tools-meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ghcr.io/azure/cloudshell/tools
+    # - name: Extract metadata labels for tools image
+    #   id: tools-meta
+    #   uses: docker/metadata-action@v5
+    #   with:
+    #     images: ${{ steps.repo_slug.outputs.result }}/tools
 
-    - name: Tools image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: linux/tools.Dockerfile
-        push: true
-        tags: ghcr.io/azure/cloudshell/tools:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/tools:latest
-        build-args: IMAGE_LOCATION=ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }}
-        labels: ${{ steps.tools-meta.outputs.labels }}
+    # - name: Tools image
+    #   uses: docker/build-push-action@v6
+    #   with:
+    #     context: .
+    #     file: linux/tools.Dockerfile
+    #     push: true
+    #     tags: ${{ steps.repo_slug.outputs.result }}/tools:${{ steps.tag.outputs.image_tag }},${{ steps.repo_slug.outputs.result }}/tools:latest
+    #     build-args: IMAGE_LOCATION=${{ steps.repo_slug.outputs.result }}/base:${{ steps.tag.outputs.image_tag }}
+    #     labels: ${{ steps.tools-meta.outputs.labels }}
