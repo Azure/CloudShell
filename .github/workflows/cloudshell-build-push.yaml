@@ -49,7 +49,7 @@ jobs:
     #   id: base-meta
     #   uses: docker/metadata-action@v5
     #   with:
-    #     images: ${{ steps.repo_slug.outputs.result }}/base
+    #     images: ${{ steps.repo_slug.outputs.result }}-base
 
     - name: Base image
       uses: docker/build-push-action@v6
@@ -57,14 +57,14 @@ jobs:
         context: .
         file: linux/base.Dockerfile
         push: true
-        tags: ${{ steps.repo_slug.outputs.result }}/base:${{ steps.tag.outputs.image_tag }},${{ steps.repo_slug.outputs.result }}/base:latest
+        tags: ${{ steps.repo_slug.outputs.result }}-base:${{ steps.tag.outputs.image_tag }},${{ steps.repo_slug.outputs.result }}-base:latest
         # labels: ${{ steps.base-meta.outputs.labels }}
 
     # - name: Extract metadata labels for tools image
     #   id: tools-meta
     #   uses: docker/metadata-action@v5
     #   with:
-    #     images: ${{ steps.repo_slug.outputs.result }}/tools
+    #     images: ${{ steps.repo_slug.outputs.result }}-tools
 
     # - name: Tools image
     #   uses: docker/build-push-action@v6
@@ -72,6 +72,6 @@ jobs:
     #     context: .
     #     file: linux/tools.Dockerfile
     #     push: true
-    #     tags: ${{ steps.repo_slug.outputs.result }}/tools:${{ steps.tag.outputs.image_tag }},${{ steps.repo_slug.outputs.result }}/tools:latest
-    #     build-args: IMAGE_LOCATION=${{ steps.repo_slug.outputs.result }}/base:${{ steps.tag.outputs.image_tag }}
+    #     tags: ${{ steps.repo_slug.outputs.result }}-tools:${{ steps.tag.outputs.image_tag }},${{ steps.repo_slug.outputs.result }}-tools:latest
+    #     build-args: IMAGE_LOCATION=${{ steps.repo_slug.outputs.result }}-base:${{ steps.tag.outputs.image_tag }}
     #     labels: ${{ steps.tools-meta.outputs.labels }}
