@@ -45,11 +45,14 @@ jobs:
       run: |
         echo "image_tag=${{ github.sha }}-$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
 
-    # - name: Extract metadata labels for base image
-    #   id: base-meta
-    #   uses: docker/metadata-action@v5
-    #   with:
-    #     images: ${{ steps.repo_slug.outputs.result }}-base
+    - name: Extract metadata labels for base image
+      id: base-meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ github.repository }}-base
+        tags: |
+          type=raw,value=latest
+          type=raw,value=${{ steps.tag.outputs.image_tag }}
 
     - name: Base image
       uses: docker/build-push-action@v6
@@ -57,8 +60,8 @@ jobs:
         context: .
         file: linux/base.Dockerfile
         push: true
-        tags: ${{ steps.repo_slug.outputs.result }}-base:${{ steps.tag.outputs.image_tag }},${{ steps.repo_slug.outputs.result }}-base:latest
-        # labels: ${{ steps.base-meta.outputs.labels }}
+        tags: ${{ steps.base-meta.outputs.tags }}
+        labels: ${{ steps.base-meta.outputs.labels }}
 
     # - name: Extract metadata labels for tools image
     #   id: tools-meta
