@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build_and_push:
@@ -23,13 +26,19 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ github.repository_owner}}
-        password: ${{ secrets.GHCR_BUILD_PUSH_TOKEN }}
+        username: ${{ github.actor}}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Generate Tag
       id: tag
       run: |
         echo "image_tag=${{ github.sha }}-$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
+
+    - name: Extract metadata labels for base image
+      id: base-meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/azure/cloudshell/base
 
     - name: Base image
       uses: docker/build-push-action@v6
@@ -38,6 +47,13 @@ jobs:
         file: linux/base.Dockerfile
         push: true
         tags: ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/base:latest
+        labels: ${{ steps.base-meta.outputs.labels }}
+
+    - name: Extract metadata labels for tools image
+      id: tools-meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/azure/cloudshell/tools
 
     - name: Tools image
       uses: docker/build-push-action@v6
@@ -47,3 +63,4 @@ jobs:
         push: true
         tags: ghcr.io/azure/cloudshell/tools:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/tools:latest
         build-args: IMAGE_LOCATION=ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }}
+        labels: ${{ steps.tools-meta.outputs.labels }}
