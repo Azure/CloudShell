@@ -49,10 +49,10 @@ jobs:
       id: base-meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ github.repository }}
+        images: ${{ env.REGISTRY }}/${{ github.repository }}/base
         tags: |
-          type=raw,value=base-latest
-          type=raw,value=base-${{ steps.tag.outputs.image_tag }}
+          type=raw,value=latest
+          type=raw,value=${{ steps.tag.outputs.image_tag }}
 
     - name: Base image
       uses: docker/build-push-action@v6
