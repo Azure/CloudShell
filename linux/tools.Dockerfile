@@ -78,8 +78,8 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 
 #Add soft links
-RUN ln -s /usr/bin/python3 /usr/bin/python
-RUN ln -s /usr/bin/node /usr/bin/nodejs
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+RUN ln -sf /usr/bin/node /usr/bin/nodejs
 
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
