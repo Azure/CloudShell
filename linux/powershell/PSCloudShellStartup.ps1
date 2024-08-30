@@ -1,7 +1,7 @@
 # Startupscript for PowerShell Cloud Shell
 
 #region Script Variables
-$script:Startuptime = [System.DateTime]::Now 
+$script:Startuptime = [System.DateTime]::Now
 $script:AzureADModuleName = 'AzureAD.Standard.Preview'
 
 # Set SkipAzInstallationChecks to avoid az check for AzInstallationChecks.json
@@ -14,8 +14,8 @@ Microsoft.PowerShell.Core\Import-Module -Name PSCloudShellUtility
 $script:PSCloudShellUtilityModuleInfo = Microsoft.PowerShell.Core\Get-Module PSCloudShellUtility
 
 $script:CloudEnvironmentMap = @{
-    PROD = 'AzureCloud'; 
-    Fairfax = 'AzureUSGovernment'; 
+    PROD = 'AzureCloud';
+    Fairfax = 'AzureUSGovernment';
     Mooncake = 'AzureChinaCloud';
     BlackForest = 'AzureGermanCloud';
     dogfood = 'dogfood';
@@ -31,12 +31,15 @@ Microsoft.PowerShell.Core\Import-Module Az.Tools.Predictor -Force
 Microsoft.PowerShell.Core\Import-Module Az.Accounts
 Az.Accounts\Enable-AzureRmAlias
 
-# On Linux, we are not loading the profile from the clouddrive since we are already mounted on the Linux OS image: \clouddrive\.cloudconsole\acc_<user>.img 
+# On Linux, we are not loading the profile from the clouddrive since we are already mounted on the Linux OS image: \clouddrive\.cloudconsole\acc_<user>.img
 # For Pwsh profile, see https://docs.microsoft.com/en-us/powershell/scripting/whats-new/what-s-new-in-powershell-core-60?view=powershell-6#filesystem
-    
+
 $script:UserDefaultPath = $HOME
-$script:CurrentHostProfilePath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/PowerShell/Microsoft.PowerShell_profile.ps1')
-$script:AllHostsProfilePath    = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/PowerShell/profile.ps1') 
+$script:CurrentHostProfilePath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/powershell/Microsoft.PowerShell_profile.ps1')
+$script:AllHostsProfilePath    = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/powershell/profile.ps1')
+
+Complete-UpperCaseProfileFolderMigration
+
 
 # To ensure that the installed script is immediately usable, we need to add the scope path to the PATH enviroment variable.
 $scriptPath = Microsoft.PowerShell.Management\Join-Path $env:HOME '.local/share/powershell/Scripts'
@@ -49,6 +52,54 @@ if(($existingPath -split ':') -notcontains $scriptPath)
 #endregion
 
 #region Utility Functions
+
+# Migrate profile from incorrect uppercase profile location to standard location. Added to help migration from a breaking change of fixing incorrectly cased powershell profile paths
+function Complete-UpperCaseProfileFolderMigration {
+    [CmdletBinding(SupportsShouldProcess,ConfirmImpact='High')]
+    param()
+
+    $errorActionPreference = 'stop'
+
+    $legacyUpperCaseProfilePath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.config/PowerShell')
+    $standardProfilePath = Split-Path $script:CurrentHostProfilePath
+
+    if (-not (Test-Path $legacyUpperCaseProfilePath)) {
+        #Nothing to do
+        return
+    }
+
+    $legacyUpperCaseProfilePathItem = Get-Item $legacyUpperCaseProfilePath
+    if ($legacyUpperCaseProfilePathItem -isnot [IO.DirectoryInfo]) {
+        #This would be a very rare occurance
+        Write-Warning "A non-directory item was detected at $legacyUpperCaseProfilePathItem. You should remove this or otherwise transition it to $standardProfilePath"
+        return
+    }
+    if ($legacyUpperCaseProfilePathItem.LinkType -eq 'SymbolicLink') {
+        if ((Resolve-Path $legacyUpperCaseProfilePathItem.Target -ne $standardProfilePath)) {
+            Write-Warning "A symbolic link was detected for the legacy profile folder $legacyUpperCaseProfilePathItem, but it points to $($legacyUpperCaseProfilePathItem.Target). You should remove this or otherwise transition it to $standardProfilePath"
+            return
+        } else {
+            #A migration has already completed
+            return
+        }
+    }
+
+    if (Test-Path $standardProfilePath) {
+        Write-Warning "$legacyUpperCaseProfilePathItem requires migration but a standard profile folder was already detected at $standardProfilePath. If you have completed migration manually, please remove $legacyUpperCaseProfilePathItem and any references to it."
+        return
+    }
+
+    #Prerequisites for migration have been met at this point.
+    Write-Warning "We have detected a legacy profile folder at $legacyUpperCaseProfilePathItem. We are moving this to the standard profile folder $standardProfilePath for you and will link the old location to maintain compatibility."
+
+    if ($PSCmdlet.ShouldProcess("Migrate profile folder from $legacyUpperCaseProfilePathItem to $standardProfilePath")) {
+        Move-Item -Path $legacyUpperCaseProfilePathItem -Destination $standardProfilePath
+    }
+    if ($PSCmdlet.ShouldProcess("Create symbolic link from $legacyUpperCaseProfilePathItem to $standardProfilePath to maintain compatibility")) {
+        New-Item -ItemType SymbolicLink -Path $legacyUpperCaseProfilePath -Value $standardProfilePath
+    }
+}
+
 
 # Helper to do telemetry logging.
 function Invoke-CloudShellTelemetry
@@ -106,14 +157,14 @@ function Get-SubscriptionIdFromStorageProfile
 function Connect-AzService
 {
     param (
-            
+
         [string]$currentSubscriptionId
     )
 
     # Enable Az Data collection
     # Else User is prompted when Connect-AzAccount is invoked
     Set-PSCloudShellTelemetry
-    
+
     $startTime = [System.DateTime]::Now
 
     try
@@ -173,7 +224,7 @@ function Connect-AzureAD
     $startTime = [System.DateTime]::Now
 
     try
-    {  
+    {
         $envName = $env:ACC_CLOUD
         if ($CloudEnvironmentMap.ContainsKey($env:ACC_CLOUD))
         {
@@ -185,7 +236,7 @@ function Connect-AzureAD
 
         # This call sets the local process context with the token, account and tenant information
         & $script:AzureADModuleName\Connect-AzureAD @azureADParameters -ErrorAction SilentlyContinue -ErrorVariable azureADError | Microsoft.PowerShell.Core\Out-Null
-        
+
         # Log any errors from AzureAD authentication
         if ($azureADError)
         {
@@ -327,7 +378,7 @@ if($script:SkipMSIAuth -eq $true)
 {
     Microsoft.PowerShell.Utility\Write-Debug -Message "Skip authenticating with MSI, instead test scripts will take care of Auth."
 }
-else 
+else
 {
     Microsoft.PowerShell.Utility\Write-Debug -Message "Authenticating with MSI ..."
 
@@ -358,9 +409,9 @@ else
 
 # Import AzureAD module so cmdlets are visible, they are not currently being auto-discovered
 $azureADLoadStartTime = [System.DateTime]::Now
-try 
+try
 {
-    Microsoft.PowerShell.Core\Import-Module -Name $script:AzureADModuleName    
+    Microsoft.PowerShell.Core\Import-Module -Name $script:AzureADModuleName
 }
 finally
 {
