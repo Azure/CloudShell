@@ -13,7 +13,8 @@ $script:SkipMSIAuth = [System.Environment]::GetEnvironmentVariable('SkipMSIAuth'
 Microsoft.PowerShell.Core\Import-Module -Name PSCloudShellUtility
 $script:PSCloudShellUtilityModuleInfo = Microsoft.PowerShell.Core\Get-Module PSCloudShellUtility
 
-$script:CloudEnvironmentMap = @{
+# This Cloud env map is for Connect-AzureAD
+$script:CloudEnvironmentMapAzureAD = @{
     PROD = 'AzureCloud'; 
     Fairfax = 'AzureUSGovernment'; 
     Mooncake = 'AzureChinaCloud';
@@ -21,6 +22,16 @@ $script:CloudEnvironmentMap = @{
     dogfood = 'dogfood';
     USNat = 'AzureUSGovernment2';
     USSec = 'AzureUSGovernment3'
+}
+
+# This Cloud Env Map is for Connect-AzAccount
+# We need to have two because the mapping is slightly different for the two commands
+$script:CloudEnvironmentMapAzAccount = @{
+    PROD = 'AzureCloud'; 
+    Fairfax = 'AzureUSGovernment'; 
+    Mooncake = 'AzureChinaCloud';
+    BlackForest = 'AzureGermanCloud';
+    dogfood = 'dogfood';
 }
 
 # For the Az.Tools.Predictor
@@ -128,9 +139,9 @@ function Connect-AzService
         # the authentication will be successful.
 
         $envName = $env:ACC_CLOUD
-        if ($CloudEnvironmentMap.ContainsKey($env:ACC_CLOUD))
+        if ($CloudEnvironmentMapAzAccount.ContainsKey($env:ACC_CLOUD))
         {
-            $envName = $script:CloudEnvironmentMap[$env:ACC_CLOUD]
+            $envName = $script:CloudEnvironmentMapAzAccount[$env:ACC_CLOUD]
         }
 
         $addAzAccountParameters = @{'Identity' = $true; 'TenantId' = $env:ACC_TID; 'EnvironmentName' = $envName}
@@ -175,9 +186,9 @@ function Connect-AzureAD
     try
     {  
         $envName = $env:ACC_CLOUD
-        if ($CloudEnvironmentMap.ContainsKey($env:ACC_CLOUD))
+        if ($CloudEnvironmentMapAzureAD.ContainsKey($env:ACC_CLOUD))
         {
-            $envName = $script:CloudEnvironmentMap[$env:ACC_CLOUD]
+            $envName = $script:CloudEnvironmentMapAzureAD[$env:ACC_CLOUD]
         }
 
         # Remove AccountId from parameters since it's missing for some users; Plus, it doesn't affect the authorization.
