@@ -126,7 +126,8 @@ RUN tdnf update -y --refresh && \
   cpio \
   gettext && \
   tdnf clean all && \
-  rm -rf /var/cache/tdnf/*
+  rm -rf /var/cache/tdnf/* && \
+  rm /var/opt/apache-maven/lib/guava-25.1-android.jar
 
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_ENV production
