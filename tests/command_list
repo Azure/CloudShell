@@ -894,7 +894,6 @@ oomctl
 openssl
 p11-kit
 p11tool
-packer
 pam_namespace_helper
 pam_timestamp_check
 parallel
