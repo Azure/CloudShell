@@ -121,6 +121,14 @@ RUN tdnf update -y --refresh && \
   rm -rf /var/cache/tdnf/* && \
   rm /var/opt/apache-maven/lib/guava-25.1-android.jar
 
+# Install any Azure CLI extensions that should be included by default.
+RUN az extension add --system --name ai-examples -y && \
+  az extension add --system --name ssh -y && \
+  az extension add --system --name ml -y && \
+  #
+  # Install kubectl
+  az aks install-cli
+
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_ENV production
 ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
@@ -202,16 +210,6 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   #
   ln -s /usr/bin/python3 /usr/bin/python && \
   ln -s /usr/bin/node /usr/bin/nodejs
-
-# Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ai-examples -y \
-  && az extension add --system --name ssh -y \
-  && az extension add --system --name ml -y
-
-# Install kubectl
-RUN az aks install-cli \
-  && chmod +x /usr/local/bin/kubectl \
-  && chmod +x /usr/local/bin/kubelogin
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
