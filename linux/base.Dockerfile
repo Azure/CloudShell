@@ -100,7 +100,6 @@ RUN tdnf update -y --refresh && \
   golang \
   ruby \
   rubygems \
-  packer \
   dcos-cli \
   ripgrep \
   helm \

@@ -459,7 +459,7 @@ function Copy-FromCloudShell
         -ExceptionObject $PSCmdlet
         return
     }
-    
+
     if ($item -is [System.IO.FileInfo])
     {
         # item is a file, go ahead to download. Note: No check is necessary because get-item has done that.
@@ -480,7 +480,7 @@ function Copy-FromCloudShell
 
         # Zip the directory. Note using jar instead of zip is to ignore original top-level folder structure.
         $null = jar cMvf $tmp -C $fullPath .
-        
+
         if ((Microsoft.PowerShell.Management\Test-Path -Path $tmp) -or (Microsoft.PowerShell.Management\Test-Path -LiteralPath $tmp))
         {
             Write-Verbose "Downloading $tmp" -Verbose
@@ -770,7 +770,7 @@ function Get-CloudShellTip
 
         if(-not [string]::IsNullOrEmpty($randomTip))
         {
-            $message = "MOTD: " + $randomTip        
+            $message = "MOTD: " + $randomTip
             $message = "`r`n" + $message + "`r`n";
         }
     }
@@ -889,8 +889,8 @@ function Invoke-AzVMCommand
         Provide UserName when connecting to Linux Targets. When used with KeyFilePath parameter, identifies the user on the remote computer
 
         .PARAMETER KeyFilePath
-        Provide SSH KeyFile Path when connecting to Linux Targets, if connection uses Key based authentication       
-                
+        Provide SSH KeyFile Path when connecting to Linux Targets, if connection uses Key based authentication
+
         .EXAMPLE
         Invoke-AzVMCommand -Name WindowsVM -ResourceGroupName ResourceGroupName -ScriptBlock ScriptBlock -Credential credential
 
@@ -928,7 +928,7 @@ function Invoke-AzVMCommand
         [ValidateNotNullOrEmpty()]
         [string]$KeyFilePath
     )
-    
+
         if(-not (Test-AzResourceGroup -ResourceGroupName $ResourceGroupName)) {
             $badResourceGroup = $LocalizedData.TestAzResourceGroup -f ($ResourceGroupName)
             throw [System.ArgumentException] $badResourceGroup
@@ -948,7 +948,7 @@ function Invoke-AzVMCommand
             {
                 $message = $LocalizedData.CredentialError
                 throw [System.ArgumentException] $message
-            }            
+            }
         }
 
         $cName = Test-AzVM @testAzVMParams
@@ -956,7 +956,7 @@ function Invoke-AzVMCommand
             $message = $LocalizedData.GetAzureVMError -f ($Name)
             throw [System.ArgumentException] $message
         }
-    
+
         if ([OStype]::Windows -eq $OsType)
         {
             $invokeCommandParams = @{
@@ -964,9 +964,9 @@ function Invoke-AzVMCommand
                     UseSSL = $true
                     Credential = $Credential
                     SessionOption = $script:sessionOption
-                    ScriptBlock = $ScriptBlock                    
+                    ScriptBlock = $ScriptBlock
                     Authentication = 'Basic'
-            }            
+            }
         }
         elseif ([OStype]::Linux -eq $OsType)
         {
@@ -992,7 +992,7 @@ function Invoke-AzVMCommand
             }
         }
 
-        Invoke-Command @invokeCommandParams -ErrorAction Stop    
+        Invoke-Command @invokeCommandParams -ErrorAction Stop
 }
 
 function Get-AzVmNsg
@@ -1024,7 +1024,7 @@ function Get-AzVmNsg
         | Foreach-Object                                                                              `
             {                                                                                         `
                 if ($_.NetworkInterfaces -and ($_.NetworkInterfaces.Id -eq $azVMNetInterfacesId))     `
-                {                    
+                {
                     $nsg+=$_
                 }                                                                                     `
             }
@@ -1088,7 +1088,7 @@ function Get-AzVMPSRemoting
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         $Nsg
-    )    
+    )
 
     $protocol = @{https = $false; http = $false; ssh = $false}
 
@@ -1138,7 +1138,7 @@ function Enable-AzVMPSRemoting
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$ResourceGroupName,
-                
+
         [ValidateSet('http','https','ssh')]
         [string]$Protocol,
 
@@ -1186,10 +1186,10 @@ function Enable-AzVMPSRemoting
             if($Protocol -eq 'https')
             {
                 if (-not $psremoting.Https)
-                {                    
+                {
                     $null = Az.Network\Add-AzNetworkSecurityRuleConfig -Name 'allow-winrm-https' -DestinationPortRange 5986 @parameters | Az.Network\Set-AzNetworkSecurityGroup
                 }
-                
+
                 # Setup WinRM HTTPS based remoting using Self-Signed Certificate
                 $runCommandParameters =
                 @{
@@ -1274,7 +1274,7 @@ function Enable-AzVMPSRemoting
                 # 1) Install powershellcore in linux, if not already present
                 # 2) backup current sshd_config, configure sshd_config to enable PasswordAuthentication, register powershell subsystem with ssh daemon
                 # (#2 is required to support interactive username/password authentication over powershell-ssh)
-                # 3) Restart the ssh daemon service to pick up the new config changes            
+                # 3) Restart the ssh daemon service to pick up the new config changes
                 $runCommandParameters =
                 @{
                     commandId = 'RunShellScript'
@@ -1286,8 +1286,8 @@ function Enable-AzVMPSRemoting
 
                 $null = Az.Resources\Invoke-AzResourceAction -ResourceId $azureVM.Id -Action runCommand -Parameters $runCommandParameters -ApiVersion 2017-03-30 -Force
             }
-        }     
-    }    
+        }
+    }
 }
 
 function Disable-AzVMPSRemoting
@@ -1339,7 +1339,7 @@ function Disable-AzVMPSRemoting
     {
         $OsType = Get-OsType -Name $Name -ResourceGroupName $ResourceGroupName
     }
-    
+
     $azVMNsgs = Get-AzVmNsg -Name $Name -ResourceGroupName $ResourceGroupName
 
     if ([OStype]::Windows -eq $OsType)
@@ -1500,7 +1500,7 @@ function Test-AzVM
         [string]$ResourceGroupName,
 
         [Parameter(Mandatory=$true)]
-        [OSType]$OsType        
+        [OSType]$OsType
     )
 
     $azVMNsgs = Get-AzVmNsg -Name $Name -ResourceGroupName $ResourceGroupName
@@ -1511,10 +1511,10 @@ function Test-AzVM
         $psRemoting = Get-AzVMPSRemoting -Name $Name -ResourceGroupName $ResourceGroupName -Nsg $azVMNsg
 
         if ((([OStype]::Windows -eq $OsType) -and (-not $psRemoting.https)) -or (([OStype]::Linux -eq $OsType) -and (-not $psRemoting.ssh)))
-        {            
+        {
             $errMsg = $LocalizedData.TestAzPsRemotingError -f ($Name, $ResourceGroupName)
-            throw $errMsg            
-        }       
+            throw $errMsg
+        }
     }
 
     # Check the communication with the remote machine
@@ -1695,7 +1695,7 @@ function GetCommand {
     return $commands
 }
 
-function GetAcronymContent 
+function GetAcronymContent
 {
     # Get the acronyms file
     $path = Join-Path -Path $PSScriptRoot -ChildPath 'PSCloudShellUtilityAcronyms.json'
@@ -1710,7 +1710,7 @@ function GetAcronymContent
 }
 
 function RedirectOnlineHelp($Parameters)
-{   
+{
     try {
         Microsoft.PowerShell.Core\Get-Help @Parameters
     }
@@ -1718,17 +1718,17 @@ function RedirectOnlineHelp($Parameters)
     {
         $err = $_
         $matchFound = $err.Exception.Message -match "No program or browser is associated to open the URI (?<link>\w+:\/\/[\w@][\w.:@]+\/?[\w\.?=%&=\-@/$,]*)."
-        
+
         if(($matchFound -eq $True) -and (-not [string]::IsNullOrEmpty($env:ACC_TERM_ID))) {
             $targetLink = $matches["link"]
             Write-Verbose "Redirecting to $targetLink"
 
-            $uri = "http://localhost:8888/openLink/$($env:ACC_TERM_ID)"	
-        
+            $uri = "http://localhost:8888/openLink/$($env:ACC_TERM_ID)"
+
             try{
                 $null = Invoke-RestMethod -Method Post -Uri $uri -Body "{""url"":""$targetLink""}" -ContentType "application/json"
             }catch{
-                Write-Warning -Message "Redirecting to $targetLink failed, please open the link in another page." 
+                Write-Warning -Message "Redirecting to $targetLink failed, please open the link in another page."
                 throw
             }
         }
@@ -1765,14 +1765,14 @@ function Get-PackageVersion() {
 
     # Apt and some other programs write to stderr, which fails tests without this
     $ErrorActionPreference = "Continue"
-    
+
     # Enumerate all APT packages with versions
     $packages = New-Object -TypeName System.Collections.ArrayList
 
     # TODO - find the regular expression to seperate the package name from the package version
-    # apt list --installed 2> /dev/null | % { 
+    # apt list --installed 2> /dev/null | % {
     #     Write-Verbose "Apt: $_"
-    #     if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") { 
+    #     if ($_ -match "([^/]*)/[^ ]* ([^ ]*)") {
     #         $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "Apt"
     #         $null = $packages.Add($p)
     #     }
@@ -1789,7 +1789,7 @@ function Get-PackageVersion() {
         catch {
             return "Error"
         }
-                
+
         $version = ($output | % {
                 if ($_ -match $package.match) {
                     Write-Verbose "matched $_"
@@ -1806,7 +1806,6 @@ function Get-PackageVersion() {
         @{displayname = "Ansible"; command = "ansible"; args = "--version"; match = "ansible \[core ([\d\.]+)\]"},
         @{displayname = "Istio"; command = "istioctl"; args = "version -s --remote=false"; match = "(.+)"},
         @{displayname = "Go"; command = "go"; args = "version"; match = "go version go(\S+) .*"},
-        @{displayname = "Packer"; command = "packer"; args = "version"; match = "Packer v(.+)"},
         @{displayname = "DC/OS CLI"; command = "dcos"; args = "--version"; match = "dcoscli.version=(.*)"},
         @{displayname = "Ripgrep"; command = "rg"; args = "--help | head"; match = "ripgrep ([\d\.]+)$"},
         @{displayname = "Helm"; command = "helm"; args = "version --short"; match = "v(.+)"},
@@ -1826,8 +1825,8 @@ function Get-PackageVersion() {
     }
 
     # PIP3 packages
-    & pip3 list | % { 
-        if ($_ -match "(\w+)\s+(.*)") { 
+    & pip3 list | % {
+        if ($_ -match "(\w+)\s+(.*)") {
             $p = New-PackageInfo -Name $matches[1] -Version $matches[2] -Type "PIP"
             $null = $packages.Add($p)
         }
