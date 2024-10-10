@@ -57,39 +57,23 @@ jobs:
           scanners: 'vuln,config'
           severity: 'HIGH,CRITICAL'
 
-      # Build tools dockerfile
-      - name: Build the tools.Dockerfile
-        run: |
-          docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
-
-      - name: Scan Tools image with Trivy
-        id: trivy-tools-scan
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          scan-type: 'image'
-          image-ref: tools_cloudshell
-          scanners: 'vuln,config'
-          severity: 'HIGH,CRITICAL'
-
       # Run the test cases
       - name: Run the test cases
-        run: docker run --volume $(pwd)/tests:/tests tools_cloudshell /bin/bash /tests/test.sh
+        run: docker run --volume $(pwd)/tests:/tests base_cloudshell /bin/bash /tests/test.sh
 
       # Show Docker image size
       - name: find the pull request id
         run: echo ISSUEID=$(echo "${{github.ref }}" | sed 's!refs/pull/\([0-9]*\)/merge!\1!') >> $GITHUB_ENV
       - name: find the base size info
         run: echo BASE_SIZE=$(docker inspect base_cloudshell:latest --format "{{.Size}}") >> $GITHUB_ENV
-      - name: find the tools size info
-        run: echo TOOLS_SIZE=$(docker inspect tools_cloudshell:latest --format "{{.Size}}") >> $GITHUB_ENV
       - name: update a comment with size
         run: |
-          echo "pull id $ISSUEID size $BASE_SIZE  $TOOLS_SIZE"  && \
+          echo "pull id $ISSUEID size $BASE_SIZE"  && \
           curl --request POST \
           --url https://api.github.com/repos/${{ github.repository }}/issues/$ISSUEID/comments \
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
           --header 'Accept: application/vnd.github.v3+json' \
           --data "{
-            \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB, tools: $(($TOOLS_SIZE / 1048576))MB. \"
+            \"body\": \"Image size with this change is base: $(($BASE_SIZE / 1048576))MB\"
             }"

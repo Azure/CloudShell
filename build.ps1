@@ -32,9 +32,3 @@ if ($buildbase) {
     & docker build -t base_cloudshell $args -f linux/base.Dockerfile .
     Write-Verbose "Finished building base image"
 }
-
-if ($image -eq "tools" -or $image -eq "all") {
-    Write-verbose "Building tools image"
-    & docker build -t tools_cloudshell $args --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . 
-    Write-Verbose "Finished building tools image"
-}
