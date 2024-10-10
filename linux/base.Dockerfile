@@ -1,19 +1,8 @@
-# base.Dockerfile contains components which are large and change less frequently.
-# tools.Dockerfile contains the smaller, more frequently-updated components.
-
-# Within Azure, the image layers
-# built from this file are cached in a number of locations to speed up container startup time. A manual
-# step needs to be performed to refresh these locations when the image changes. For this reason, we explicitly
-# split the base and the tools docker files into separate files and base the tools file from a version
-# of the base docker file stored in a container registry. This avoids accidentally introducing a change in
-# the base image
-
-# CBL-Mariner is an internal Linux distribution for Microsoft’s cloud infrastructure and edge products and services.
-# CBL-Mariner is designed to provide a consistent platform for these devices and services and will enhance Microsoft’s
-# ability to stay current on Linux updates.
-# https://github.com/microsoft/CBL-Mariner
 FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
+
+RUN mkdir -p /usr/cloudshell
+WORKDIR /usr/cloudshell
 
 SHELL ["/bin/bash","-c"]
 COPY linux/tdnfinstall.sh .
@@ -124,16 +113,41 @@ RUN tdnf update -y --refresh && \
   redis \
   cpio \
   gettext && \
+  #
+  # Install latest Azure CLI package. CLI team drops latest (pre-release)
+  # package here prior to public release We don't support using this location
+  # elsewhere - it may be removed or updated without notice
+  wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm && \
+  tdnf install -y ./azure-cli-latest-mariner2.0.rpm && \
+  rm azure-cli-latest-mariner2.0.rpm && \
+  #
+  # Note: These set of cleanup steps should always be the last ones in this RUN
+  # statement.
   tdnf clean all && \
   rm -rf /var/cache/tdnf/* && \
   rm /var/opt/apache-maven/lib/guava-25.1-android.jar
 
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_ENV production
-ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
+# Install any Azure CLI extensions that should be included by default.
+RUN az extension add --system --name ai-examples -y && \
+  az extension add --system --name ssh -y && \
+  az extension add --system --name ml -y && \
+  #
+  # Install kubectl
+  az aks install-cli
+
+ENV NPM_CONFIG_LOGLEVEL=warn \
+  NODE_ENV=production \
+  NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4' \
+  GOROOT="/usr/lib/golang"
+
+# Add user's home directories to PATH at the front so they can install tools
+# which override defaults Add dotnet tools to PATH so users can install a tool
+# using dotnet tools and can execute that command from any directory
+ENV  PATH="~/.local/bin:~/bin:~/.dotnet/tools:$PATH:$GOROOT/bin:/opt/mssql-tools18/bin" \
+  AZURE_CLIENTS_SHOW_SECRETS_WARNING=True \
+  AZUREPS_HOST_ENVIRONMENT=cloud-shell/1.0
 
 # Get latest version of Terraform.
-# Customers require the latest version of Terraform.
 RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
   && wget -nv -O terraform.zip "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" \
   && wget -nv -O terraform.sha256 "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" \
@@ -147,7 +161,7 @@ RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform
 RUN echo en_US UTF-8 >> /etc/locale.conf && locale-gen.sh
 ENV LANG="en_US.utf8"
 
-# # BEGIN: Install Ansible in isolated Virtual Environment
+# BEGIN: Install Ansible in isolated Virtual Environment
 COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
   && cd /opt \
@@ -161,16 +175,12 @@ RUN chmod 755 /usr/local/bin/ansible* \
   && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements.txt \
   && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
-
 # Install latest version of Istio
-ENV ISTIO_ROOT /usr/local/istio-latest
+ENV ISTIO_ROOT=/usr/local/istio-latest
+ENV PATH=$PATH:$ISTIO_ROOT/bin
 RUN curl -sSL https://git.io/getLatestIstio | sh - \
   && mv $PWD/istio* $ISTIO_ROOT \
   && chmod -R 755 $ISTIO_ROOT
-ENV PATH $PATH:$ISTIO_ROOT/bin
-
-ENV GOROOT="/usr/lib/golang"
-ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
 
 RUN gem install bundler --no-document --clear-sources --force \
   && bundle config set without 'development test' \
@@ -179,9 +189,9 @@ RUN gem install bundler --no-document --clear-sources --force \
   && gem install rspec --no-document --clear-sources --force \
   && rm -rf $(gem env gemdir)/cache/*.gem
 
-ENV GEM_HOME=~/bundle
-ENV BUNDLE_PATH=~/bundle
-ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
+ENV GEM_HOME=~/bundle \
+  BUNDLE_PATH=~/bundle \
+  PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Install vscode
 RUN wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=insider&os=cli-alpine-x64" \
@@ -195,17 +205,32 @@ ENV AZD_IN_CLOUDSHELL=1 \
 RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   #
   # Install Office 365 CLI templates
-  #
   npm install -q -g @pnp/cli-microsoft365 && \
   #
   # Install Bicep CLI
-  #
   curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 \
   && chmod +x ./bicep \
   && mv ./bicep /usr/local/bin/bicep \
   && bicep --help && \
   #
   # Add soft links
-  #
   ln -s /usr/bin/python3 /usr/bin/python && \
   ln -s /usr/bin/node /usr/bin/nodejs
+
+# Powershell telemetry
+ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
+  # don't tell users to upgrade, they can't
+  POWERSHELL_UPDATECHECK=Off
+
+# Copy and run script to install Powershell modules and setup Powershell machine profile
+COPY ./linux/powershell/ powershell
+RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
+  cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
+  /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
+  # Install Powershell warmup script
+  mkdir -p linux/powershell && \
+  cp powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1 && \
+  rm -rf ./powershell
+
+# Remove su so users don't have su access by default.
+RUN rm -f ./linux/Dockerfile && rm -f /bin/su

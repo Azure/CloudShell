@@ -38,12 +38,3 @@ jobs:
         file: linux/base.Dockerfile
         push: true
         tags: ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/base:latest
-
-    - name: Tools image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: linux/tools.Dockerfile
-        push: true
-        tags: ghcr.io/azure/cloudshell/tools:${{ steps.tag.outputs.image_tag }},ghcr.io/azure/cloudshell/tools:latest
-        build-args: IMAGE_LOCATION=ghcr.io/azure/cloudshell/base:${{ steps.tag.outputs.image_tag }}
