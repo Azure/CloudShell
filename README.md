@@ -63,31 +63,9 @@ container to connect the shell process to the user interface via a websocket.
 1. **Root instead of cloud shell user**. In Azure Cloud Shell you always run as a regular user. When
    running the image locally, you run as root.
 
-### Understanding the base.Dockerfile and tools.Dockerfile
-
-The repository contains two Docker configuration files: `base` and `tools`. Normally you just have
-one Dockerfile and rely on the container registry to cache the layers that haven't changed.
-However, we need to cache the base image explicitly to ensure a fast startup time. Tools is built
-on top of the base file and starts from an internal repository where the base image is cached, so
-that we know when we need to update the base.
-
-When building or using the image locally, you don't need to worry about that. Just build using the
-instructions below, and be aware that changes to the base layer will take longer to release than
-changes to the tools.
-
-| Layer        | Job           |
-| ---|---|
-| Base      | Contains large, infrequently changing packages. Changes every 3-4 months. |
-| Tools      | Contains frequently changing packages. Changes every 2-3 weeks |
-
 ## Building and Testing the image
 
 ### Building the images
-
-> [!NOTE]
-> Cloud Shell publishes an image on each update to the master branch. If you would like to use the pre-built image, then
-> you can skip this step by downloading the latest [base image layer here](ghcr.io/azure/cloudshell/base:latest)
-> and the latest [tools image layer here](ghcr.io/azure/cloudshell/tools:latest). You can find all previously built image layers [here](https://github.com/orgs/Azure/packages?repo_name=CloudShell).
 
 Required software:
 
@@ -100,30 +78,24 @@ Building base.Dockerfile image from the root repository
 docker build -t base_cloudshell -f linux/base.Dockerfile .
 ```
 
-Building tools.Dockerfile image
-
-```bash
-docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile .
-```
-
 ### Testing the images
 
-Running `bash` in the `tools.Dockerfile` based image:
+Running `bash` in the `base.Dockerfile` based image:
 
 ```bash
-docker run -it tools_cloudshell /bin/bash
+docker run -it base_cloudshell /bin/bash
 ```
 
-Running `pwsh` in the `tools.Dockerfile` based image:
+Running `pwsh` in the `base.Dockerfile` based image:
 
 ```bash
-docker run -it tools_cloudshell /usr/bin/pwsh
+docker run -it base_cloudshell /usr/bin/pwsh
 ```
 
 Testing the Cloud Shell image:
 
 ```bash
-docker run --volume /path/to/CloudShell/folder/tests:/tests -it tools_cloudshell /tests/test.sh
+docker run --volume `pwd`/tests:/tests -it base_cloudshell /tests/test.sh
 ```
 
 For more information about bind mounts, please see the
