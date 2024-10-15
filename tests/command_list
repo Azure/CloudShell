@@ -187,6 +187,11 @@ compute_create
 compute_member
 compute_relabel
 consoletype
+containerd
+containerd-shim
+containerd-shim-runc-v1
+containerd-shim-runc-v2
+containerd-stress
 continue
 coproc
 coredumpctl
@@ -207,6 +212,7 @@ crond
 cronnext
 crontab
 csplit
+ctr
 ctrlaltdel
 ctstat
 curl
@@ -250,6 +256,10 @@ dltest
 dmesg
 dnsdomainname
 do
+docker
+dockerd
+docker-init
+docker-proxy
 domainname
 done
 dos2unix
@@ -372,7 +382,9 @@ fsfreeze
 fstrim
 function
 funzip
+fuse-overlayfs
 fuser
+fusermount3
 g++
 gawk
 gawk-5.1.1
@@ -794,6 +806,7 @@ modprobe
 more
 mount
 mount.cifs
+mount.fuse3
 mountpoint
 mount.smb3
 mpicalc
@@ -1093,6 +1106,7 @@ rtmon
 rtpr
 rtstat
 ruby
+runc
 runcon
 runlevel
 run-parts
@@ -1158,6 +1172,7 @@ slabtop
 slattach
 sleep
 slencheck
+slirp4netns
 slsh
 smb2-quota
 smbinfo
@@ -1266,6 +1281,7 @@ time
 timedatectl
 timeout
 times
+tini-static
 tipc
 tload
 tmux

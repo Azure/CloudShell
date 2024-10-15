@@ -123,6 +123,13 @@ RUN tdnf update -y --refresh && \
   gh \
   redis \
   cpio \
+  moby-engine \
+  moby-cli \
+  moby-containerd \
+  moby-runc \
+  moby-buildx \
+  fuse-overlayfs \
+  slirp4netns \
   gettext && \
   tdnf clean all && \
   rm -rf /var/cache/tdnf/* && \
