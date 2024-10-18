@@ -32,7 +32,7 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubelogin
 
 # Install vscode
-RUN wget -nv -O vscode.tar.gz "https://code.visualstudio.com/sha/download?build=insider&os=cli-alpine-x64" \
+RUN wget -nv -O vscode.tar.gz --user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0" "https://code.visualstudio.com/sha/download?build=insider&os=cli-alpine-x64" \
     && tar -xvzf vscode.tar.gz \
     && mv ./code-insiders /bin/vscode \
     && rm vscode.tar.gz
