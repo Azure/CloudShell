@@ -90,6 +90,7 @@ RUN tdnf update -y --refresh && \
   unzip \
   util-linux \
   vim \
+  vim-extra \
   wget \
   which \
   zip \
