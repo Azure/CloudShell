@@ -51,6 +51,8 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
 
 # Remove su so users don't have su access by default.
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
+# cleanup tmp files left behind by installation
+RUN find /tmp/ -mindepth 1 -delete
 
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
