@@ -1086,6 +1086,8 @@ roff2pdf
 roff2ps
 roff2text
 roff2x
+rootlesskit
+rootlesskit-docker-proxy
 route
 routef
 routel
