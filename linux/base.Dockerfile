@@ -24,7 +24,6 @@ RUN tdnf update -y --refresh && \
   tdnf repolist --refresh && \
   bash ./tdnfinstall.sh \
   nodejs18 \
-  curl \
   xz \
   git \
   gpgme \
@@ -101,7 +100,6 @@ RUN tdnf update -y --refresh && \
   golang \
   ruby \
   rubygems \
-  packer \
   dcos-cli \
   ripgrep \
   helm \
@@ -125,9 +123,17 @@ RUN tdnf update -y --refresh && \
   gh \
   redis \
   cpio \
+  moby-engine \
+  moby-cli \
+  moby-containerd \
+  moby-runc \
+  moby-buildx \
+  fuse-overlayfs \
+  slirp4netns \
   gettext && \
   tdnf clean all && \
-  rm -rf /var/cache/tdnf/*
+  rm -rf /var/cache/tdnf/* && \
+  rm /var/opt/apache-maven/lib/guava-25.1-android.jar
 
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_ENV production
@@ -156,7 +162,12 @@ RUN chmod 755 /usr/local/bin/ansible* \
   && /bin/bash -c "source ansible/bin/activate && pip3 list --outdated --format=freeze | cut -d '=' -f1 | xargs -n1 pip3 install -U && pip3 install ansible && pip3 install pywinrm\>\=0\.2\.2 && deactivate" \
   && rm -rf ~/.local/share/virtualenv/ \
   && rm -rf ~/.cache/pip/ \
-  && ansible-galaxy collection install azure.azcollection --force -p /usr/share/ansible/collections
+  && ansible-galaxy collection install azure.azcollection --force -p /usr/share/ansible/collections \
+  # Temp: Proper fix is to use regular python for Ansible.
+  && mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/ \
+  && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements.txt \
+  && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
+
 
 # Install latest version of Istio
 ENV ISTIO_ROOT /usr/local/istio-latest
@@ -178,3 +189,30 @@ RUN gem install bundler --no-document --clear-sources --force \
 ENV GEM_HOME=~/bundle
 ENV BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
+
+# Install vscode
+RUN wget -nv -O vscode.tar.gz --user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0" "https://code.visualstudio.com/sha/download?build=insider&os=cli-alpine-x64" \
+  && tar -xvzf vscode.tar.gz \
+  && mv ./code-insiders /bin/vscode \
+  && rm vscode.tar.gz
+
+# Install azure-developer-cli (azd)
+ENV AZD_IN_CLOUDSHELL=1 \
+  AZD_SKIP_UPDATE_CHECK=1
+RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
+  #
+  # Install Office 365 CLI templates
+  #
+  npm install -q -g @pnp/cli-microsoft365 && \
+  #
+  # Install Bicep CLI
+  #
+  curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 \
+  && chmod +x ./bicep \
+  && mv ./bicep /usr/local/bin/bicep \
+  && bicep --help && \
+  #
+  # Add soft links
+  #
+  ln -s /usr/bin/python3 /usr/bin/python && \
+  ln -s /usr/bin/node /usr/bin/nodejs

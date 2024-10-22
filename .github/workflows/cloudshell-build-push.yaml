@@ -23,7 +23,7 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ github.actor }}
+        username: ${{ github.repository_owner}}
         password: ${{ secrets.GHCR_BUILD_PUSH_TOKEN }}
 
     - name: Generate Tag
