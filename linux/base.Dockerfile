@@ -215,4 +215,16 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   # Add soft links
   #
   ln -s /usr/bin/python3 /usr/bin/python && \
-  ln -s /usr/bin/node /usr/bin/nodejs
+  ln -s /usr/bin/node /usr/bin/nodejs && \
+  #
+  # Install rootless kit
+  TMP_DIR=$(mktemp -d) && \
+  pushd $TMP_DIR && \
+  ROOTLESSKIT_VERSION=$(curl https://api.github.com/repos/rootless-containers/rootlesskit/releases/latest | jq -r '.tag_name') && \
+  curl -LO https://github.com/rootless-containers/rootlesskit/releases/download/${ROOTLESSKIT_VERSION}/rootlesskit-x86_64.tar.gz && \
+  curl -LO https://github.com/rootless-containers/rootlesskit/releases/download/${ROOTLESSKIT_VERSION}/SHA256SUMS && \
+  sha256sum -c SHA256SUMS --ignore-missing && \
+  tar -xf rootlesskit-x86_64.tar.gz && \
+  cp rootlesskit rootlesskit-docker-proxy /usr/bin/ && \
+  popd && \
+  rm -rf $TMP_DIR
