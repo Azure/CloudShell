@@ -43,8 +43,7 @@ jobs:
 
       - name: Create temporary trivy directories
         run: |
-          sudo mkdir $GITHUB_WORKSPACE/trivy-tmp
-          sudo mkdir $GITHUB_WORKSPACE/trivy-tmp/.cache
+          mkdir -p $GITHUB_WORKSPACE/trivy-tmp/.cache
           echo "TMPDIR=$GITHUB_WORKSPACE/trivy-tmp" >> $GITHUB_ENV
           echo "TRIVY_CACHE_DIR=$GITHUB_WORKSPACE/trivy-tmp/.cache" >> $GITHUB_ENV
 
