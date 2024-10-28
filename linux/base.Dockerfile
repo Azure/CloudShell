@@ -242,3 +242,35 @@ ENV PATH=~/.local/bin:~/bin:~/.dotnet/tools:$PATH \
   # Powershell telemetry & don't tell users to upgrade since they cannot.
   POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
   POWERSHELL_UPDATECHECK=Off
+
+# Copy and run script to install Powershell modules and setup Powershell machine
+# profile
+COPY ./linux/powershell/ powershell
+
+RUN tdnf clean all && \
+  tdnf repolist --refresh && \
+  ACCEPT_EULA=Y tdnf update -y && \
+  # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
+  # We don't support using this location elsewhere - it may be removed or updated without notice
+  wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
+  && tdnf install -y ./azure-cli-latest-mariner2.0.rpm \
+  && rm azure-cli-latest-mariner2.0.rpm && \
+  tdnf clean all && \
+  rm -rf /var/cache/tdnf/* && \
+  #
+  # Install any Azure CLI extensions that should be included by default.
+  az extension add --system --name ai-examples -y && \
+  az extension add --system --name ssh -y && \
+  az extension add --system --name ml -y && \
+  #
+  # Install kubectl
+  az aks install-cli && \
+  #
+  # Powershell installation and setup
+  /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
+  cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
+  /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
+  # Install Powershell warmup script
+  mkdir -p linux/powershell && \
+  cp powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1 && \
+  rm -rf ./powershell
