@@ -10,6 +10,10 @@ FROM ${IMAGE_LOCATION}
 
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
+# Copy and run script to install Powershell modules and setup Powershell machine
+# profile
+COPY ./linux/powershell/ powershell
+
 RUN tdnf clean all && \
     tdnf repolist --refresh && \
     ACCEPT_EULA=Y tdnf update -y && \
@@ -19,44 +23,21 @@ RUN tdnf clean all && \
     && tdnf install -y ./azure-cli-latest-mariner2.0.rpm \
     && rm azure-cli-latest-mariner2.0.rpm && \
     tdnf clean all && \
-    rm -rf /var/cache/tdnf/*
-
-# Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ai-examples -y \
-    && az extension add --system --name ssh -y \
-    && az extension add --system --name ml -y
-
-# Install kubectl
-RUN az aks install-cli \
-    && chmod +x /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubelogin
-
-RUN mkdir -p /usr/cloudshell
-WORKDIR /usr/cloudshell
-
-# Powershell telemetry
-ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
-    # don't tell users to upgrade, they can't
-    POWERSHELL_UPDATECHECK=Off
-
-# Copy and run script to install Powershell modules and setup Powershell machine profile
-COPY ./linux/powershell/ powershell
-RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
+    rm -rf /var/cache/tdnf/* && \
+    #
+    # Install any Azure CLI extensions that should be included by default.
+    az extension add --system --name ai-examples -y && \
+    az extension add --system --name ssh -y && \
+    az extension add --system --name ml -y && \
+    #
+    # Install kubectl
+    az aks install-cli && \
+    #
+    # Powershell installation and setup
+    /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
     cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
     /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
     # Install Powershell warmup script
     mkdir -p linux/powershell && \
     cp powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1 && \
     rm -rf ./powershell
-
-# Remove su so users don't have su access by default.
-RUN rm -f ./linux/Dockerfile && rm -f /bin/su
-
-# Add user's home directories to PATH at the front so they can install tools
-# which override defaults. Add dotnet tools to PATH so users can install a tool
-# using dotnet tools and can execute that command from any directory
-ENV PATH=~/.local/bin:~/bin:~/.dotnet/tools:$PATH \
-    AZURE_CLIENTS_SHOW_SECRETS_WARNING=True \
-    #
-    # Set AZUREPS_HOST_ENVIRONMENT
-    AZUREPS_HOST_ENVIRONMENT=cloud-shell/1.0

@@ -15,6 +15,8 @@
 FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
+WORKDIR /usr/cloudshell
+
 SHELL ["/bin/bash","-c"]
 COPY linux/tdnfinstall.sh .
 
@@ -227,3 +229,16 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   cp rootlesskit rootlesskit-docker-proxy /usr/bin/ && \
   popd && \
   rm -rf $TMP_DIR
+
+# Add user's home directories to PATH at the front so they can install tools
+# which override defaults. Add dotnet tools to PATH so users can install a tool
+# using dotnet tools and can execute that command from any directory
+ENV PATH=~/.local/bin:~/bin:~/.dotnet/tools:$PATH \
+  AZURE_CLIENTS_SHOW_SECRETS_WARNING=True \
+  #
+  # Set AZUREPS_HOST_ENVIRONMENT
+  AZUREPS_HOST_ENVIRONMENT=cloud-shell/1.0 \
+  #
+  # Powershell telemetry & don't tell users to upgrade since they cannot.
+  POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
+  POWERSHELL_UPDATECHECK=Off
