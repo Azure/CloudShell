@@ -151,7 +151,7 @@ RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform
   && unset TF_VERSION
 
 # Setup locale to en_US.utf8
-RUN echo en_US UTF-8 >> /etc/locale.conf && locale-gen.sh
+RUN echo 'LANG=en_US.UTF-8' >> /etc/locale.conf && locale-gen.sh
 ENV LANG="en_US.utf8"
 
 # # BEGIN: Install Ansible in isolated Virtual Environment
