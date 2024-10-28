@@ -52,12 +52,11 @@ RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
 # Remove su so users don't have su access by default.
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 
-# Add user's home directories to PATH at the front so they can install tools which
-# override defaults
-# Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
-ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
-
-ENV AZURE_CLIENTS_SHOW_SECRETS_WARNING True
-
-# Set AZUREPS_HOST_ENVIRONMENT
-ENV AZUREPS_HOST_ENVIRONMENT cloud-shell/1.0
+# Add user's home directories to PATH at the front so they can install tools
+# which override defaults. Add dotnet tools to PATH so users can install a tool
+# using dotnet tools and can execute that command from any directory
+ENV PATH=~/.local/bin:~/bin:~/.dotnet/tools:$PATH \
+    AZURE_CLIENTS_SHOW_SECRETS_WARNING=True \
+    #
+    # Set AZUREPS_HOST_ENVIRONMENT
+    AZUREPS_HOST_ENVIRONMENT=cloud-shell/1.0

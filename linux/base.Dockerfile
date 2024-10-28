@@ -135,9 +135,9 @@ RUN tdnf update -y --refresh && \
   rm -rf /var/cache/tdnf/* && \
   rm /var/opt/apache-maven/lib/guava-25.1-android.jar
 
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_ENV production
-ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
+ENV NPM_CONFIG_LOGLEVEL=warn \
+  NODE_ENV=production \
+  NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 # Get latest version of Terraform.
 # Customers require the latest version of Terraform.
@@ -170,14 +170,13 @@ RUN chmod 755 /usr/local/bin/ansible* \
 
 
 # Install latest version of Istio
-ENV ISTIO_ROOT /usr/local/istio-latest
+ENV ISTIO_ROOT=/usr/local/istio-latest
 RUN curl -sSL https://git.io/getLatestIstio | sh - \
   && mv $PWD/istio* $ISTIO_ROOT \
   && chmod -R 755 $ISTIO_ROOT
-ENV PATH $PATH:$ISTIO_ROOT/bin
 
 ENV GOROOT="/usr/lib/golang"
-ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
+ENV PATH=$PATH:$ISTIO_ROOT/bin:$GOROOT/bin:/opt/mssql-tools18/bin
 
 RUN gem install bundler --no-document --clear-sources --force \
   && bundle config set without 'development test' \
@@ -186,8 +185,8 @@ RUN gem install bundler --no-document --clear-sources --force \
   && gem install rspec --no-document --clear-sources --force \
   && rm -rf $(gem env gemdir)/cache/*.gem
 
-ENV GEM_HOME=~/bundle
-ENV BUNDLE_PATH=~/bundle
+ENV GEM_HOME=~/bundle \
+  BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Install vscode
