@@ -15,6 +15,8 @@
 FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
+WORKDIR /usr/cloudshell
+
 SHELL ["/bin/bash","-c"]
 COPY linux/tdnfinstall.sh .
 
@@ -73,7 +75,6 @@ RUN tdnf update -y --refresh && \
   pkg-config \
   postgresql-libs \
   postgresql \
-  powershell \
   python3 \
   python3-pip \
   python3-virtualenv \
@@ -135,9 +136,9 @@ RUN tdnf update -y --refresh && \
   rm -rf /var/cache/tdnf/* && \
   rm /var/opt/apache-maven/lib/guava-25.1-android.jar
 
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_ENV production
-ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
+ENV NPM_CONFIG_LOGLEVEL=warn \
+  NODE_ENV=production \
+  NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 # Get latest version of Terraform.
 # Customers require the latest version of Terraform.
@@ -170,14 +171,13 @@ RUN chmod 755 /usr/local/bin/ansible* \
 
 
 # Install latest version of Istio
-ENV ISTIO_ROOT /usr/local/istio-latest
+ENV ISTIO_ROOT=/usr/local/istio-latest
 RUN curl -sSL https://git.io/getLatestIstio | sh - \
   && mv $PWD/istio* $ISTIO_ROOT \
   && chmod -R 755 $ISTIO_ROOT
-ENV PATH $PATH:$ISTIO_ROOT/bin
 
 ENV GOROOT="/usr/lib/golang"
-ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
+ENV PATH=$PATH:$ISTIO_ROOT/bin:$GOROOT/bin:/opt/mssql-tools18/bin
 
 RUN gem install bundler --no-document --clear-sources --force \
   && bundle config set without 'development test' \
@@ -186,8 +186,8 @@ RUN gem install bundler --no-document --clear-sources --force \
   && gem install rspec --no-document --clear-sources --force \
   && rm -rf $(gem env gemdir)/cache/*.gem
 
-ENV GEM_HOME=~/bundle
-ENV BUNDLE_PATH=~/bundle
+ENV GEM_HOME=~/bundle \
+  BUNDLE_PATH=~/bundle
 ENV PATH=$PATH:$GEM_HOME/bin:$BUNDLE_PATH/gems/bin
 
 # Install vscode
@@ -228,3 +228,62 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   cp rootlesskit rootlesskit-docker-proxy /usr/bin/ && \
   popd && \
   rm -rf $TMP_DIR
+
+# Add user's home directories to PATH at the front so they can install tools
+# which override defaults. Add dotnet tools to PATH so users can install a tool
+# using dotnet tools and can execute that command from any directory
+ENV PATH=~/.local/bin:~/bin:~/.dotnet/tools:$PATH \
+  AZURE_CLIENTS_SHOW_SECRETS_WARNING=True \
+  #
+  # Set AZUREPS_HOST_ENVIRONMENT
+  AZUREPS_HOST_ENVIRONMENT=cloud-shell/1.0 \
+  #
+  # Powershell telemetry & don't tell users to upgrade since they cannot.
+  POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
+  POWERSHELL_UPDATECHECK=Off
+
+# ------------------------------ Tools Dockerfile ------------------------------
+# Copy and run script to install Powershell modules and setup Powershell machine
+# profile
+COPY ./linux/powershell/ powershell
+
+# Install latest Azure CLI package. CLI team drops latest (pre-release) package
+# here prior to public release We don't support using this location elsewhere -
+# it may be removed or updated without notice.
+RUN INSTALLED_VERSION=$(az version --output json 2>/dev/null | jq -r '."azure-cli"') && \
+  wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm && \
+  # Get the version of the downloaded Azure CLI
+  DOWNLOADED_VERSION=$(rpm --queryformat="%{VERSION}" -qp ./azure-cli-latest-mariner2.0.rpm) && \
+  #
+  # If the installed Azure CLI and the downloaded Azure CLI are different, then
+  # install the downloaded Azure CLI.
+  if [ "$DOWNLOADED_VERSION" != "$INSTALLED_VERSION" ]; then \
+  tdnf clean all && \
+  tdnf repolist --refresh && \
+  tdnf remove powershell -y && \
+  rm -rf /opt/microsoft/powershell && \
+  rm -rf /usr/local/share/powershell && \
+  ACCEPT_EULA=Y tdnf update -y && \
+  tdnf install -y ./azure-cli-latest-mariner2.0.rpm && \
+  tdnf install -y powershell && \
+  tdnf clean all && \
+  rm -rf /var/cache/tdnf/* && \
+  #
+  # Install any Azure CLI extensions that should be included by default.
+  az extension add --system --name ai-examples -y && \
+  az extension add --system --name ssh -y && \
+  az extension add --system --name ml -y && \
+  #
+  # Install kubectl
+  az aks install-cli && \
+  #
+  # Powershell installation and setup
+  /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
+  cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
+  /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
+  # Install Powershell warmup script
+  mkdir -p linux/powershell && \
+  cp powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1; \
+  fi && \
+  rm azure-cli-latest-mariner2.0.rpm && \
+  rm -rf ./powershell

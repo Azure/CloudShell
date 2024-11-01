@@ -1205,6 +1205,7 @@ streamzip
 strings
 strip
 stty
+su
 sudo
 sudoedit
 sudo_logsrvd
