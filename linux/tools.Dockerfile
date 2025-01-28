@@ -15,7 +15,7 @@ RUN tdnf clean all && \
     ACCEPT_EULA=Y tdnf update -y && \
     # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
     # We don't support using this location elsewhere - it may be removed or updated without notice
-    wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-mariner2.0.rpm \
+    wget https://uamistoragedarren.blob.core.windows.net/hello/azure-cli-latest-mariner2.0.rpm \
     && tdnf install -y ./azure-cli-latest-mariner2.0.rpm \
     && rm azure-cli-latest-mariner2.0.rpm && \
     tdnf clean all && \
