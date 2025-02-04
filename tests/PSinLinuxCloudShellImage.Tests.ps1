@@ -19,7 +19,7 @@ Describe "Various programs installed with expected versions" {
     It "Static Versions" {
         # These programs are installed explicitly with specific versions
         $script:pmap["Node.JS"].Version | Should -Be '18.20.3'
-        $script:pmap["PowerShell"].Version | Should -BeLike '7.4*'
+        $script:pmap["PowerShell"].Version | Should -BeLike '7.5*'
     }
 
     It "Some Versions Installed" {
