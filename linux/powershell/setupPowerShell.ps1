@@ -33,8 +33,7 @@ function Get-DockerfileData {
         throw "Error while reading $dockerFileData file."
     }
     $pscloudshellVer = $script:dockerfileDataObject.PSCloudShellVersion
-    $script:pscloudshellBlob = "https://pscloudshellbuild.blob.core.windows.net/$pscloudshellVer"
-    Write-Output "pscloudshellVersion= $pscloudshellVer; pscloudshellBlob=$script:pscloudshellBlob"
+    Write-Output "pscloudshellVersion= $pscloudshellVer;"
 }
 
 # Install Azure and AzureAD (Active Directory) modules
@@ -47,7 +46,7 @@ function Install-AzAndAzAdModules {
     rm az-cmdlets.tar.gz
     cd temp
 
-    curl -o "AzureAD.Standard.Preview.nupkg" -sSL "https://pscloudshellbuild.blob.core.windows.net/azuread-standard-preview/azuread.standard.preview.0.0.0.10.nupkg"
+    cp /usr/cloudshell/powershell/pkgs/azuread.standard.preview.0.0.0.10.nupkg ./AzureAD.Standard.Preview.nupkg
 
     $SourceLocation = $PSScriptRoot
     Write-Output "Source Location: $SourceLocation"
