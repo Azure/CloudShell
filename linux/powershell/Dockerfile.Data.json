@@ -1,7 +1,5 @@
 {
     "PSCloudShellVersion": "0-49-0",
-    "LibMIVersion": "omi-20201021-19",
-    "LibMIFileHash": "603AF969AAD4590E3584FA014EB0E7F0255A1D4F8AEEA79C060FB3E275E83D74",
     "ExoConnectorFileHash": "56db648f33ed324b7e29b6e8b5d022cde24dd06ea0dff890b6b9348fb0a502fc",
     "AzMaxVersion": "99.999.999",
     "AzureADMaxVersion": "2.9999.9999.9999",

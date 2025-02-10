@@ -41,7 +41,8 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
 
 # Copy and run script to install Powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/ powershell
-RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
+RUN cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
+    /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
     cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
     /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
     # Install Powershell warmup script
