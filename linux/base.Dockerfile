@@ -170,11 +170,13 @@ RUN chmod 755 /usr/local/bin/ansible* \
 
 
 # Install latest version of Istio
-ENV ISTIO_ROOT /usr/local/istio-latest
-RUN curl -sSL https://git.io/getLatestIstio | sh - \
-  && mv $PWD/istio* $ISTIO_ROOT \
-  && chmod -R 755 $ISTIO_ROOT
-ENV PATH $PATH:$ISTIO_ROOT/bin
+RUN export TMP_DIR=$(mktemp -d) \
+  && pushd "${TMP_DIR}"  \
+  && curl -sSL https://git.io/getLatestIstio | sh - \
+  && mv ./istio*/bin/istioctl /usr/local/bin/istioctl \
+  && chmod 755 /usr/local/bin/istioctl \
+  && popd \
+  && rm -rf "${TMP_DIR}"
 
 ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"
