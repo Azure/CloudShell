@@ -10,7 +10,7 @@ param(
 $ProgressPreference = 'SilentlyContinue' # Suppresses progress, which doesn't render correctly in docker
 
 # PowerShellGallery PROD site
-$prodGallery = 'https://www.powershellgallery.com/api/v2' 
+$prodGallery = 'https://www.powershellgallery.com/api/v2'
 
 $script:pscloudshellBlob = $null                            # Version folder for the pscloudshell blob storage
 $shareModulePath = ([System.Management.Automation.Platform]::SelectProductNameForDirectory('SHARED_MODULES'))
@@ -31,25 +31,9 @@ function Get-DockerfileData {
     $script:dockerfileDataObject = Microsoft.PowerShell.Management\Get-Content $dockerFileData | Microsoft.PowerShell.Utility\ConvertFrom-Json
     if (-not $script:dockerfileDataObject) {
         throw "Error while reading $dockerFileData file."
-    }   
-    $pscloudshellVer = $script:dockerfileDataObject.PSCloudShellVersion
-    $script:pscloudshellBlob = "https://pscloudshellbuild.blob.core.windows.net/$pscloudshellVer"
-    Write-Output "pscloudshellVersion= $pscloudshellVer; pscloudshellBlob=$script:pscloudshellBlob"
-}
-
-# A build of LibMI.so compatible with OpenSSL 1.1 is stored in the blob. This has not yet been tested in any other
-# situation than running in Cloud Shell
-function Install-LibMIFile {
-    $libmiversion = $script:dockerfileDataObject.libmiversion
-    $FileHash = $script:dockerfileDataObject.libmifilehash
-    $libmiBlob = "https://pscloudshellbuild.blob.core.windows.net/$libmiversion/a/debian10-libmi/libmi.so"
-    $FullPath = "/opt/microsoft/powershell/7/libmi.so"
-    Write-Output "Updating libmi.so with $($libmiBlob)"
-    Microsoft.PowerShell.Utility\Invoke-WebRequest -Uri $libmiBlob -UseBasicParsing -OutFile $FullPath
-    $hash = (Microsoft.PowerShell.Utility\Get-FileHash $FullPath).Hash
-    if ($hash -ne $FileHash) {
-        throw "Hash mismatch for $FullPath. Expected: $FileHash Actual:$hash."
     }
+    $pscloudshellVer = $script:dockerfileDataObject.PSCloudShellVersion
+    Write-Output "pscloudshellVersion= $pscloudshellVer;"
 }
 
 # Install Azure and AzureAD (Active Directory) modules
@@ -57,12 +41,12 @@ function Install-LibMIFile {
 function Install-AzAndAzAdModules {
     Write-Output "Install-AzAndAdModules.."
     mkdir temp
-    curl -o az-cmdlets.tar.gz -sSL "https://azpspackage.blob.core.windows.net/release/Az-Cmdlets-latest.tar.gz" 
-    tar -xf az-cmdlets.tar.gz -C temp 
+    curl -o az-cmdlets.tar.gz -sSL "https://azpspackage.blob.core.windows.net/release/Az-Cmdlets-latest.tar.gz"
+    tar -xf az-cmdlets.tar.gz -C temp
     rm az-cmdlets.tar.gz
     cd temp
 
-    curl -o "AzureAD.Standard.Preview.nupkg" -sSL "https://pscloudshellbuild.blob.core.windows.net/azuread-standard-preview/azuread.standard.preview.0.0.0.10.nupkg"
+    cp /usr/cloudshell/powershell/pkgs/azuread.standard.preview.0.0.0.10.nupkg ./AzureAD.Standard.Preview.nupkg
 
     $SourceLocation = $PSScriptRoot
     Write-Output "Source Location: $SourceLocation"
@@ -118,10 +102,10 @@ try {
 
     if ($image -eq "Base") {
         Write-Output "Installing modules from production gallery"
-        PowerShellGet\Install-Module -Name SHiPS @prodAllUsers    
+        PowerShellGet\Install-Module -Name SHiPS @prodAllUsers
         PowerShellGet\Install-Module -Name SQLServer -MaximumVersion $script:dockerfileDataObject.SQLServerModuleMaxVersion @prodAllUsers
         PowerShellGet\Install-Module -Name MicrosoftPowerBIMgmt -MaximumVersion $script:dockerfileDataObject.PowerBIMaxVersion @prodAllUsers
-        PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers     
+        PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers
 
         # MS Graph packages
         PowerShellGet\Install-Module -Name Microsoft.Graph.Authentication @prodAllUsers
@@ -135,17 +119,13 @@ try {
 
     }
     else {
-        # update libmi.so
-        Write-Output "Updating libmi.so"
-        Install-LibMIFile
-
         # Installing modules from Azure Powershell and AzureAD
         Write-Output "Installing modules from Azure Powershell and AzureAD"
         Install-AzAndAzAdModules
-        
+
         # Install modules from PSGallery
-        Write-Output "Installing modules from production gallery"    
-        PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers   
+        Write-Output "Installing modules from production gallery"
+        PowerShellGet\Install-Module -Name AzurePSDrive @prodAllUsers
         PowerShellGet\Install-Module -Name GuestConfiguration -MaximumVersion $script:dockerfileDataObject.GuestConfigurationMaxVersion -ErrorAction SilentlyContinue @prodAllUsers
         PowerShellGet\Install-Module -Force PSReadLine @prodAllUsers
         PowerShellGet\Install-Module -Name Az.Tools.Predictor @prodAllUsers
@@ -153,14 +133,14 @@ try {
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretManagement @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.PowerShell.SecretStore @prodAllUsers
 
-        # With older base image builds, teams 1.1.6 is already installed 
+        # With older base image builds, teams 1.1.6 is already installed
         if (Get-Module MicrosoftTeams -ListAvailable) {
             # For some odd reason, Update-Module was creating the MicrosoftTeams module twice with different version numbers.
-            # Uninstalling and then installing it again was the only way to keep it as one module. 
+            # Uninstalling and then installing it again was the only way to keep it as one module.
             Uninstall-Module MicrosoftTeams -Force
             PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers
         } else {
-            PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers     
+            PowerShellGet\Install-Module -Name MicrosoftTeams @prodAllUsers
         }
 
         # Install PSCloudShell modules
@@ -171,14 +151,14 @@ try {
             Write-Output ('Temp Directory: {0}' -f $tempDirectory)
         }
 
-        # Copy the startup script to the all-users profile 
+        # Copy the startup script to the all-users profile
         $psStartupScript = Microsoft.PowerShell.Management\Join-Path $PSHOME 'PSCloudShellStartup.ps1'
         Microsoft.PowerShell.Management\Copy-Item -Path $PSScriptRoot\PSCloudShellStartup.ps1 -Destination $psStartupScript
-        
+
         Write-Output "Installing powershell profile to $($PROFILE.AllUsersAllHosts)"
         Microsoft.PowerShell.Management\Copy-Item -Path $psStartupScript -Destination $PROFILE.AllUsersAllHosts -Verbose
         Write-Output "Installed powershell profile."
-        
+
         # Update PowerShell Core help files in the image, ensure any errors that result in help not being updated does not interfere with the build process
         # We want the image to have latest help files when shipped.
         Write-Output "Updating help files."
@@ -187,7 +167,7 @@ try {
     }
 
     Write-Output "All modules installed:"
-    Write-Output (Get-InstalledModule | Sort-Object Name | Select-Object Name, Version, Repository) 
+    Write-Output (Get-InstalledModule | Sort-Object Name | Select-Object Name, Version, Repository)
 }
 finally {
     # Clean-up the PowerShell Gallery registration settings
