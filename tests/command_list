@@ -101,7 +101,6 @@ basename
 basenc
 bash
 bashbug
-bcp
 bg
 bicep
 bind
@@ -1186,7 +1185,6 @@ splain
 split
 sprof
 sql
-sqlcmd
 srptool
 ss
 sserver

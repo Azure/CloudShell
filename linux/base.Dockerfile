@@ -64,8 +64,6 @@ RUN tdnf update -y --refresh && \
   openssl-libs \
   openssl-devel \
   man-db \
-  msodbcsql18 \
-  mssql-tools18 \
   nano \
   net-tools \
   parallel \
