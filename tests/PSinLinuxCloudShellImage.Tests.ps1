@@ -12,13 +12,13 @@ Describe "Various programs installed with expected versions" {
 
         [System.Environment]::OSVersion.Platform | Should -Be 'Unix'
         $osDetails = Get-Content /etc/*release
-        $osDetails | Where-Object {$_.Contains('VERSION_ID="2.0"')} | Should -Not -BeNullOrEmpty
-        $osDetails | Where-Object {$_.Contains('NAME="Common Base Linux Mariner"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('VERSION_ID="3.0"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object {$_.Contains('NAME="Microsoft Azure Linux"')} | Should -Not -BeNullOrEmpty
     }
 
     It "Static Versions" {
         # These programs are installed explicitly with specific versions
-        $script:pmap["Node.JS"].Version | Should -Be '18.20.3'
+        $script:pmap["Node.JS"].Version | Should -Be '20.14.0'
         $script:pmap["PowerShell"].Version | Should -BeLike '7.5*'
     }
 
