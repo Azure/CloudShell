@@ -4,7 +4,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cloudshell:base.master.cd63aa88.20241018.1
+ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cloudshell:base.master.ab53697f.20250218.1
 # Copy from base build
 FROM ${IMAGE_LOCATION}
 
@@ -41,7 +41,8 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
 
 # Copy and run script to install Powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/ powershell
-RUN /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
+RUN cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
+    /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
     cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
     /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
     # Install Powershell warmup script

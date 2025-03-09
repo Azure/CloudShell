@@ -142,6 +142,7 @@ ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 # Get latest version of Terraform.
 # Customers require the latest version of Terraform.
 RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
+  && TF_VERSION="${TF_VERSION#v}" \
   && wget -nv -O terraform.zip "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" \
   && wget -nv -O terraform.sha256 "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" \
   && echo "$(grep "${TF_VERSION}_linux_amd64.zip" terraform.sha256 | awk '{print $1}')  terraform.zip" | sha256sum -c \
@@ -170,11 +171,13 @@ RUN chmod 755 /usr/local/bin/ansible* \
 
 
 # Install latest version of Istio
-ENV ISTIO_ROOT /usr/local/istio-latest
-RUN curl -sSL https://git.io/getLatestIstio | sh - \
-  && mv $PWD/istio* $ISTIO_ROOT \
-  && chmod -R 755 $ISTIO_ROOT
-ENV PATH $PATH:$ISTIO_ROOT/bin
+RUN export TMP_DIR=$(mktemp -d) \
+  && pushd "${TMP_DIR}"  \
+  && curl -sSL https://git.io/getLatestIstio | sh - \
+  && mv ./istio*/bin/istioctl /usr/local/bin/istioctl \
+  && chmod 755 /usr/local/bin/istioctl \
+  && popd \
+  && rm -rf "${TMP_DIR}"
 
 ENV GOROOT="/usr/lib/golang"
 ENV PATH="$PATH:$GOROOT/bin:/opt/mssql-tools18/bin"

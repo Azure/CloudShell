@@ -5,5 +5,4 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 cd /tests
-Install-Module -Name Pester -Force
 Invoke-Pester -CI -Script PSinLinuxCloudShellImage.Tests.ps1

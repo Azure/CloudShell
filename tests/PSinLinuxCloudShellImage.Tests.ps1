@@ -1,5 +1,5 @@
 Describe "Various programs installed with expected versions" {
- 
+
     BeforeAll {
         $script:packages = Get-PackageVersion
         $script:pmap = @{}
@@ -23,9 +23,9 @@ Describe "Various programs installed with expected versions" {
     }
 
     It "Some Versions Installed" {
-        # These programs are not pinned to exact versions, we just check they are still installed and 
+        # These programs are not pinned to exact versions, we just check they are still installed and
         # running the version command works
-        
+
         $script:packages | ? Type -eq "Special" | % {
             $name = $_.Name
             $_.Version | Should -Not -BeNullOrEmpty -Because "$name should be present"
@@ -49,21 +49,21 @@ Describe "Various programs installed with expected versions" {
         $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff -w /tests/command_list /tests/installed_commands"
         # these may or may not be present depending on how tests were invoked
         $special = @(
-            "profile.ps1", 
-            "PSCloudShellStartup.ps1", 
-            "dh_pypy", 
-            "dh_python3", 
-            "pybuild", 
-            "python3-config", 
-            "python3m-config", 
-            "x86_64-linux-gnu-python3-config", 
+            "profile.ps1",
+            "PSCloudShellStartup.ps1",
+            "dh_pypy",
+            "dh_python3",
+            "pybuild",
+            "python3-config",
+            "python3m-config",
+            "x86_64-linux-gnu-python3-config",
             "x86_64-linux-gnu-python3m-config",
             "pwsh-preview"
         )
 
         $specialmatcher = ($special | % { "($_)"}) -join "|"
 
-        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","        
+        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","
         $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
         $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","
@@ -94,7 +94,7 @@ Describe "PowerShell Modules" {
 
         # set SkipAzInstallationChecks to avoid az check for AzInstallationChecks.json
         [System.Environment]::SetEnvironmentVariable('SkipAzInstallationChecks', $true)
-        
+
     }
 
     It "Single version of Modules are installed" {
@@ -143,7 +143,7 @@ Describe "PowerShell Modules" {
         # Due to Gallery limitation of handling FullClr/CoreClr dependencies
         # See https://msazure.visualstudio.com/One/_queries/edit/2364469/?fullScreen=false
         $module = Get-Module -Name AzurePSDrive -ListAvailable
-        $module | Should -Not -BeNullOrEmpty        
+        $module | Should -Not -BeNullOrEmpty
 
         # AzurePSDrive module version must be 0.9.*.* or greater
         $module.Version.Major -eq 0 | Should -Be $true
@@ -186,18 +186,18 @@ Describe "PowerShell Modules" {
         $module | Should -Not -BeNullOrEmpty
 
         # MicrosoftTeams module should have at least one command
-        (Get-Command * -Module MicrosoftTeams).Count -ge 1 | Should -Be $true        
+        (Get-Command * -Module MicrosoftTeams).Count -ge 1 | Should -Be $true
     }
-    
+
     It "Microsoft.PowerShell.SecretManagement PowerShell Module" {
-        
+
         $module = Get-Module -Name 'Microsoft.PowerShell.SecretManagement' -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
     }
-    
+
     It "Microsoft.PowerShell.SecretStore PowerShell Module" {
-        
+
         $module = Get-Module -Name 'Microsoft.PowerShell.SecretStore' -ListAvailable
         $module | Should -Not -BeNullOrEmpty
 
