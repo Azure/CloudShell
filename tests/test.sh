@@ -6,10 +6,9 @@
 chmod -R a+rw /tests
 
 # If we don't have test user created, create them
-id -u csuser 2> /dev/null
+id -u csuser 2>/dev/null
 
-if [ $? != 0 ]
-then
+if [ $? != 0 ]; then
   echo "Creating user"
   adduser -m --uid 9527 csuser
 fi
@@ -21,3 +20,6 @@ pwsh -c "Install-Module Pester -Force -Scope AllUsers"
 
 echo "running tests as csuser"
 runuser -u csuser pwsh /tests/test.ps1
+
+# Tests if the maven installation is working.
+runuser -u csuser bash /tests/test-mvn.sh
