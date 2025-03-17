@@ -394,6 +394,7 @@ fsck.ext4
 fsck.minix
 fsfreeze
 fstrim
+func
 function
 funzip
 fuse-overlayfs
@@ -467,6 +468,7 @@ gnutls-cli-debug
 gnutls-serv
 go
 gofmt
+gozip
 gp-archive
 gpasswd
 gp-collect-app
