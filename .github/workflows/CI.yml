@@ -24,15 +24,16 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Maximize build space
-        uses: easimon/maximize-build-space@master
+        uses: AdityaGarg8/remove-unwanted-software@v5
         with:
-          root-reserve-mb: '16384'
-          temp-reserve-mb: '100'
-          swap-size-mb: '8192'
+          # root-reserve-mb: '16384'
+          # temp-reserve-mb: '100'
+          # swap-size-mb: '8192'
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
           remove-codeql: 'true'
+          remove-docker-images: 'true'
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
