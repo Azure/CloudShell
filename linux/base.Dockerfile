@@ -41,8 +41,8 @@ RUN tdnf update -y --refresh && \
   curl \
   bind-utils \
   dos2unix \
-  dotnet-runtime-8.0 \
-  dotnet-sdk-8.0 \
+  dotnet-runtime-9.0 \
+  dotnet-sdk-9.0 \
   e2fsprogs \
   emacs \
   gawk \
