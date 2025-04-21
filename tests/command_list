@@ -88,6 +88,7 @@ basename
 basenc
 bash
 bashbug
+bcp
 bg
 bicep
 bind
@@ -1202,6 +1203,7 @@ source
 split
 sprof
 sql
+sqlcmd
 ss
 sserver
 ssh
