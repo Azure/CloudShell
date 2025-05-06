@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Run all the unit tests
 
@@ -6,9 +7,7 @@
 chmod -R a+rw /tests
 
 # If we don't have test user created, create them
-id -u csuser 2>/dev/null
-
-if [ $? != 0 ]; then
+if ! id -u csuser &>/dev/null; then
   echo "Creating user"
   adduser -m --uid 9527 csuser
 fi
