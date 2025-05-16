@@ -156,6 +156,7 @@ chrt
 chsh
 cifscreds
 cifsiostat
+cifs.upcall
 cksum
 clear
 clockdiff
@@ -178,8 +179,6 @@ compute_member
 compute_relabel
 consoletype
 containerd
-containerd-shim
-containerd-shim-runc-v1
 containerd-shim-runc-v2
 containerd-stress
 continue
@@ -243,16 +242,6 @@ disown
 dltest
 dmesg
 dnsdomainname
-dnssec-cds
-dnssec-dsfromkey
-dnssec-importkey
-dnssec-keyfromlabel
-dnssec-keygen
-dnssec-ksr
-dnssec-revoke
-dnssec-settime
-dnssec-signzone
-dnssec-verify
 do
 docker
 dockerd
@@ -804,7 +793,6 @@ mariadb-waitpid
 matchpathcon
 mcookie
 md5sum
-mdig
 mesg
 microsoft365
 mii-tool
@@ -881,13 +869,9 @@ mysqltest_embedded
 mysql_upgrade
 mysql_waitpid
 mytop
-named
-named-checkconf
 named-checkzone
 named-compilezone
-named-journalprint
 named-nzd2nzf
-named-rrchecker
 namei
 nameif
 nano
@@ -1089,8 +1073,6 @@ rmdir
 rmiregistry
 rmmod
 rnano
-rndc
-rndc-confgen
 rootlesskit
 rootlesskit-docker-proxy
 route
