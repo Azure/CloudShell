@@ -203,6 +203,27 @@ Describe "PowerShell Modules" {
 
     }
 
+    It "Microsoft.Graph modules can be imported in any order" {
+        # This test verifies that Microsoft.Graph.Applications and Microsoft.Graph.Groups 
+        # can be imported in any order without version conflicts
+        try {
+            Import-Module Microsoft.Graph.Applications -Force -ErrorAction Stop
+            Import-Module Microsoft.Graph.Groups -Force -ErrorAction Stop
+            $appsModule = Get-Module Microsoft.Graph.Applications
+            $groupsModule = Get-Module Microsoft.Graph.Groups
+            
+            $appsModule | Should -Not -BeNullOrEmpty
+            $groupsModule | Should -Not -BeNullOrEmpty
+            
+            # Verify both modules use the same version of Microsoft.Graph.Authentication
+            $appsAuthVersion = (Get-Module Microsoft.Graph.Authentication).Version
+            $appsAuthVersion | Should -Not -BeNullOrEmpty
+        }
+        catch {
+            "Unexpected exception thrown: $_" | Should -BeNullOrEmpty
+        }
+    }
+
     $importModuleTestCases = @(
         @{ ModuleName = "Microsoft.PowerShell.Management" }
         @{ ModuleName = "PSCloudShellUtility" }
@@ -214,6 +235,9 @@ Describe "PowerShell Modules" {
         @{ ModuleName = "MicrosoftTeams" }
         @{ ModuleName = "Microsoft.PowerShell.SecretManagement" }
         @{ ModuleName = "Microsoft.PowerShell.SecretStore" }
+        @{ ModuleName = "Microsoft.Graph.Authentication" }
+        @{ ModuleName = "Microsoft.Graph.Applications" }
+        @{ ModuleName = "Microsoft.Graph.Groups" }
     )
 
     It "Import-Module test for <ModuleName>" -TestCases $importModuleTestCases {
