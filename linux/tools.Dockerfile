@@ -62,6 +62,8 @@ RUN cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
 
 # Remove su so users don't have su access by default.
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
+# cleanup tmp files left behind by installation
+RUN find /tmp/ -mindepth 1 -delete
 
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
