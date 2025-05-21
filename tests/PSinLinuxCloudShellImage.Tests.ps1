@@ -209,18 +209,22 @@ Describe "PowerShell Modules" {
         try {
             Import-Module Microsoft.Graph.Applications -Force -ErrorAction Stop
             Import-Module Microsoft.Graph.Groups -Force -ErrorAction Stop
+            
+            # Verify modules were loaded successfully
             $appsModule = Get-Module Microsoft.Graph.Applications
             $groupsModule = Get-Module Microsoft.Graph.Groups
+            $authModule = Get-Module Microsoft.Graph.Authentication
             
             $appsModule | Should -Not -BeNullOrEmpty
             $groupsModule | Should -Not -BeNullOrEmpty
+            $authModule | Should -Not -BeNullOrEmpty
             
-            # Verify both modules use the same version of Microsoft.Graph.Authentication
-            $appsAuthVersion = (Get-Module Microsoft.Graph.Authentication).Version
-            $appsAuthVersion | Should -Not -BeNullOrEmpty
+            # Verify all modules are using version 2.26.1 of Microsoft.Graph.Authentication
+            $authModule.Version.ToString() | Should -Be "2.26.1"
+            $appsModule.Version.ToString() | Should -Be "2.26.1"
         }
         catch {
-            "Unexpected exception thrown: $_" | Should -BeNullOrEmpty
+            $_.Exception.Message | Should -BeNullOrEmpty -Because "No exceptions should be thrown when importing Microsoft.Graph modules"
         }
     }
 
@@ -244,11 +248,22 @@ Describe "PowerShell Modules" {
 
         param($ModuleName)
         try {
-            Import-Module $ModuleName -Force -ErrorAction Stop -ErrorVariable ev
-            $ev | Should -BeNullOrEmpty
+            Import-Module $ModuleName -Force -ErrorAction Stop
+            $module = Get-Module $ModuleName
+            $module | Should -Not -BeNullOrEmpty
+            
+            # Verify Microsoft.Graph modules have the correct version
+            if ($ModuleName -like "Microsoft.Graph*") {
+                if ($ModuleName -eq "Microsoft.Graph.Authentication") {
+                    $module.Version.ToString() | Should -Be "2.26.1"
+                }
+                elseif ($ModuleName -eq "Microsoft.Graph.Applications") {
+                    $module.Version.ToString() | Should -Be "2.26.1"
+                }
+            }
         }
         catch {
-            "Unexpected exception thrown: $_" | Should -BeNullOrEmpty
+            $_.Exception.Message | Should -BeNullOrEmpty -Because "No exceptions should be thrown when importing $ModuleName"
         }
 
     }
