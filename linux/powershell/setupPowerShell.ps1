@@ -115,7 +115,7 @@ try {
         PowerShellGet\Install-Module -Name Microsoft.Graph.Identity.DirectoryManagement @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.Graph.Identity.Governance @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.Graph.Identity.SignIns @prodAllUsers
-        PowerShellGet\Install-Module -Name Microsoft.Graph.Applications -RequiredVersion 2.26.1 @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Graph.Applications -RequiredVersion 2.28.0 @prodAllUsers
 
     }
     else {
