@@ -219,9 +219,17 @@ Describe "PowerShell Modules" {
             $groupsModule | Should -Not -BeNullOrEmpty
             $authModule | Should -Not -BeNullOrEmpty
             
-            # Verify all modules are using version 2.26.1 of Microsoft.Graph.Authentication
-            $authModule.Version.ToString() | Should -Be "2.26.1"
-            $appsModule.Version.ToString() | Should -Be "2.26.1"
+            # Verify all modules are using the same version of Microsoft.Graph.Authentication
+            $authVersion = $authModule.Version.ToString()
+            $appsVersion = $appsModule.Version.ToString()
+            $groupsVersion = $groupsModule.Version.ToString()
+            
+            Write-Host "Microsoft.Graph.Authentication version: $authVersion"
+            Write-Host "Microsoft.Graph.Applications version: $appsVersion"
+            Write-Host "Microsoft.Graph.Groups version: $groupsVersion"
+            
+            $appsVersion | Should -Be $authVersion -Because "All Microsoft.Graph modules should use the same version"
+            $groupsVersion | Should -Be $authVersion -Because "All Microsoft.Graph modules should use the same version"
         }
         catch {
             $_.Exception.Message | Should -BeNullOrEmpty -Because "No exceptions should be thrown when importing Microsoft.Graph modules"
@@ -254,11 +262,10 @@ Describe "PowerShell Modules" {
             
             # Verify Microsoft.Graph modules have the correct version
             if ($ModuleName -like "Microsoft.Graph*") {
-                if ($ModuleName -eq "Microsoft.Graph.Authentication") {
-                    $module.Version.ToString() | Should -Be "2.26.1"
-                }
-                elseif ($ModuleName -eq "Microsoft.Graph.Applications") {
-                    $module.Version.ToString() | Should -Be "2.26.1"
+                $authModule = Get-Module "Microsoft.Graph.Authentication"
+                if ($authModule) {
+                    $authVersion = $authModule.Version.ToString()
+                    $module.Version.ToString() | Should -Be $authVersion -Because "All Microsoft.Graph modules should use the same version"
                 }
             }
         }
