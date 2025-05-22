@@ -31,6 +31,14 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
+# Install krew to install kubectl-gadget
+RUN KREW="krew-linux_amd64" \
+    && curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" \
+    && tar zxvf "${KREW}.tar.gz" \
+    && ./"${KREW}" install krew \
+    && PATH="$HOME/.krew/bin:$PATH" kubectl krew install gadget \
+    && rm "${KREW}" "${KREW}.tar.gz"
+
 # Install azure-functions-core-tools
 RUN wget -nv -O Azure.Functions.Cli.zip `curl -fSsL https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest | grep "url.*linux-x64" | grep -v "sha2" | cut -d '"' -f4` \
     && unzip -d azure-functions-cli Azure.Functions.Cli.zip \
@@ -66,7 +74,7 @@ RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
 # Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
-ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:$PATH
+ENV PATH ~/.local/bin:~/bin:~/.dotnet/tools:/root/.krew/bin:$PATH
 
 ENV AZURE_CLIENTS_SHOW_SECRETS_WARNING True
 
