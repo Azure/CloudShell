@@ -20,6 +20,7 @@ COPY linux/tdnfinstall.sh .
 
 RUN tdnf update -y --refresh && \
   bash ./tdnfinstall.sh \
+  azurelinux-repos-cloud-native \
   azurelinux-repos-extended \
   azurelinux-repos-ms-non-oss-3.0 && \
   tdnf repolist --refresh && \
@@ -129,6 +130,8 @@ RUN tdnf update -y --refresh && \
   slirp4netns \
   msodbcsql18 \
   mssql-tools18 \
+  kubectl-gadget \
+  ig \
   gettext && \
   tdnf clean all && \
   rm -rf /var/cache/tdnf/*
