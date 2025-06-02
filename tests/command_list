@@ -1195,7 +1195,6 @@ ssh
 ssh-add
 ssh-agent
 ssh-copy-id
-sshd
 ssh-keygen
 ssh-keyscan
 sst_dump
