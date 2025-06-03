@@ -391,6 +391,7 @@ fuse-overlayfs
 fuser
 fusermount3
 g++
+gadgetctl
 gawk
 gawk-5.2.2
 gawkbug
@@ -557,6 +558,7 @@ if
 ifconfig
 ifnames
 ifstat
+ig
 in
 indxbib
 infocmp
@@ -662,6 +664,7 @@ ksba-config
 kswitch
 ktutil
 kubectl
+kubectl-gadget
 kubelogin
 kvno
 last
@@ -1192,7 +1195,6 @@ ssh
 ssh-add
 ssh-agent
 ssh-copy-id
-sshd
 ssh-keygen
 ssh-keyscan
 sst_dump
