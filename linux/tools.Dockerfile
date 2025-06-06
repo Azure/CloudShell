@@ -14,7 +14,7 @@ LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 RUN tdnf clean all && \
     azurelinux-repos-cloud-native \
     azurelinux-repos-extended \
-    azurelinux-repos-ms-non-oss-3.0 &&
+    azurelinux-repos-ms-non-oss-3.0 && \
     tdnf repolist --refresh && \
     ACCEPT_EULA=Y tdnf update -y && \
     tdnf install \
