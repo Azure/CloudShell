@@ -10,6 +10,22 @@ FROM ${IMAGE_LOCATION}
 
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
+# Temporarily add in this code. We can remove it once we cache the base image.
+RUN tdnf clean all && \
+    azurelinux-repos-cloud-native \
+    azurelinux-repos-extended \
+    azurelinux-repos-ms-non-oss-3.0 &&
+    tdnf repolist --refresh && \
+    ACCEPT_EULA=Y tdnf update -y && \
+    tdnf install \
+    msodbcsql18 \
+    mssql-tools18 \
+    kubectl-gadget \
+    ig && \
+    tdnf clean all && \
+    rm -rf /var/cache/tdnf/*
+        
+
 RUN tdnf clean all && \
     tdnf repolist --refresh && \
     ACCEPT_EULA=Y tdnf update -y && \
