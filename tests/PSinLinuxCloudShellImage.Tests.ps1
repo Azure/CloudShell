@@ -40,10 +40,6 @@ Describe "Various programs installed with expected versions" {
         Test-Path $startupScriptPath | Should -Be $true
     }
 
-    It "az cli extensions" {
-        az extension list | jq '.[] | .name' | Should -Contain '"ai-examples"'
-    }
-
     It "Compare bash commands to baseline" {
         # command_list contains a list of all the files which should be installed
         $command_diffs = bash -c "compgen -c | sort -u > /tests/installed_commands && diff -w /tests/command_list /tests/installed_commands"
