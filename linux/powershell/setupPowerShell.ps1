@@ -46,7 +46,6 @@ function Install-AzAndAzAdModules {
     rm az-cmdlets.tar.gz
     cd temp
 
-    cp /usr/cloudshell/powershell/pkgs/azuread.standard.preview.0.0.0.10.nupkg ./AzureAD.Standard.Preview.nupkg
 
     $SourceLocation = $PSScriptRoot
     Write-Output "Source Location: $SourceLocation"
@@ -58,8 +57,6 @@ function Install-AzAndAzAdModules {
     try {
         Write-Output "Installing Az..."
         Install-Module -Name Az -Repository $gallery -Scope AllUsers -AllowClobber -Force
-        Write-Output "Installing AzureAD.Standard.Preview..."
-        Install-Module -Name "AzureAD.Standard.Preview" -Repository $gallery -Scope AllUsers -AllowClobber -Force
     }
     finally {
         Write-Output "Unregistering gallery $gallery..."

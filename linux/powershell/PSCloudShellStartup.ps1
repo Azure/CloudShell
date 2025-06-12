@@ -1,8 +1,7 @@
 # Startupscript for PowerShell Cloud Shell
 
 #region Script Variables
-$script:Startuptime = [System.DateTime]::Now 
-$script:AzureADModuleName = 'AzureAD.Standard.Preview'
+$script:Startuptime = [System.DateTime]::Now
 
 # Set SkipAzInstallationChecks to avoid az check for AzInstallationChecks.json
 [System.Environment]::SetEnvironmentVariable('SkipAzInstallationChecks', $true)
@@ -13,16 +12,6 @@ $script:SkipMSIAuth = [System.Environment]::GetEnvironmentVariable('SkipMSIAuth'
 Microsoft.PowerShell.Core\Import-Module -Name PSCloudShellUtility
 $script:PSCloudShellUtilityModuleInfo = Microsoft.PowerShell.Core\Get-Module PSCloudShellUtility
 
-# This Cloud env map is for Connect-AzureAD
-$script:CloudEnvironmentMapAzureAD = @{
-    PROD = 'AzureCloud'; 
-    Fairfax = 'AzureUSGovernment'; 
-    Mooncake = 'AzureChinaCloud';
-    BlackForest = 'AzureGermanCloud';
-    dogfood = 'dogfood';
-    USNat = 'AzureUSGovernment2';
-    USSec = 'AzureUSGovernment3'
-}
 
 # This Cloud Env Map is for Connect-AzAccount
 # We need to have two because the mapping is slightly different for the two commands
@@ -176,46 +165,6 @@ function Connect-AzService
     return $azAccount
 }
 
-# Authenticate to Azure Active Directory Service
-# This function needs to be run once per shell startup and everytime we get a new token from the RP
-# This deliberately shadows the Connect-AzureAD cmdlet because most of the time you want our version, and their error messages tell you to run this
-function Connect-AzureAD
-{
-    $startTime = [System.DateTime]::Now
-
-    try
-    {  
-        $envName = $env:ACC_CLOUD
-        if ($CloudEnvironmentMapAzureAD.ContainsKey($env:ACC_CLOUD))
-        {
-            $envName = $script:CloudEnvironmentMapAzureAD[$env:ACC_CLOUD]
-        }
-
-        # Remove AccountId from parameters since it's missing for some users; Plus, it doesn't affect the authorization.
-        $azureADParameters = @{'Identity' = $true; 'TenantId' = $env:ACC_TID;  'AzureEnvironmentName' = $envName}
-
-        # This call sets the local process context with the token, account and tenant information
-        & $script:AzureADModuleName\Connect-AzureAD @azureADParameters -ErrorAction SilentlyContinue -ErrorVariable azureADError | Microsoft.PowerShell.Core\Out-Null
-        
-        # Log any errors from AzureAD authentication
-        if ($azureADError)
-        {
-            $errorFolderPath = $script:UserDefaultPath
-            $azureFolderPath = (Microsoft.PowerShell.Management\Join-Path -Path $script:UserDefaultPath -ChildPath '.azure')
-            Microsoft.PowerShell.Utility\Write-Warning -Message "An error occurred while authenticating to $($script:AzureADModuleName). Check $azureFolderPath for logs"
-            if (Microsoft.PowerShell.Management\Test-Path -Path $azureFolderPath)
-            {
-                $errorFolderPath = $azureFolderPath
-            }
-            # Use  $script:UserDefaultPath Path if .azure folder does not exist
-            $azureADError > (Microsoft.PowerShell.Management\Join-Path -Path $errorFolderPath -ChildPath 'azureADError.err')
-        }
-    }
-    finally
-    {
-        Invoke-CloudShellTelemetry -LogLabel "CONNECTAZUREADSERVICE" -StartTime $startTime
-    }
-}
 
 function Set-PSCloudShellTelemetry
 {
@@ -361,21 +310,6 @@ else
         # Measure the time spent on the Azure authentication
         Invoke-CloudShellTelemetry -LogLabel "AZUREAUTHENTICATION" -StartTime $AuthStartTime
     }
-}
-
-#endregion
-
-#region AzureAD
-
-# Import AzureAD module so cmdlets are visible, they are not currently being auto-discovered
-$azureADLoadStartTime = [System.DateTime]::Now
-try 
-{
-    Microsoft.PowerShell.Core\Import-Module -Name $script:AzureADModuleName    
-}
-finally
-{
-    Invoke-CloudShellTelemetry -LogLabel "AZUREADLOAD" -StartTime $azureADLoadStartTime
 }
 
 #endregion
