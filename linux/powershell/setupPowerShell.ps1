@@ -117,6 +117,16 @@ try {
         PowerShellGet\Install-Module -Name Microsoft.Graph.Identity.SignIns @prodAllUsers
         PowerShellGet\Install-Module -Name Microsoft.Graph.Applications @prodAllUsers
 
+        # Microsoft Entra PowerShell packages
+        PowerShellGet\Install-Module -Name Microsoft.Entra.Authentication @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Entra.Users @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Entra.Groups @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Entra.DirectoryManagement @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Entra.Governance @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Entra.SignIns @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Entra.Applications @prodAllUsers
+        PowerShellGet\Install-Module -Name Microsoft.Entra.Reports @prodAllUsers
+
     }
     else {
         # Installing modules from Azure Powershell and AzureAD
