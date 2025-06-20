@@ -75,6 +75,10 @@ RUN cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
     cp powershell/Invoke-PreparePowerShell.ps1 linux/powershell/Invoke-PreparePowerShell.ps1 && \
     rm -rf ./powershell
 
+# Single user installation - does not work in Azure DevOps build.
+COPY ./linux/scripts/chroot-flox-install.sh /tmp/chroot-flox-install.sh
+RUN chmod +x /tmp/chroot-flox-install.sh && /tmp/chroot-flox-install.sh
+
 # Remove su so users don't have su access by default.
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 
