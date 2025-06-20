@@ -78,6 +78,10 @@ RUN cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
 # Remove su so users don't have su access by default.
 RUN rm -f ./linux/Dockerfile && rm -f /bin/su
 
+# Single user installation - does not work in Azure DevOps build.
+COPY ./linux/scripts/chroot-flox-install.sh /tmp/chroot-flox-install.sh
+RUN chmod +x /tmp/chroot-flox-install.sh && /tmp/chroot-flox-install.sh
+
 # Add user's home directories to PATH at the front so they can install tools which
 # override defaults
 # Add dotnet tools to PATH so users can install a tool using dotnet tools and can execute that command from any directory
