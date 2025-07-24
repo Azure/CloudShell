@@ -474,6 +474,7 @@ gpg-card
 gpgconf
 gpg-connect-agent
 gpg-error
+gpg-mail-tube
 gpgparsemail
 gpgscm
 gpgsm
