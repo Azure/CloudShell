@@ -171,16 +171,6 @@ RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
     && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements.txt \
     && /opt/ansible/bin/python -m pip install --index-url $(cat /run/secrets/pip_index_url) -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
-# Install ansible and pywinrm packages using Azure Artifacts feed
-RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
-  cd /opt && \
-  /bin/bash -c "source ansible/bin/activate && pip3 install --index-url $(cat /run/secrets/pip_index_url) ansible && pip3 install --index-url $(cat /run/secrets/pip_index_url) pywinrm\>\=0\.2\.2 && deactivate"
-
-# Install Azure collection requirements using Azure Artifacts feed  
-RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
-  /opt/ansible/bin/python -m pip install --index-url $(cat /run/secrets/pip_index_url) -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
-
-
 # Install latest version of Istio
 RUN export TMP_DIR=$(mktemp -d) \
   && pushd "${TMP_DIR}"  \
