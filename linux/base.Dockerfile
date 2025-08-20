@@ -161,14 +161,22 @@ COPY ./linux/ansible/ansible*  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/ansible* \
   && cd /opt \
   && virtualenv -p python3 ansible \
-  && /bin/bash -c "source ansible/bin/activate && pip3 list --format=freeze | cut -d '=' -f1 | xargs -n1 pip3 install -U && pip3 install ansible && pip3 install pywinrm\>\=0\.2\.2 && deactivate" \
+  && /bin/bash -c "source ansible/bin/activate && pip3 list --format=freeze | cut -d '=' -f1 | xargs -n1 pip3 install -U && deactivate" \
   && rm -rf ~/.local/share/virtualenv/ \
   && rm -rf ~/.cache/pip/ \
   && ansible-galaxy collection install azure.azcollection --force -p /usr/share/ansible/collections \
   # Temp: Proper fix is to use regular python for Ansible.
   && mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/ \
-  && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements.txt \
-  && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
+  && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements.txt
+
+# Install ansible and pywinrm packages using Azure Artifacts feed
+RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
+  cd /opt && \
+  /bin/bash -c "source ansible/bin/activate && pip3 install --index-url $(cat /run/secrets/pip_index_url) ansible && pip3 install --index-url $(cat /run/secrets/pip_index_url) pywinrm\>\=0\.2\.2 && deactivate"
+
+# Install Azure collection requirements using Azure Artifacts feed  
+RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
+  /opt/ansible/bin/python -m pip install --index-url $(cat /run/secrets/pip_index_url) -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
 
 # Install latest version of Istio
