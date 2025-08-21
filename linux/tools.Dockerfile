@@ -24,9 +24,8 @@ RUN tdnf clean all && \
 
 # Install any Azure CLI extensions that should be included by default.
 RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
-    az config set extension.index_url=$(cat /run/secrets/pip_index_url) \
-    && az extension add --system --name ssh -y \
-    && az extension add --system --name ml -y
+    az extension add --system --name ssh -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)" \
+    && az extension add --system --name ml -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)"
 
 # Install kubectl
 RUN az aks install-cli \
