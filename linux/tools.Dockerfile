@@ -23,7 +23,9 @@ RUN tdnf clean all && \
     rm -rf /var/cache/tdnf/*
 
 # Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ssh -y \
+RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
+    az config set extension.index_url=$(cat /run/secrets/pip_index_url) \
+    && az extension add --system --name ssh -y \
     && az extension add --system --name ml -y
 
 # Install kubectl
