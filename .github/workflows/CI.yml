@@ -37,7 +37,9 @@ jobs:
 
       # Build base dockerfile
       - name: Build the base.Dockerfile
-        run: docker build --build-arg pip_index_url=https://pypi.org/simple -t base_cloudshell -f linux/base.Dockerfile .
+        run: |
+          echo "https://pypi.org/simple/" > pip_index_url.txt
+          docker build -t base_cloudshell -f linux/base.Dockerfile --secret id=pip_index_url,src=pip_index_url.txt .
 
       - name: Create temporary trivy directories
         run: |
