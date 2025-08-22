@@ -59,7 +59,7 @@ jobs:
       # Build tools dockerfile
       - name: Build the tools.Dockerfile
         run: |
-          docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile . --secret id=pip_index_url,src=pip_index_url.txt .
+          docker build -t tools_cloudshell --build-arg IMAGE_LOCATION=base_cloudshell -f linux/tools.Dockerfile --secret id=pip_index_url,src=pip_index_url.txt .
 
       - name: Scan Tools image with Trivy
         id: trivy-tools-scan
