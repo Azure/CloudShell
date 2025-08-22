@@ -24,8 +24,10 @@ RUN tdnf clean all && \
 
 # Install any Azure CLI extensions that should be included by default.
 RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
-    az extension add --system --name ssh -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)" \
-    && az extension add --system --name ml -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)"
+    echo "Using Azure Artifacts feed: $(cat /run/secrets/pip_index_url)" && \
+    export PIP_VERBOSE=1 && \
+    az extension add --system --name ssh -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)" --verbose --debug \
+    && az extension add --system --name ml -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)" --verbose --debug
 
 # Install kubectl
 RUN az aks install-cli \
