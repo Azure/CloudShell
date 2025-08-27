@@ -58,11 +58,10 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
 COPY ./linux/powershell/ powershell
 RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
     cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
-    # Configure PowerShell to use Azure Artifacts feed for PSResourceGet
-    export FEED_URL=$(cat /run/secrets/pip_index_url | sed 's|/simple/|/nuget/v3/index.json|') && \
-    /usr/bin/pwsh -Command "Register-PSResourceRepository -Name 'PSGalleryUpstream' -Uri \"$env:FEED_URL\" -Trusted" && \
-    # Temporarily override PowerShell Gallery URL in the setup script
-    sed -i "s|https://www.powershellgallery.com/api/v2|$FEED_URL|g" ./powershell/setupPowerShell.ps1 && \
+    # Set environment variables for PowerShell to potentially use Azure Artifacts feed
+    export NUGET_SOURCE=$(cat /run/secrets/pip_index_url | sed 's|/simple/|/nuget/v2|') && \
+    # Temporarily override PowerShell Gallery URL in the setup script to use Azure Artifacts feed
+    sed -i "s|https://www.powershellgallery.com/api/v2|$NUGET_SOURCE|g" ./powershell/setupPowerShell.ps1 && \
     /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
     cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
     /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
