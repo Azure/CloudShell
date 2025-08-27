@@ -4,7 +4,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cdpxb787066ec88f4e20ae65e42a858c42ca00.azurecr.io/official/cloudshell:base.master.3df5312c.20250612.2
+ARG IMAGE_LOCATION=cloudconregtest.azurecr.io/cloudshell:base.master.548d49ff.20250719.3
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
@@ -23,11 +23,16 @@ RUN tdnf clean all && \
     rm -rf /var/cache/tdnf/*
 
 # Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ssh -y \
-    && az extension add --system --name ml -y
+RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
+    echo "Using Azure Artifacts feed: $(cat /run/secrets/pip_index_url)" && \
+    export PIP_VERBOSE=1 && \
+    az extension add --system --name ssh -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)" --verbose --debug \
+    && az extension add --system --name ml -y --pip-extra-index-urls "$(cat /run/secrets/pip_index_url)" --verbose --debug
 
 # Install kubectl
-RUN az aks install-cli \
+RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
+    export PIP_INDEX_URL=$(cat /run/secrets/pip_index_url) && \
+    az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
@@ -51,7 +56,12 @@ ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
 
 # Copy and run script to install Powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/ powershell
-RUN cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
+RUN --mount=type=secret,id=pip_index_url,target=/run/secrets/pip_index_url \
+    cp ./powershell/libs/libmi.so /opt/microsoft/powershell/7/libmi.so && \
+    # Set environment variables for PowerShell to potentially use Azure Artifacts feed
+    export NUGET_SOURCE=$(cat /run/secrets/pip_index_url | sed 's|/simple/|/nuget/v2|') && \
+    # Temporarily override PowerShell Gallery URL in the setup script to use Azure Artifacts feed
+    sed -i "s|https://www.powershellgallery.com/api/v2|$NUGET_SOURCE|g" ./powershell/setupPowerShell.ps1 && \
     /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Base && \
     cp -r ./powershell/PSCloudShellUtility /usr/local/share/powershell/Modules/PSCloudShellUtility/ && \
     /usr/bin/pwsh -File ./powershell/setupPowerShell.ps1 -image Top && \
