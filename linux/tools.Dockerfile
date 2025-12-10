@@ -4,7 +4,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cloudconregprd.azurecr.io/public/azure-cloudshell:base.base_image_vuln_fixes.1aca95f8.20251208.2
+ARG IMAGE_LOCATION=cloudconregprd.azurecr.io/public/azure-cloudshell:base.master.6850ceb0.20250930.1
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
