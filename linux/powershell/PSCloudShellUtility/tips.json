@@ -1,6 +1,10 @@
 {
   "items": [
-    "Azure Cloud Shell now includes Predictive IntelliSense! Learn more: https://aka.ms/CloudShell/IntelliSense",
-    "SqlServer has been updated to Version 22!"
+    "You can now copy & paste in Cloud Shell using Ctrl+C/Ctrl+V (Linux/Windows) or Cmd+C/Cmd+V (Mac)! Learn more: https://aka.ms/cloudshell/copy-paste",
+    "You can now drag and drop files to upload them to Cloud Shell! Learn more: https://aka.ms/cloudshell/manage-files",
+    "Use Web Preview to access apps running in Cloud Shell! Learn more: https://aka.ms/cloudshell/web-preview",
+    "Quickly edit, debug, and run your apps in VS Code for the Web - powered by Cloud Shell. No setup needed. Try it now: https://aka.ms/vscode-web-azure",
+    "Run Cloud Shell inside a VNet to securely connect to private Azure resources! Learn more: https://aka.ms/cloudshell/docs/vnet",
+    "Share your feedback and help us improve Cloud Shell: https://aka.ms/cloudshell/feedback"
   ]
 }
