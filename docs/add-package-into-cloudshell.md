@@ -29,6 +29,9 @@ To meet security and compliance requirements, all packages must be installed fro
 
 ### Check if package is available in Azure Linux
 
+> [!NOTE]
+> The instructions assume Azure Linux 3.0 because Cloud Shell is currently based on Azure Linux 3.0.
+
 Please check if the package is available here:
 https://packages.microsoft.com/azurelinux/3.0/prod/base/x86_64/Packages/
 
