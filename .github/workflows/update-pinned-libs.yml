@@ -81,17 +81,8 @@ jobs:
           fi
           echo "Updated ISTIO_VERSION to ${LATEST}"
 
-      - name: Determine if any updates needed
-        id: check-updates
-        run: |
-          if [ "${{ steps.compare-istio.outputs.needs_update }}" == "true" ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Create Pull Request
-        if: steps.check-updates.outputs.has_updates == 'true'
+        if: steps.compare-istio.outputs.needs_update == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
