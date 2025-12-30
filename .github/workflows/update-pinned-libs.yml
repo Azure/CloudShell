@@ -2,8 +2,8 @@ name: Update Pinned Library Versions
 
 on:
   schedule:
-    # Check for updates every day at 6:00 AM UTC
-    - cron: '0 6 * * *'
+    # Check for updates every 2 weeks (1st and 15th of each month) at 6:00 AM UTC
+    - cron: '0 6 1,15 * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
