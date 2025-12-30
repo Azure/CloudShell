@@ -33,7 +33,17 @@ jobs:
       - name: Get latest Istio version
         id: latest-istio
         run: |
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/istio/istio/releases/latest | jq -r '.tag_name')
+          set -e
+          LATEST_VERSION=$(curl -fsSL https://api.github.com/repos/istio/istio/releases/latest | jq -er '.tag_name') || {
+            echo "Error: Failed to fetch latest Istio release information from GitHub API." >&2
+            exit 1
+          }
+          
+          if [ -z "${LATEST_VERSION}" ] || [ "${LATEST_VERSION}" = "null" ]; then
+            echo "Error: Received empty or invalid latest Istio version from GitHub API." >&2
+            exit 1
+          fi
+          
           echo "version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
           echo "Latest Istio version: ${LATEST_VERSION}"
 
