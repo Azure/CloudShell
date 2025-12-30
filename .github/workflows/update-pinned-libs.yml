@@ -23,6 +23,10 @@ jobs:
         id: current-istio
         run: |
           CURRENT_VERSION=$(grep 'ENV ISTIO_VERSION=' linux/base.Dockerfile | cut -d'=' -f2)
+          if [ -z "${CURRENT_VERSION}" ]; then
+            echo "Error: Unable to determine current Istio version from linux/base.Dockerfile" >&2
+            exit 1
+          fi
           echo "version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
           echo "Current Istio version: ${CURRENT_VERSION}"
 
