@@ -97,7 +97,7 @@ jobs:
       - name: Create Pull Request
         if: steps.compare-istio.outputs.needs_update == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
         run: |
           CURRENT_VERSION="${{ steps.current-istio.outputs.version }}"
           LATEST_VERSION="${{ steps.latest-istio.outputs.version }}"
