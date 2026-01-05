@@ -1,0 +1,110 @@
+name: Update Pinned Library Versions
+
+on:
+  schedule:
+    # Check for updates every 2 weeks (1st and 15th of each month) at 6:00 AM UTC
+    - cron: '0 6 1,15 * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  check-library-versions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current Istio version
+        id: current-istio
+        run: |
+          CURRENT_VERSION=$(grep 'ENV ISTIO_VERSION=' linux/base.Dockerfile | cut -d'=' -f2)
+          if [ -z "${CURRENT_VERSION}" ]; then
+            echo "Error: Unable to determine current Istio version from linux/base.Dockerfile" >&2
+            exit 1
+          fi
+          echo "version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+          echo "Current Istio version: ${CURRENT_VERSION}"
+
+      - name: Get latest Istio version
+        id: latest-istio
+        run: |
+          set -e
+          LATEST_VERSION=$(curl -fsSL https://api.github.com/repos/istio/istio/releases/latest | jq -er '.tag_name') || {
+            echo "Error: Failed to fetch latest Istio release information from GitHub API." >&2
+            exit 1
+          }
+          
+          if [ -z "${LATEST_VERSION}" ] || [ "${LATEST_VERSION}" = "null" ]; then
+            echo "Error: Received empty or invalid latest Istio version from GitHub API." >&2
+            exit 1
+          fi
+          
+          echo "version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+          echo "Latest Istio version: ${LATEST_VERSION}"
+
+      - name: Compare Istio versions
+        id: compare-istio
+        run: |
+          CURRENT="${{ steps.current-istio.outputs.version }}"
+          LATEST="${{ steps.latest-istio.outputs.version }}"
+          
+          if [ "${CURRENT}" != "${LATEST}" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "Istio update needed: ${CURRENT} -> ${LATEST}"
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "Istio already on latest version: ${CURRENT}"
+          fi
+
+      - name: Update Istio in Dockerfile
+        if: steps.compare-istio.outputs.needs_update == 'true'
+        run: |
+          LATEST="${{ steps.latest-istio.outputs.version }}"
+
+          # Ensure the expected ENV ISTIO_VERSION line exists before attempting to update
+          if ! grep -q '^ENV ISTIO_VERSION=' linux/base.Dockerfile; then
+            echo "Error: Could not find 'ENV ISTIO_VERSION=' line in linux/base.Dockerfile"
+            exit 1
+          fi
+
+          sed -i "s/^ENV ISTIO_VERSION=.*/ENV ISTIO_VERSION=${LATEST}/" linux/base.Dockerfile
+
+          # Verify that the update was applied successfully
+          if ! grep -q "^ENV ISTIO_VERSION=${LATEST}$" linux/base.Dockerfile; then
+            echo "Error: Failed to update ISTIO_VERSION to ${LATEST} in linux/base.Dockerfile"
+            exit 1
+          fi
+          echo "Updated ISTIO_VERSION to ${LATEST}"
+
+      - name: Create Pull Request
+        if: steps.compare-istio.outputs.needs_update == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update pinned library versions"
+          title: "chore: update pinned library versions"
+          body: |
+            ## Automated Library Version Updates
+            
+            This PR updates the following pinned library versions:
+            
+            ${{ steps.compare-istio.outputs.needs_update == 'true' && format('- **Istio**: `{0}` → `{1}`', steps.current-istio.outputs.version, steps.latest-istio.outputs.version) || '' }}
+            
+            ### Changes
+            - Updated version variables in [linux/base.Dockerfile](linux/base.Dockerfile)
+            
+            ### Release Notes
+            ${{ steps.compare-istio.outputs.needs_update == 'true' && format('- [Istio {0}](https://github.com/istio/istio/releases/tag/{0})', steps.latest-istio.outputs.version) || '' }}
+            
+            ---
+            *This PR was automatically created by the Update Pinned Library Versions workflow.*
+          branch: update-pinned-libs-${{ github.run_number }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
