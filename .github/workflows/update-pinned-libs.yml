@@ -81,30 +81,44 @@ jobs:
           fi
           echo "Updated ISTIO_VERSION to ${LATEST}"
 
+      - name: Create and push branch with updates
+        if: steps.compare-istio.outputs.needs_update == 'true'
+        run: |
+          BRANCH_NAME="update-pinned-libs-$(date +%Y%m%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
+          git add linux/base.Dockerfile
+          git commit -m "chore: update pinned library versions"
+          git push origin "$BRANCH_NAME"
+          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        id: push-branch
+
       - name: Create Pull Request
         if: steps.compare-istio.outputs.needs_update == 'true'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: update pinned library versions"
-          title: "chore: update pinned library versions"
-          body: |
-            ## Automated Library Version Updates
-            
-            This PR updates the following pinned library versions:
-            
-            ${{ steps.compare-istio.outputs.needs_update == 'true' && format('- **Istio**: `{0}` → `{1}`', steps.current-istio.outputs.version, steps.latest-istio.outputs.version) || '' }}
-            
-            ### Changes
-            - Updated version variables in [linux/base.Dockerfile](linux/base.Dockerfile)
-            
-            ### Release Notes
-            ${{ steps.compare-istio.outputs.needs_update == 'true' && format('- [Istio {0}](https://github.com/istio/istio/releases/tag/{0})', steps.latest-istio.outputs.version) || '' }}
-            
-            ---
-            *This PR was automatically created by the Update Pinned Library Versions workflow.*
-          branch: update-pinned-libs-${{ github.run_number }}
-          delete-branch: true
-          labels: |
-            dependencies
-            automated
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CURRENT_VERSION="${{ steps.current-istio.outputs.version }}"
+          LATEST_VERSION="${{ steps.latest-istio.outputs.version }}"
+          BRANCH_NAME="${{ steps.push-branch.outputs.branch }}"
+          
+          gh pr create \
+            --title "chore: update pinned library versions" \
+            --body "## Automated Library Version Updates
+          
+          This PR updates the following pinned library versions:
+          
+          - **Istio**: ${CURRENT_VERSION} to ${LATEST_VERSION}
+          
+          ### Changes
+          - Updated version variables in linux/base.Dockerfile
+          
+          ### Release Notes
+          - Istio ${LATEST_VERSION}: https://github.com/istio/istio/releases/tag/${LATEST_VERSION}
+          
+          ---
+          This PR was automatically created by the Update Pinned Library Versions workflow." \
+            --base master \
+            --head "${BRANCH_NAME}" \
+            --label "dependencies,automated"
