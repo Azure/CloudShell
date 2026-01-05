@@ -121,4 +121,4 @@ jobs:
           This PR was automatically created by the Update Pinned Library Versions workflow." \
             --base master \
             --head "${BRANCH_NAME}" \
-            --label "version_upgrade, automated_pr"
+            --label "version_upgrade,automated_pr"
