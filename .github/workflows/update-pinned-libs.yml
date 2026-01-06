@@ -61,6 +61,48 @@ jobs:
             echo "Istio already on latest version: ${CURRENT}"
           fi
 
+      - name: Get current RootlessKit version
+        id: current-rootlesskit
+        run: |
+          CURRENT_VERSION=$(grep 'ROOTLESSKIT_VERSION=' linux/base.Dockerfile | grep -o 'v[0-9.]*')
+          if [ -z "${CURRENT_VERSION}" ]; then
+            echo "Error: Unable to determine current RootlessKit version from linux/base.Dockerfile" >&2
+            exit 1
+          fi
+          echo "version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+          echo "Current RootlessKit version: ${CURRENT_VERSION}"
+
+      - name: Get latest RootlessKit version
+        id: latest-rootlesskit
+        run: |
+          set -e
+          LATEST_VERSION=$(curl -fsSL https://api.github.com/repos/rootless-containers/rootlesskit/releases/latest | jq -er '.tag_name') || {
+            echo "Error: Failed to fetch latest RootlessKit release information from GitHub API." >&2
+            exit 1
+          }
+          
+          if [ -z "${LATEST_VERSION}" ] || [ "${LATEST_VERSION}" = "null" ]; then
+            echo "Error: Received empty or invalid latest RootlessKit version from GitHub API." >&2
+            exit 1
+          fi
+          
+          echo "version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+          echo "Latest RootlessKit version: ${LATEST_VERSION}"
+
+      - name: Compare RootlessKit versions
+        id: compare-rootlesskit
+        run: |
+          CURRENT="${{ steps.current-rootlesskit.outputs.version }}"
+          LATEST="${{ steps.latest-rootlesskit.outputs.version }}"
+          
+          if [ "${CURRENT}" != "${LATEST}" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "RootlessKit update needed: ${CURRENT} -> ${LATEST}"
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "RootlessKit already on latest version: ${CURRENT}"
+          fi
+
       - name: Update Istio in Dockerfile
         if: steps.compare-istio.outputs.needs_update == 'true'
         run: |
@@ -81,8 +123,26 @@ jobs:
           fi
           echo "Updated ISTIO_VERSION to ${LATEST}"
 
+      - name: Update RootlessKit in Dockerfile
+        if: steps.compare-rootlesskit.outputs.needs_update == 'true'
+        run: |
+          LATEST="${{ steps.latest-rootlesskit.outputs.version }}"
+
+          if ! grep -q 'ROOTLESSKIT_VERSION=' linux/base.Dockerfile; then
+            echo "Error: Could not find 'ROOTLESSKIT_VERSION=' line in linux/base.Dockerfile"
+            exit 1
+          fi
+
+          sed -i "s/ROOTLESSKIT_VERSION=v[0-9.]*/ROOTLESSKIT_VERSION=${LATEST}/" linux/base.Dockerfile
+
+          if ! grep -q "ROOTLESSKIT_VERSION=${LATEST}" linux/base.Dockerfile; then
+            echo "Error: Failed to update ROOTLESSKIT_VERSION to ${LATEST} in linux/base.Dockerfile"
+            exit 1
+          fi
+          echo "Updated ROOTLESSKIT_VERSION to ${LATEST}"
+
       - name: Create and push branch with updates
-        if: steps.compare-istio.outputs.needs_update == 'true'
+        if: steps.compare-istio.outputs.needs_update == 'true' || steps.compare-rootlesskit.outputs.needs_update == 'true'
         run: |
           BRANCH_NAME="update-pinned-libs-$(date +%Y%m%d)"
           git config user.name "github-actions[bot]"
@@ -95,13 +155,28 @@ jobs:
         id: push-branch
 
       - name: Create Pull Request
-        if: steps.compare-istio.outputs.needs_update == 'true'
+        if: steps.compare-istio.outputs.needs_update == 'true' || steps.compare-rootlesskit.outputs.needs_update == 'true'
         env:
           GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
         run: |
-          CURRENT_VERSION="${{ steps.current-istio.outputs.version }}"
-          LATEST_VERSION="${{ steps.latest-istio.outputs.version }}"
+          CURRENT_ISTIO="${{ steps.current-istio.outputs.version }}"
+          LATEST_ISTIO="${{ steps.latest-istio.outputs.version }}"
+          CURRENT_ROOTLESSKIT="${{ steps.current-rootlesskit.outputs.version }}"
+          LATEST_ROOTLESSKIT="${{ steps.latest-rootlesskit.outputs.version }}"
           BRANCH_NAME="${{ steps.push-branch.outputs.branch }}"
+          
+          UPDATES=""
+          RELEASE_NOTES=""
+          
+          if [ "${{ steps.compare-istio.outputs.needs_update }}" == "true" ]; then
+            UPDATES="${UPDATES}- **Istio**: ${CURRENT_ISTIO} to ${LATEST_ISTIO}\n"
+            RELEASE_NOTES="${RELEASE_NOTES}- Istio ${LATEST_ISTIO}: https://github.com/istio/istio/releases/tag/${LATEST_ISTIO}\n"
+          fi
+          
+          if [ "${{ steps.compare-rootlesskit.outputs.needs_update }}" == "true" ]; then
+            UPDATES="${UPDATES}- **RootlessKit**: ${CURRENT_ROOTLESSKIT} to ${LATEST_ROOTLESSKIT}\n"
+            RELEASE_NOTES="${RELEASE_NOTES}- RootlessKit ${LATEST_ROOTLESSKIT}: https://github.com/rootless-containers/rootlesskit/releases/tag/${LATEST_ROOTLESSKIT}\n"
+          fi
           
           gh pr create \
             --title "chore: update pinned library versions" \
@@ -109,14 +184,12 @@ jobs:
           
           This PR updates the following pinned library versions:
           
-          - **Istio**: ${CURRENT_VERSION} to ${LATEST_VERSION}
-          
+          ${UPDATES}
           ### Changes
           - Updated version variables in linux/base.Dockerfile
           
           ### Release Notes
-          - Istio ${LATEST_VERSION}: https://github.com/istio/istio/releases/tag/${LATEST_VERSION}
-          
+          ${RELEASE_NOTES}
           ---
           This PR was automatically created by the Update Pinned Library Versions workflow." \
             --base master \
