@@ -392,8 +392,7 @@ $PSDefaultParameterValues = @{'Install-Module:Scope' = 'CurrentUser'; 'Install-S
 $startLoadingModules = [System.DateTime]::Now
 try
 {
-    Microsoft.PowerShell.Core\Import-Module -Name AzurePSDrive
-    Microsoft.PowerShell.Utility\Write-Verbose -Verbose -Message 'Building your Azure drive ...'
+    Microsoft.PowerShell.Core\Import-Module -Name AzurePSDrive    
 }
 finally
 {
