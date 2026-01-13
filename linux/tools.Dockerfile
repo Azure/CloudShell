@@ -22,6 +22,21 @@ RUN tdnf clean all && \
     tdnf clean all && \
     rm -rf /var/cache/tdnf/*
 
+# Install flox and initialize Nix store for multi-user access
+RUN wget -O flox.rpm https://downloads.flox.dev/by-env/stable/rpm/flox.rpm && \
+    tdnf install -y ./flox.rpm && \
+    rm flox.rpm && \
+    tdnf clean all && \
+    rm -rf /var/cache/tdnf/* && \
+    # Initialize the Nix store and set permissions for multi-user access
+    mkdir -p /nix && \
+    chmod 755 /nix && \
+    # Run flox to bootstrap the store
+    flox --version && \
+    # Ensure /nix/store is readable by all users
+    if [ -d /nix/store ]; then chmod -R a+rX /nix/store; fi && \
+    if [ -d /nix/var ]; then chmod -R a+rX /nix/var; fi
+
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ssh -y \
     && az extension add --system --name ml -y
