@@ -24,7 +24,7 @@ RUN tdnf clean all && \
 
 # Install flox and initialize Nix store for multi-user access
 RUN wget -O flox.rpm https://downloads.flox.dev/by-env/stable/rpm/flox.rpm && \
-    tdnf install -y ./flox.rpm && \
+    tdnf install -y --nogpgcheck ./flox.rpm && \
     rm flox.rpm && \
     tdnf clean all && \
     rm -rf /var/cache/tdnf/* && \
