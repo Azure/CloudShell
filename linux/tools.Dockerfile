@@ -31,11 +31,17 @@ RUN wget -O flox.rpm https://downloads.flox.dev/by-env/stable/rpm/flox.rpm && \
     # Initialize the Nix store and set permissions for multi-user access
     mkdir -p /nix && \
     chmod 755 /nix && \
+    # Disable Nix sandboxing for Docker compatibility
+    mkdir -p /etc/nix && \
+    echo "sandbox = false" >> /etc/nix/nix.conf && \
     # Run flox to bootstrap the store
     flox --version && \
     # Ensure /nix/store is readable by all users
     if [ -d /nix/store ]; then chmod -R a+rX /nix/store; fi && \
     if [ -d /nix/var ]; then chmod -R a+rX /nix/var; fi
+
+# Pre-pull flox environment for all users
+RUN flox pull priyaananthasankar/azcliflox
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ssh -y \
