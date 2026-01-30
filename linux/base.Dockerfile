@@ -33,6 +33,7 @@ RUN tdnf update -y --refresh && \
   gnupg2 \
   autoconf \
   ansible \
+  azfilesauth \
   bash-completion \
   build-essential \
   binutils \
@@ -235,4 +236,8 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   tar -xf rootlesskit-x86_64.tar.gz && \
   cp rootlesskit rootlesskit-docker-proxy /usr/bin/ && \
   popd && \
-  rm -rf $TMP_DIR
+  rm -rf $TMP_DIR && \
+  #
+  # Install requests package for azfilesauth
+  #
+  pip install requests
