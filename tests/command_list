@@ -80,6 +80,8 @@ awk
 az
 azcopy
 azd
+azfilesauthmanager
+azfilesrefresh
 b2sum
 badblocks
 base32
@@ -868,6 +870,7 @@ node
 nodejs
 nohup
 nologin
+normalizer
 npm
 nproc
 npth-config
