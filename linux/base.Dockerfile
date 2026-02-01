@@ -172,7 +172,7 @@ RUN chmod 755 /usr/local/bin/ansible* \
 
 
 # Install specific version of Istio from GitHub releases
-ENV ISTIO_VERSION=1.28.2
+ENV ISTIO_VERSION=1.28.3
 RUN export TMP_DIR=$(mktemp -d) \
   && cd "${TMP_DIR}" \
   && curl -L https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istio-${ISTIO_VERSION}-linux-amd64.tar.gz -o istio.tar.gz \
@@ -228,7 +228,7 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   # Install rootless kit
   TMP_DIR=$(mktemp -d) && \
   pushd $TMP_DIR && \
-  ROOTLESSKIT_VERSION=v2.3.5 && \
+  ROOTLESSKIT_VERSION=v2.3.6 && \
   curl -LO https://github.com/rootless-containers/rootlesskit/releases/download/${ROOTLESSKIT_VERSION}/rootlesskit-x86_64.tar.gz && \
   curl -LO https://github.com/rootless-containers/rootlesskit/releases/download/${ROOTLESSKIT_VERSION}/SHA256SUMS && \
   sha256sum -c SHA256SUMS --ignore-missing && \
