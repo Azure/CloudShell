@@ -212,6 +212,9 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   # Install Office 365 CLI templates
   #
   npm install -q -g @pnp/cli-microsoft365 && \
+  #
+  # Install GitHub Copilot CLI
+  #
   npm install -q -g @github/copilot && \
   #
   # Install Bicep CLI
