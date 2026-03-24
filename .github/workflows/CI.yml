@@ -15,6 +15,10 @@ on:
     # run the build at midnight every night
     - cron: '0 0 * * *'
 
+permissions:
+  contents: read
+  pull-requests: write # to update a PR comment
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -80,6 +84,7 @@ jobs:
       - name: find the tools size info
         run: echo TOOLS_SIZE=$(docker inspect tools_cloudshell:latest --format "{{.Size}}") >> $GITHUB_ENV
       - name: update a comment with size
+        if: github.event_name == 'pull_request'
         run: |
           echo "pull id $ISSUEID size $BASE_SIZE  $TOOLS_SIZE"  && \
           curl --request POST \
