@@ -137,8 +137,8 @@ RUN tdnf update -y --refresh && \
   tdnf clean all && \
   rm -rf /var/cache/tdnf/*
 
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_ENV production
+ENV NPM_CONFIG_LOGLEVEL=warn
+ENV NODE_ENV=production
 ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 # Get latest version of Terraform.
