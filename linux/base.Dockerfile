@@ -55,6 +55,7 @@ RUN tdnf update -y --refresh && \
   initscripts \
   iptables \
   iputils \
+  istio-istioctl \
   msopenjdk-17 \
   jq \
   less \
@@ -136,8 +137,8 @@ RUN tdnf update -y --refresh && \
   tdnf clean all && \
   rm -rf /var/cache/tdnf/*
 
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV NODE_ENV production
+ENV NPM_CONFIG_LOGLEVEL=warn
+ENV NODE_ENV=production
 ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 
 # Get latest version of Terraform.
@@ -169,18 +170,6 @@ RUN chmod 755 /usr/local/bin/ansible* \
   && mkdir -p /usr/share/ansible/collections/ansible_collections/azure/azcollection/ \
   && wget -nv -q -O /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements.txt \
   && /opt/ansible/bin/python -m pip install -r /usr/share/ansible/collections/ansible_collections/azure/azcollection/requirements.txt
-
-
-# Install specific version of Istio from GitHub releases
-ENV ISTIO_VERSION=1.29.1
-RUN export TMP_DIR=$(mktemp -d) \
-  && cd "${TMP_DIR}" \
-  && curl -L https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istio-${ISTIO_VERSION}-linux-amd64.tar.gz -o istio.tar.gz \
-  && tar -xzf istio.tar.gz \
-  && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin/istioctl \
-  && chmod 755 /usr/local/bin/istioctl \
-  && cd / \
-  && rm -rf "${TMP_DIR}"
 
 ENV GOROOT="/usr/lib/golang"
 # TODO: Move adding mssql-tools18 path addition to agent image
