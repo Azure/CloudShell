@@ -25,8 +25,8 @@ RUN tdnf update -y --refresh && \
   azurelinux-repos-ms-non-oss-3.0 && \
   tdnf repolist --refresh && \
   bash ./tdnfinstall.sh \
-  nodejs \
-  nodejs-npm \
+  nodejs24 \
+  nodejs24-npm \
   xz \
   git \
   gpgme \
