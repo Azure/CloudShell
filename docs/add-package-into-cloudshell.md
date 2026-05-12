@@ -15,7 +15,9 @@ mkdir -p ~/.local/bin/
 tar -zxf oras_${VERSION}_*.tar.gz -C ~/.local/bin/ oras
 rm oras_${VERSION}_*.tar.gz
 ```
+
 Reference: https://oras.land/docs/installation#linux
+
 > [!NOTE]
 > If you would like your package to persist across multiple Cloud Shell sessions, a storage account is required.
 
@@ -32,14 +34,13 @@ To meet security and compliance requirements, all packages must be installed fro
 > [!NOTE]
 > The instructions assume Azure Linux 2.0 because CloudShell is currently based on Azure Linux 2.0
 
-Please check if the package is available here:
-https://packages.microsoft.com/cbl-mariner/2.0/prod/base/x86_64/Packages/
+Please check if the package is available here: <https://packages.microsoft.com/azurelinux/3.0/prod/>
 
 Alternatively, you can use `docker` to check if a package exists in Azure Linux. Run the following command in a terminal:
 
+```sh
+docker run mcr.microsoft.com/azurelinux/base/core:3.0 bash -c "tdnf list | grep <package name>"
 ```
-docker run mcr.microsoft.com/cbl-mariner/base/core:2.0 bash -c "tdnf list | grep <package name>"
- ```
 
 ### Requesting Azure Linux package repository for the package
 
@@ -51,10 +52,9 @@ To start the process of adding your package to Azure Linux repository, please op
 
 To track this request in Cloud Shell, we will need an issue on GitHub. If the package is already in the Azure Linux repository, please open a pull request to include it, as described below. If the package is not yet available in the Azure Linux repo please open an issue making the request for the addition and link to the issue you raised in the Azure Linux GitHub repo in the previous step. Of course,before taking either of these steps, check if someone else has already made the request. If they have, please add your thumbs up so we know you need it too.
 
-Please create a PR for adding the package in [base.Dockerfile](https://github.com/Azure/CloudShell/blob/master/linux/base.Dockerfile)'s package list as shown below: 
+Please create a PR for adding the package in [base.Dockerfile](https://github.com/Azure/CloudShell/blob/master/linux/base.Dockerfile)'s package list as shown below:
 
-
-```
+```dockerfile
 RUN tdnf update -y --refresh && \
   bash ./tdnfinstall.sh \
   mariner-repos-extended && \
@@ -65,5 +65,3 @@ RUN tdnf update -y --refresh && \
   ... \
   <package name>
 ```
-
-

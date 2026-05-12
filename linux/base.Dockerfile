@@ -8,10 +8,10 @@
 # of the base docker file stored in a container registry. This avoids accidentally introducing a change in
 # the base image
 
-# CBL-Mariner is an internal Linux distribution for Microsoft’s cloud infrastructure and edge products and services.
-# CBL-Mariner is designed to provide a consistent platform for these devices and services and will enhance Microsoft’s
+# Azure Linux is an internal Linux distribution for Microsoft’s cloud infrastructure and edge products and services. 
+# Azure Linux is designed to provide a consistent platform for these devices and services and will enhance Microsoft’s 
 # ability to stay current on Linux updates.
-# https://github.com/microsoft/CBL-Mariner
+# https://github.com/microsoft/azurelinux
 FROM mcr.microsoft.com/azurelinux/base/core:3.0
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
