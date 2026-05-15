@@ -8,12 +8,12 @@ Describe "Various programs installed with expected versions" {
         }
     }
 
-    It "Base OS - CBL-Mariner 2.0" {
+    It "Base OS - Azure Linux 3.0" {
 
         [System.Environment]::OSVersion.Platform | Should -Be 'Unix'
         $osDetails = Get-Content /etc/*release
-        $osDetails | Where-Object {$_.Contains('VERSION_ID="3.0"')} | Should -Not -BeNullOrEmpty
-        $osDetails | Where-Object {$_.Contains('NAME="Microsoft Azure Linux"')} | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object { $_.Contains('VERSION_ID="3.0"') } | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object { $_.Contains('NAME="Microsoft Azure Linux"') } | Should -Not -BeNullOrEmpty
     }
 
     It "Static Versions" {
@@ -57,12 +57,12 @@ Describe "Various programs installed with expected versions" {
             "pwsh-preview"
         )
 
-        $specialmatcher = ($special | % { "($_)"}) -join "|"
+        $specialmatcher = ($special | % { "($_)" }) -join "|"
 
-        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","
+        $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher }) -join ","
         $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
-        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notmatch $specialmatcher}) -join ","
+        $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notmatch $specialmatcher }) -join ","
         $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
     }
@@ -100,7 +100,7 @@ Describe "PowerShell Modules" {
 
         $special = @("PSReadLine")
 
-        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Where-Object { $_.Name -notin $special} | Should -Be $null
+        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Where-Object { $_.Name -notin $special } | Should -Be $null
 
     }
 
