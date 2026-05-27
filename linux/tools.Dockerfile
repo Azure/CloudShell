@@ -35,10 +35,8 @@ RUN az aks install-cli \
 RUN wget -nv -O Azure.Functions.Cli.zip `curl -fSsL https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest | grep "url.*linux-x64" | grep -v "sha2" | cut -d '"' -f4` \
     && unzip -d azure-functions-cli Azure.Functions.Cli.zip \
     && chmod +x azure-functions-cli/func \
-    && chmod +x azure-functions-cli/gozip \
     && mv -v azure-functions-cli /opt \
     && ln -sf /opt/azure-functions-cli/func /usr/bin/func \
-    && ln -sf /opt/azure-functions-cli/gozip /usr/bin/gozip \
     && rm -r Azure.Functions.Cli.zip
 
 RUN mkdir -p /usr/cloudshell
