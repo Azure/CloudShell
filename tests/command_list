@@ -459,7 +459,6 @@ gnutls-cli-debug
 gnutls-serv
 go
 gofmt
-gozip
 gp-archive
 gpasswd
 gp-collect-app
