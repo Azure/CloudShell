@@ -23,8 +23,8 @@ RUN tdnf clean all && \
     rm -rf /var/cache/tdnf/*
 
 # Install any Azure CLI extensions that should be included by default.
-RUN az extension add --system --name ssh -y \
-    && az extension add --system --name ml -y
+RUN az extension add --system --name ssh -y --debug \
+    && az extension add --system --name ml -y --debug
 
 # Install kubectl
 RUN az aks install-cli \
