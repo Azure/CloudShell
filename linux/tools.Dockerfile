@@ -26,6 +26,33 @@ RUN tdnf clean all && \
 RUN az extension add --system --name ssh -y \
     && az extension add --system --name ml -y
 
+# Get latest version of Terraform and install only if newer version available.
+RUN TF_LATEST=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
+  && TF_LATEST="${TF_LATEST#v}" \
+  && TF_CURRENT=$(/usr/local/bin/terraform version -json 2>/dev/null | jq -r '.terraform_version' 2>/dev/null || echo "0") \
+  && TF_CURRENT="${TF_CURRENT#v}" \
+  && if [ "$TF_LATEST" != "$TF_CURRENT" ]; then \
+    rm -f /usr/local/bin/terraform \
+    && TF_INSTALL_DIR=$(mktemp -d) \
+    && pushd $TF_INSTALL_DIR \
+    && wget -nv -O terraform.zip "https://releases.hashicorp.com/terraform/${TF_LATEST}/terraform_${TF_LATEST}_linux_amd64.zip" \
+    && wget -nv -O terraform.sha256 "https://releases.hashicorp.com/terraform/${TF_LATEST}/terraform_${TF_LATEST}_SHA256SUMS" \
+    && echo "$(grep "${TF_LATEST}_linux_amd64.zip" terraform.sha256 | awk '{print $1}')  terraform.zip" | sha256sum -c \
+    && unzip terraform.zip \
+    && mv terraform /usr/local/bin/terraform \
+    && popd \
+    && rm -rf $TF_INSTALL_DIR \
+  ; fi \
+  && unset TF_LATEST TF_CURRENT TF_INSTALL_DIR
+
+# Update azd to latest
+RUN azd update --no-prompt
+
+# Update Bicep to latest
+RUN az config set bicep.check_version=False \
+    && az config set bicep.use_binary_from_path=True \
+    && az bicep upgrade
+
 # Install kubectl
 RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
