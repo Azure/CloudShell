@@ -40,8 +40,11 @@ RUN TF_LATEST=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform 
     && echo "$(grep "${TF_LATEST}_linux_amd64.zip" terraform.sha256 | awk '{print $1}')  terraform.zip" | sha256sum -c \
     && unzip terraform.zip \
     && mv terraform /usr/local/bin/terraform \
+    && echo "Updated Terraform to $TF_CURRENT" \
     && popd \
     && rm -rf $TF_INSTALL_DIR \
+  ; else \
+    echo "Terraform is already at the latest version: $TF_LATEST" \
   ; fi \
   && unset TF_LATEST TF_CURRENT TF_INSTALL_DIR
 
