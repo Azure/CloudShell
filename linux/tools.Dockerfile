@@ -4,7 +4,7 @@
 
 # To build yourself locally, override this location with a local image tag. See README.md for more detail
 
-ARG IMAGE_LOCATION=cloudconregprd.azurecr.io/public/azure-cloudshell:base.master.4bb8adf7.20260602.1
+ARG IMAGE_LOCATION=mcr.microsoft.com/azure-cloudshell:base.master.894ed5cf.20260518.1
 
 # Copy from base build
 FROM ${IMAGE_LOCATION}
@@ -24,37 +24,10 @@ RUN tdnf clean all && \
 
 # Install any Azure CLI extensions that should be included by default.
 RUN az extension add --system --name ssh -y \
-    && az extension add --system --name ml -y
-
-# Get latest version of Terraform and install only if newer version available.
-RUN TF_LATEST=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
-  && TF_LATEST="${TF_LATEST#v}" \
-  && TF_CURRENT=$(/usr/local/bin/terraform version -json 2>/dev/null | jq -r '.terraform_version' 2>/dev/null || echo "0") \
-  && TF_CURRENT="${TF_CURRENT#v}" \
-  && if [ "$TF_LATEST" != "$TF_CURRENT" ]; then \
-    rm -f /usr/local/bin/terraform \
-    && TF_INSTALL_DIR=$(mktemp -d) \
-    && pushd $TF_INSTALL_DIR \
-    && wget -nv -O terraform.zip "https://releases.hashicorp.com/terraform/${TF_LATEST}/terraform_${TF_LATEST}_linux_amd64.zip" \
-    && wget -nv -O terraform.sha256 "https://releases.hashicorp.com/terraform/${TF_LATEST}/terraform_${TF_LATEST}_SHA256SUMS" \
-    && echo "$(grep "${TF_LATEST}_linux_amd64.zip" terraform.sha256 | awk '{print $1}')  terraform.zip" | sha256sum -c \
-    && unzip terraform.zip \
-    && mv terraform /usr/local/bin/terraform \
-    && echo "Updated Terraform to $TF_CURRENT" \
-    && popd \
-    && rm -rf $TF_INSTALL_DIR \
-  ; else \
-    echo "Terraform is already at the latest version: $TF_LATEST" \
-  ; fi \
-  && unset TF_LATEST TF_CURRENT TF_INSTALL_DIR
-
-# Update azd to latest
-RUN azd update --no-prompt
-
-# Update Bicep to latest
-RUN az config set bicep.check_version=False \
-    && az config set bicep.use_binary_from_path=True \
-    && az bicep upgrade
+    && az extension add --system --name ml -y \
+    # Configure Bicep settings
+    && az config set bicep.check_version=False \
+    && az config set bicep.use_binary_from_path=True
 
 # Install kubectl
 RUN az aks install-cli \
@@ -68,6 +41,58 @@ RUN wget -nv -O Azure.Functions.Cli.zip `curl -fSsL https://api.github.com/repos
     && mv -v azure-functions-cli /opt \
     && ln -sf /opt/azure-functions-cli/func /usr/bin/func \
     && rm -r Azure.Functions.Cli.zip
+
+# Conditionally update tools that were pre-installed in the base image.
+# Each check only installs when a newer version is available, keeping the
+# tools image layer as small as possible.
+RUN set -e \
+    # --- Terraform ---
+    && TF_LATEST=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
+    && TF_LATEST="${TF_LATEST#v}" \
+    && TF_CURRENT=$(/usr/local/bin/terraform version -json 2>/dev/null | jq -r '.terraform_version' 2>/dev/null || echo "0") \
+    && TF_CURRENT="${TF_CURRENT#v}" \
+    && if [ "$TF_LATEST" != "$TF_CURRENT" ]; then \
+         rm -f /usr/local/bin/terraform \
+         && TF_INSTALL_DIR=$(mktemp -d) \
+         && pushd $TF_INSTALL_DIR \
+         && wget -nv -O terraform.zip "https://releases.hashicorp.com/terraform/${TF_LATEST}/terraform_${TF_LATEST}_linux_amd64.zip" \
+         && wget -nv -O terraform.sha256 "https://releases.hashicorp.com/terraform/${TF_LATEST}/terraform_${TF_LATEST}_SHA256SUMS" \
+         && echo "$(grep "${TF_LATEST}_linux_amd64.zip" terraform.sha256 | awk '{print $1}')  terraform.zip" | sha256sum -c \
+         && unzip terraform.zip \
+         && mv terraform /usr/local/bin/terraform \
+         && echo "Updated Terraform $TF_CURRENT -> $TF_LATEST" \
+         && popd \
+         && rm -rf $TF_INSTALL_DIR ; \
+       else \
+         echo "Terraform already up to date: $TF_LATEST" ; \
+       fi \
+    && unset TF_LATEST TF_CURRENT TF_INSTALL_DIR \
+    # --- azd ---
+    && azd update --no-prompt \
+    # --- Ruby gems ---
+    && OUTDATED=$(gem outdated 2>/dev/null | awk '{print $1}') \
+    && for gem_name in bundler rake colorize rspec; do \
+         if echo "$OUTDATED" | grep -qx "$gem_name"; then \
+           echo "Updating gem: $gem_name" ; \
+           gem update "$gem_name" --no-document --force ; \
+         else \
+           echo "Gem already up to date: $gem_name" ; \
+         fi ; \
+       done \
+    && rm -rf $(gem env gemdir)/cache/*.gem \
+    && unset OUTDATED \
+    # --- @pnp/cli-microsoft365 ---
+    && PKG=@pnp/cli-microsoft365 \
+    && CURRENT=$(npm list -g --depth=0 --json 2>/dev/null | jq -r --arg p "$PKG" '.dependencies[$p].version // "0"') \
+    && LATEST=$(npm view "$PKG" version 2>/dev/null) \
+    && if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then \
+         echo "Updating $PKG: $CURRENT -> $LATEST" ; \
+         npm install -q -g "$PKG@$LATEST" ; \
+         npm cache clean --force ; \
+       else \
+         echo "$PKG already up to date: $CURRENT" ; \
+       fi \
+    && unset PKG CURRENT LATEST
 
 RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell

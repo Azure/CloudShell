@@ -203,7 +203,8 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   #
   # Install Office 365 CLI templates
   #
-  npm install -q -g @pnp/cli-microsoft365 && \
+  npm install -q -g @pnp/cli-microsoft365 \
+  && m365 version && \
   #
   # Install Bicep CLI
   #
