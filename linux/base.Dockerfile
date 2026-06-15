@@ -217,7 +217,7 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   # Install rootless kit
   TMP_DIR=$(mktemp -d) && \
   pushd $TMP_DIR && \
-  ROOTLESSKIT_VERSION=v3.0.0 && \
+  ROOTLESSKIT_VERSION=v3.0.1 && \
   curl -LO https://github.com/rootless-containers/rootlesskit/releases/download/${ROOTLESSKIT_VERSION}/rootlesskit-x86_64.tar.gz && \
   curl -LO https://github.com/rootless-containers/rootlesskit/releases/download/${ROOTLESSKIT_VERSION}/SHA256SUMS && \
   sha256sum -c SHA256SUMS --ignore-missing && \
