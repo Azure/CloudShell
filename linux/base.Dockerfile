@@ -144,14 +144,17 @@ ENV NODE_OPTIONS=--tls-cipher-list='ECDHE-RSA-AES128-GCM-SHA256:!RC4'
 # Get latest version of Terraform.
 # Customers require the latest version of Terraform.
 RUN TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version") \
+  && TF_INSTALL_DIR=$(mktemp -d) \
+	&& pushd $TF_INSTALL_DIR \
   && TF_VERSION="${TF_VERSION#v}" \
   && wget -nv -O terraform.zip "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" \
   && wget -nv -O terraform.sha256 "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" \
   && echo "$(grep "${TF_VERSION}_linux_amd64.zip" terraform.sha256 | awk '{print $1}')  terraform.zip" | sha256sum -c \
   && unzip terraform.zip \
   && mv terraform /usr/local/bin/terraform \
-  && rm -f terraform.zip terraform.sha256 \
-  && unset TF_VERSION
+  && popd \
+  && rm -rf $TF_INSTALL_DIR \
+  && unset TF_VERSION TF_INSTALL_DIR
 
 # Setup locale to en_US.utf8
 RUN echo 'LANG=en_US.UTF-8' >> /etc/locale.conf && locale-gen.sh
@@ -200,7 +203,8 @@ RUN curl -fsSL https://aka.ms/install-azd.sh | bash && \
   #
   # Install Office 365 CLI templates
   #
-  npm install -q -g @pnp/cli-microsoft365 && \
+  npm install -q -g @pnp/cli-microsoft365 \
+  && m365 version && \
   #
   # Install Bicep CLI
   #
