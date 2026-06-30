@@ -34,9 +34,9 @@ RUN az aks install-cli \
     && chmod +x /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubelogin
 
-# Install GitHub Copilot CLI. GH_DATA_DIR is set to a system-wide path so the
-# extension is available to all users of the container.
-ENV GH_DATA_DIR=/usr/local/share/gh
+# Install GitHub Copilot CLI. GH_DATA_DIR is set to the user's home directory
+# so the extension is writable by the end user.
+ENV GH_DATA_DIR=~/.local/share/gh
 RUN curl -fsSL https://gh.io/copilot-install | bash
 
 # Install azure-functions-core-tools
