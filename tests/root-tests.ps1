@@ -7,7 +7,7 @@ $ProgressPreference = "SilentlyContinue"
 Push-Location /tests
 try {
 	Install-Module -Name Pester -Force
-	Invoke-Pester Root.Tests.ps1
+	Invoke-Pester -CI -Path Root.Tests.ps1
 } finally {
 	Pop-Location
 }

@@ -10,16 +10,16 @@ Describe "Various programs installed with expected versions" {
 
     It "Base OS - Azure Linux 3.0" {
 
-        [System.Environment]::OSVersion.Platform | Should -Be 'Unix'
+        [System.Environment]::OSVersion.Platform | Should-Be 'Unix'
         $osDetails = Get-Content /etc/*release
-        $osDetails | Where-Object { $_.Contains('VERSION_ID="3.0"') } | Should -Not -BeNullOrEmpty
-        $osDetails | Where-Object { $_.Contains('NAME="Microsoft Azure Linux"') } | Should -Not -BeNullOrEmpty
+        $osDetails | Where-Object { $_.Contains('VERSION_ID="3.0"') } | Should-NotBeNull
+        $osDetails | Where-Object { $_.Contains('NAME="Microsoft Azure Linux"') } | Should-NotBeNull
     }
 
     It "Static Versions" {
         # These programs are installed explicitly with specific versions
-        $script:pmap["Node.JS"].Version | Should -Be '24.14.1'
-        $script:pmap["PowerShell"].Version | Should -BeLike '7.6*'
+        $script:pmap["Node.JS"].Version | Should-Be '24.14.1'
+        $script:pmap["PowerShell"].Version | Should-BeLikeString '7.6*'
     }
 
     It "Some Versions Installed" {
@@ -28,16 +28,16 @@ Describe "Various programs installed with expected versions" {
 
         $script:packages | ? Type -eq "Special" | % {
             $name = $_.Name
-            $_.Version | Should -Not -BeNullOrEmpty -Because "$name should be present"
-            $_.Version | Should -Not -Be "Error" -Because "Error occurred running $name to determine version"
-            $_.Version | Should -Not -Be "Unknown" -Because "Could not parse version info for $name"
+            $_.Version | Should-NotBeNull -Because "$name should be present"
+            $_.Version | Should-NotBe "Error" -Because "Error occurred running $name to determine version"
+            $_.Version | Should-NotBe "Unknown" -Because "Could not parse version info for $name"
         }
     }
 
     It "startupscript" {
         $pwshPath = which pwsh
         $startupScriptPath = Join-Path (Split-Path $pwshPath) 'PSCloudShellStartup.ps1'
-        Test-Path $startupScriptPath | Should -Be $true
+        Test-Path $startupScriptPath | Should-BeTrue
     }
 
     It "Compare bash commands to baseline" {
@@ -60,27 +60,27 @@ Describe "Various programs installed with expected versions" {
         $specialmatcher = ($special | % { "($_)" }) -join "|"
 
         $missing = ($command_diffs | ? { $_ -like "<*" } | % { $_.Replace("< ", "") } | ? { $_ -notmatch $specialmatcher }) -join ","
-        $missing | Should -Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
+        $missing | Should-Be "" -Because "Commands '$missing' should be installed on the path but were not found. No commands should have been removed unexpectedly. If one really should be deleted, remove it from command_list"
 
         $added = ($command_diffs | ? { $_ -like ">*" } | % { $_.Replace("> ", "") } | ? { $_ -notmatch $specialmatcher }) -join ","
-        $added | Should -Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
+        $added | Should-Be "" -Because "Commands '$added' were unexpectedly found on the path. Probably this is good, in which case add them to command_list"
 
     }
 
     It "has local paths in `$PATH" {
         $paths = ($env:PATH).split(":")
-        $paths | Should -Contain "~/bin"
-        $paths | Should -Contain "~/.local/bin"
+        $paths | Should-ContainCollection "~/bin"
+        $paths | Should-ContainCollection "~/.local/bin"
     }
 
     It "Ansible pwsh has modules" {
-        Test-Path -Path "/usr/share/ansible/collections/ansible_collections/azure/azcollection/" | Should -Be $true
+        Test-Path -Path "/usr/share/ansible/collections/ansible_collections/azure/azcollection/" | Should-BeTrue
         $process = Start-Process -FilePath /opt/ansible/bin/python -ArgumentList "-c `"import msrest`"" -Wait -PassThru
-        $process.ExitCode | Should -Be 0
+        $process.ExitCode | Should-Be 0
     }
 
     It "Has various environment vars" {
-        $env:AZUREPS_HOST_ENVIRONMENT | Should -Be "cloud-shell/1.0"
+        $env:AZUREPS_HOST_ENVIRONMENT | Should-Be "cloud-shell/1.0"
     }
 }
 
@@ -100,36 +100,36 @@ Describe "PowerShell Modules" {
 
         $special = @("PSReadLine")
 
-        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Where-Object { $_.Name -notin $special } | Should -Be $null
+        (Get-Module -ListAvailable | Group-Object Name | Where-Object { $_.Count -gt 1 } ) | Where-Object { $_.Name -notin $special } | Should-BeNull
 
     }
 
     It "Az PowerShell Module" {
 
         $module = Get-InstalledModule -Name Az -AllVersions
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
     }
 
     It "Az.Accounts PowerShell Module" {
 
         $module = Get-InstalledModule -Name Az.Accounts -AllVersions
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
     }
 
     It "Az.Resources PowerShell Module" {
 
         $module = Get-InstalledModule -Name Az.Resources -AllVersions
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
     }
 
     It "SHiPS PowerShell Module" {
 
         $module = Get-InstalledModule -Name SHiPS -AllVersions
-        $module | Should -Not -BeNullOrEmpty
-        $module.Repository | Should -Be "PSGallery"
+        $module | Should-NotBeNull
+        $module.Repository | Should-Be "PSGallery"
 
         # SHiPS module version must be 0.*.*.* or greater
-        $module.Version -like "0.*.*" | Should -Be $true
+        $module.Version -like "0.*.*" | Should-BeTrue
 
     }
 
@@ -139,63 +139,63 @@ Describe "PowerShell Modules" {
         # Due to Gallery limitation of handling FullClr/CoreClr dependencies
         # See https://msazure.visualstudio.com/One/_queries/edit/2364469/?fullScreen=false
         $module = Get-Module -Name AzurePSDrive -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
 
         # AzurePSDrive module version must be 0.9.*.* or greater
-        $module.Version.Major -eq 0 | Should -Be $true
-        $module.Version.Minor -ge 9 | Should -Be $true
+        $module.Version.Major -eq 0 | Should-BeTrue
+        $module.Version.Minor -ge 9 | Should-BeTrue
 
     }
 
     It "PSCloudShellUtility PowerShell Module" {
 
         $module = Get-Module -Name PSCloudShellUtility -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
 
         # PSCloudShellUtility module version must be 0.*.*.* or greater
-        $module.Version -like "0.*.*" | Should -Be $true
+        $module.Version -like "0.*.*" | Should-BeTrue
 
     }
 
     It "PowerBI PowerShell Module" {
 
         $module = Get-Module -Name MicrosoftPowerBIMgmt -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
 
         # MicrosoftPowerBIMgmt module version must be 1.*.* or greater
-        $module.Version -like "1.*.*" | Should -Be $true
+        $module.Version -like "1.*.*" | Should-BeTrue
 
     }
 
     It "GuestConfiguration PowerShell Module" {
 
         $module = Get-Module -Name GuestConfiguration -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
 
         # GuestConfiguration module version must be 0.*.* or greater
-        $module.Version -like "4.*.*" | Should -Be $true
+        $module.Version -like "4.*.*" | Should-BeTrue
     }
 
     It "MicrosoftTeams PowerShell Module" {
 
         $module = Get-Module -Name MicrosoftTeams -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
 
         # MicrosoftTeams module should have at least one command
-        (Get-Command * -Module MicrosoftTeams).Count -ge 1 | Should -Be $true
+        (Get-Command * -Module MicrosoftTeams).Count -ge 1 | Should-BeTrue
     }
 
     It "Microsoft.PowerShell.SecretManagement PowerShell Module" {
 
         $module = Get-Module -Name 'Microsoft.PowerShell.SecretManagement' -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
 
     }
 
     It "Microsoft.PowerShell.SecretStore PowerShell Module" {
 
         $module = Get-Module -Name 'Microsoft.PowerShell.SecretStore' -ListAvailable
-        $module | Should -Not -BeNullOrEmpty
+        $module | Should-NotBeNull
 
     }
 
@@ -217,10 +217,10 @@ Describe "PowerShell Modules" {
         param($ModuleName)
         try {
             Import-Module $ModuleName -Force -ErrorAction Stop -ErrorVariable ev
-            $ev | Should -BeNullOrEmpty
+            $ev | Should-BeFalsy
         }
         catch {
-            "Unexpected exception thrown: $_" | Should -BeNullOrEmpty
+            "Unexpected exception thrown: $_" | Should-BeEmptyString
         }
 
     }
@@ -234,7 +234,7 @@ Describe "PowerShell Modules" {
             AzureAD.Standard.Preview\Connect-AzureAD -Identity -TenantId 0
         }
         catch {
-            "Unexpected exception thrown: $_" | Should -BeNullOrEmpty
+            "Unexpected exception thrown: $_" | Should-BeEmptyString
         }
 
     }
