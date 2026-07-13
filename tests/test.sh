@@ -15,7 +15,8 @@ fi
 echo "running root-level tests"
 pwsh /tests/root-tests.ps1
 
-pwsh -c "Install-Module Pester -Force -Scope AllUsers"
+	# Pester is also installed in `root-tests.ps1` - make sure that is using the same version as here.
+pwsh -c "Install-Module Pester -MinimumVersion 6.0.0 -MaximumVersion 6.999.999 -Force -Scope AllUsers"
 
 echo "running tests as csuser"
 runuser -u csuser pwsh /tests/test.ps1

@@ -6,6 +6,7 @@ $ProgressPreference = "SilentlyContinue"
 
 Push-Location /tests
 try {
+	# Pester is also installed in `test.sh` - make sure that is using the same version as here.
 	Install-Module -Name Pester -MinimumVersion 6.0.0 -MaximumVersion 6.999.999 -Force
 
 	$config = New-PesterConfiguration
