@@ -1,6 +1,6 @@
 Import-Module Pester
 
-Describe "Tests that check things not available to the limited user" {
+Describe "Tests that check things not available to the limited user" -Tag "RootUser" {
 
     It "Powershell warmup script is available and works" {
 

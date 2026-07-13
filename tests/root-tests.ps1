@@ -7,7 +7,13 @@ $ProgressPreference = "SilentlyContinue"
 Push-Location /tests
 try {
 	Install-Module -Name Pester -MinimumVersion 6.0.0 -MaximumVersion 6.999.999 -Force
-	Invoke-Pester -CI -Path Root.Tests.ps1
+
+	$config = New-PesterConfiguration
+	$config.TestResult.Enabled = $false
+	$config.Filter.Tag = "RootUser" # only run tests tagged StandardUser
+	$config.Output.CIFormat = "GithubActions"
+
+	Invoke-Pester -Configuration $config
 } finally {
 	Pop-Location
 }

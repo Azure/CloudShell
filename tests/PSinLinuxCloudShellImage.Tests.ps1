@@ -1,4 +1,4 @@
-Describe "Various programs installed with expected versions" {
+Describe "Various programs installed with expected versions" -Tag "StandardUser" {
 
     BeforeAll {
         $script:packages = Get-PackageVersion
