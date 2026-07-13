@@ -4,6 +4,10 @@
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-cd /tests
-Install-Module -Name Pester -Force
-Invoke-Pester -Script Root.Tests.ps1
+Push-Location /tests
+try {
+	Install-Module -Name Pester -Force
+	Invoke-Pester Root.Tests.ps1
+} finally {
+	Pop-Location
+}
