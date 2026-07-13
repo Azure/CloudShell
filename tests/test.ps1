@@ -8,7 +8,7 @@ Push-Location /tests
 try {
 	$config = New-PesterConfiguration
 	$config.TestResult.Enabled = $false
-	$config.Filter.Tag = "StandardUser" # only run tests tagged StandardUser
+	$config.Filter.Tag = "CloudShellUser"
 	$config.Output.CIFormat = "GithubActions"
 
 	Invoke-Pester -Configuration $config

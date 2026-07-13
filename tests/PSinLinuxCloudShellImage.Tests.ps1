@@ -1,4 +1,4 @@
-Describe "Various programs installed with expected versions" -Tag "StandardUser" {
+Describe "Various programs installed with expected versions" -Tag "CloudShellUser" {
 
     BeforeAll {
         $script:packages = Get-PackageVersion

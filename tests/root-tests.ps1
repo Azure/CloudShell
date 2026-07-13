@@ -10,7 +10,7 @@ try {
 
 	$config = New-PesterConfiguration
 	$config.TestResult.Enabled = $false
-	$config.Filter.Tag = "RootUser" # only run tests tagged StandardUser
+	$config.Filter.Tag = "RootUser" 
 	$config.Output.CIFormat = "GithubActions"
 
 	Invoke-Pester -Configuration $config
