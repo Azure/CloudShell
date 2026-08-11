@@ -15,12 +15,6 @@ $script:MaximumHistoryCount = 500
 
 $script:IsCore =  $PSVersionTable.PSEdition -eq 'Core'
 
-# PowerShell Session Option when connecting to Windows targets
-# This is required since we connect to a WinRM_HTTPS endpoint configured using a self-signed certificate
-$script:sessionOption = [System.Management.Automation.Remoting.PSSessionOption]::new()
-$script:sessionOption.SkipCACheck = $true
-$script:sessionOption.SkipCNCheck = $true
-
 #region Telemetry
 $script:AppInsightTrackMetric = New-Object Microsoft.ApplicationInsights.TelemetryClient
 # Use the same instrumentationKey from bash
@@ -883,7 +877,10 @@ function Invoke-AzVMCommand
         The ScriptBlock that needs to be executed
 
         .PARAMETER Credential
-        Provide Credential when connecting to Windows Targets
+        Required when targeting Windows VMs. Note: Windows targets are run via Azure Run Command, which
+        always executes the script as SYSTEM on the VM Agent - this credential is not used to authenticate
+        or run as a specific guest-OS user. Access is instead authorized by the caller's Azure RBAC role
+        on the VM resource.
 
         .PARAMETER UserName
         Provide UserName when connecting to Linux Targets. When used with KeyFilePath parameter, identifies the user on the remote computer
@@ -941,7 +938,6 @@ function Invoke-AzVMCommand
             throw [System.ArgumentException] $badTargetVM
         }
 
-        $testAzVMParams = @{'Name'=$Name;'ResourceGroupName'=$ResourceGroupName;'OsType'=$OsType}
         if ([OStype]::Windows -eq $OsType)
         {
             if (-not $Credential)
@@ -949,27 +945,59 @@ function Invoke-AzVMCommand
                 $message = $LocalizedData.CredentialError
                 throw [System.ArgumentException] $message
             }
-        }
 
-        $cName = Test-AzVM @testAzVMParams
-        if(-not $cName) {
-            $message = $LocalizedData.GetAzureVMError -f ($Name)
-            throw [System.ArgumentException] $message
-        }
+            if (-not (Az.Compute\Get-AzVM -Name $Name -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue))
+            {
+                $message = $LocalizedData.GetAzureVMError -f ($Name)
+                throw [System.ArgumentException] $message
+            }
 
-        if ([OStype]::Windows -eq $OsType)
-        {
-            $invokeCommandParams = @{
-                    ComputerName = $cName
-                    UseSSL = $true
-                    Credential = $Credential
-                    SessionOption = $script:sessionOption
-                    ScriptBlock = $ScriptBlock
-                    Authentication = 'Basic'
+            # Windows targets are invoked through the Azure Run Command feature (VM Agent) over the ARM
+            # control plane instead of a direct WinRM connection to the VM's public IP/FQDN. This avoids
+            # exposing WinRM over the public internet and avoids having to validate a self-signed WinRM
+            # certificate from an untrusted network path.
+            #
+            # Note: Invoke-AzVMRunCommand has no supported way to execute the script as a specific guest-OS
+            # user - the VM Agent always runs Run Command scripts as SYSTEM, and access is instead
+            # authorized by the caller's Azure RBAC role on the VM resource (e.g. Virtual Machine
+            # Contributor). -Credential is therefore kept only for parameter/signature back-compat and is
+            # validated above, but its username/password are intentionally never sent to the VM.
+            $runCommandParams = @{
+                ResourceGroupName = $ResourceGroupName
+                VMName            = $Name
+                CommandId         = 'RunPowerShellScript'
+                ScriptString      = $ScriptBlock.ToString()
+            }
+
+            $result = Az.Compute\Invoke-AzVMRunCommand @runCommandParams -ErrorAction Stop
+
+            # Azure Run Command always reports Level=Info and a "...succeeded" Code for both the StdOut and
+            # StdErr status entries, even when the script itself threw a terminating error - the extension
+            # only fails when the script cannot be launched at all. The only reliable signal that the script
+            # itself failed is a non-empty Message on the StdErr entry, so surface stdout normally and treat
+            # any non-empty StdErr content as a terminating error to preserve Invoke-Command's failure behavior.
+            $stdOutStatus = $result.Value | Where-Object { $_.Code -match 'StdOut' }
+            $stdErrStatus = $result.Value | Where-Object { $_.Code -match 'StdErr' }
+
+            if ($stdOutStatus -and $stdOutStatus.Message)
+            {
+                Write-Output $stdOutStatus.Message
+            }
+
+            if ($stdErrStatus -and $stdErrStatus.Message)
+            {
+                throw [System.InvalidOperationException] $stdErrStatus.Message
             }
         }
         elseif ([OStype]::Linux -eq $OsType)
         {
+            $testAzVMParams = @{'Name'=$Name;'ResourceGroupName'=$ResourceGroupName;'OsType'=$OsType}
+            $cName = Test-AzVM @testAzVMParams
+            if(-not $cName) {
+                $message = $LocalizedData.GetAzureVMError -f ($Name)
+                throw [System.ArgumentException] $message
+            }
+
             $invokeCommandParams = @{'HostName'=$cName;'ScriptBlock'=$ScriptBlock}
 
             if ($KeyFilePath)
@@ -990,9 +1018,9 @@ function Invoke-AzVMCommand
                 $message = $LocalizedData.UserNameError
                 throw [System.ArgumentException] $message
             }
-        }
 
-        Invoke-Command @invokeCommandParams -ErrorAction Stop
+            Invoke-Command @invokeCommandParams -ErrorAction Stop
+        }
 }
 
 function Get-AzVmNsg
@@ -1170,83 +1198,11 @@ function Enable-AzVMPSRemoting
 
     if ([OStype]::Windows -eq $OsType)
     {
-        if (-not $Protocol)
-        {
-            # Only WinRM_HTTPS protocol is supported for Windows Target
-            $Protocol = 'https'
-        }
-
-        foreach ($azVMNsg in $azVMNsgs)
-        {
-            # Get PSRemoting status for a given Nsg
-            $psremoting = Get-AzVMPSRemoting -Name $Name -ResourceGroupName $ResourceGroupName -Nsg $azVMNsg
-            $parameters['NetworkSecurityGroup'] = $azVMNsg
-
-            # If Https is not enabled, enable it
-            if($Protocol -eq 'https')
-            {
-                if (-not $psremoting.Https)
-                {
-                    $null = Az.Network\Add-AzNetworkSecurityRuleConfig -Name 'allow-winrm-https' -DestinationPortRange 5986 @parameters | Az.Network\Set-AzNetworkSecurityGroup
-                }
-
-                # Setup WinRM HTTPS based remoting using Self-Signed Certificate
-                $runCommandParameters =
-                @{
-                    commandId = 'RunPowerShellScript'
-                    script =
-                    @(
-                        'Set-Item WSMan:\localhost\Service\Auth\Basic $true -Force;$selfSignedCert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName $env:COMPUTERNAME;Enable-PSRemoting -SkipNetworkProfileCheck -Force;Remove-Item -Path WSMan:\Localhost\listener\Listener* -Recurse -Force;New-Item -Path WSMan:\LocalHost\Listener -Transport HTTPS -Address * -CertificateThumbPrint $selfSignedCert.Thumbprint -Force;New-NetFirewallRule -DisplayName WindowsRemoteManagement_HTTPS_In -Name WindowsRemoteManagement_HTTPS_In -Profile Any -LocalPort 5986 -Protocol TCP -RemoteAddress Any;'
-                    )
-                }
-
-                $null = Az.Resources\Invoke-AzResourceAction -ResourceId $azureVM.Id -Action runCommand -Parameters $runCommandParameters -ApiVersion 2017-03-30 -Force
-            }
-
-            # Future code path, if we support both http/https protocols for Windows target
-            # If Http is not enabled, enable it
-            if($Protocol -eq 'http')
-            {
-                if (-not $psremoting.Http)
-                {
-                    $null = Az.Network\Add-AzNetworkSecurityRuleConfig -Name 'allow-winrm-http' -DestinationPortRange 5985 @parameters | Az.Network\Set-AzNetworkSecurityGroup
-                }
-
-                ###################################################################
-                # Enable PowerShell remoting on a target Windows computer
-                ###################################################################
-
-                # Enable-PSRemoting -Force
-                # Enable-PSRemoting configures the computer to receive Windows PowerShell remote commands that are sent by using WSMan protocol
-                # Enable-PSRemoting performs the following operations:
-                # 1) Runs the Set-WSManQuickConfig cmdlet, to:
-                #      Start the WinRM service.
-                #      Set the startup type on the WinRM service to Automatic.
-                #      Create a listener to accept requests on any IP address.
-                #      Enable a firewall exception for WS-Management communications.
-                #      Register the Microsoft.PowerShell and Microsoft.PowerShell.Workflow session configurations, if it they are not already registered.
-                #      Register the Microsoft.PowerShell32 session configuration on 64-bit computers, if it is not already registered.
-                #      Enable all session configurations.
-                #      Change the security descriptor of all session configurations to allow remote access.
-                # 2) Restart the WinRM service to make the preceding changes effective.
-
-                # Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name  'LocalAccountTokenFilterPolicy' -Value 1 -Type DWord -Force
-                # When using local computer account for remoting, UAC (User Account Control) does not allow access to WinRM service.
-                # Setting LocalAccountTokenFilterPolicy to 1 ensures UAC filtering for local accounts is disabled and access to WinRM service is granted.
-                # Side Note: When using domain account for remoting, this account needs to be a member of the remote computer Administrators group.
-
-                $runCommandParameters =
-                @{
-                    commandId = 'RunPowerShellScript'
-                    script =
-                    @(
-                        'Set-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 1 -Type DWord -Force;Enable-PSRemoting -Force;Set-NetFirewallRule -Name WINRM-HTTP-In-TCP-PUBLIC -RemoteAddress Any;'
-                    )
-                }
-
-                $null = Az.Resources\Invoke-AzResourceAction -ResourceId $azureVM.Id -Action runCommand -Parameters $runCommandParameters -ApiVersion 2017-03-30 -Force
-            }
-        }
+        # Windows targets are now invoked via Azure Run Command (Invoke-AzVMRunCommand) over the ARM
+        # control plane instead of a direct WinRM connection to the VM's public IP/FQDN, so no NSG rule,
+        # WinRM listener, or self-signed certificate needs to be provisioned on the target VM anymore.
+        # This branch is intentionally a no-op and is kept only so existing callers of this cmdlet for
+        # Windows targets continue to succeed without requiring any network/VM configuration changes.
     }
     elseif ([OStype]::Linux -eq $OsType)
     {
@@ -1344,39 +1300,9 @@ function Disable-AzVMPSRemoting
 
     if ([OStype]::Windows -eq $OsType)
     {
-        if (-not $Protocol)
-        {
-            # Only WinRM_HTTPS protocol is supported for Windows Target
-            $Protocol = 'https'
-        }
-
-        foreach ($azVMNsg in $azVMNsgs)
-        {
-            #Check if Nsg has allow security rules for port (5986 or 5985) and protocol (TCP) for WinRM
-            Az.Network\Get-AzNetworkSecurityRuleConfig -NetworkSecurityGroup $azVMNsg |
-                Where-Object {($_.Access -eq 'Allow') -and ($_.Protocol -eq 'TCP') -and ($_.Direction -eq 'Inbound') } |
-                    ForEach-Object {
-                        if(
-                            (($Protocol -eq 'http') -and ($_.DestinationPortRange -eq 5985)) -or
-                            (($Protocol -eq 'https') -and ($_.DestinationPortRange -eq 5986))
-                        ){
-                            $null = Az.Network\Remove-AzNetworkSecurityRuleConfig -Name $_.Name -NetworkSecurityGroup $azVMNsg | Az.Network\Set-AzNetworkSecurityGroup
-                        }
-                    }
-        }
-
-        # Disable PowerShell Remoting and restore UAC (User Account Control) setting
-        $azureVM = Az.Compute\Get-AzVM -Name $Name -ResourceGroupName $ResourceGroupName
-        $parameters =
-        @{
-            commandId = 'RunPowerShellScript'
-            script =
-            @(
-                "Disable-PSRemoting -Force; Set-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 0 -Type DWord -Force;"
-            )
-        }
-
-        $null = Az.Resources\Invoke-AzResourceAction -ResourceId $azureVM.Id -Action runCommand -Parameters $parameters -ApiVersion 2017-03-30 -Force
+        # Windows targets no longer have WinRM/NSG rules provisioned by Enable-AzVMPSRemoting (see that
+        # function), so there is nothing to tear down here. Kept as a no-op so existing callers continue
+        # to succeed without requiring any network/VM configuration changes.
     }
     elseif ([OStype]::Linux -eq $OsType)
     {
@@ -1503,6 +1429,8 @@ function Test-AzVM
         [OSType]$OsType
     )
 
+    # Windows targets no longer go through this path (see Invoke-AzVMCommand, which now uses
+    # Invoke-AzVMRunCommand for Windows), so this check only applies to Linux/ssh remoting.
     $azVMNsgs = Get-AzVmNsg -Name $Name -ResourceGroupName $ResourceGroupName
 
     foreach ($azVMNsg in $azVMNsgs)
@@ -1510,7 +1438,7 @@ function Test-AzVM
         # Check if Remoting is enabled for the VM
         $psRemoting = Get-AzVMPSRemoting -Name $Name -ResourceGroupName $ResourceGroupName -Nsg $azVMNsg
 
-        if ((([OStype]::Windows -eq $OsType) -and (-not $psRemoting.https)) -or (([OStype]::Linux -eq $OsType) -and (-not $psRemoting.ssh)))
+        if (([OStype]::Linux -eq $OsType) -and (-not $psRemoting.ssh))
         {
             $errMsg = $LocalizedData.TestAzPsRemotingError -f ($Name, $ResourceGroupName)
             throw $errMsg
