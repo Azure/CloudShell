@@ -11,14 +11,16 @@ FROM ${IMAGE_LOCATION}
 
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
+# Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
+# We don't support using this location elsewhere - it may be removed or updated without notice
+ARG AZURE_CLI_RPM_URL=https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-azurelinux3.0.rpm
+
 RUN tdnf clean all && \
     tdnf repolist --refresh && \
     ACCEPT_EULA=Y tdnf update -y && \
-    # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
-    # We don't support using this location elsewhere - it may be removed or updated without notice
-    wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-azurelinux3.0.rpm \
-    && tdnf install -y ./azure-cli-latest-azurelinux3.0.rpm \
-    && rm azure-cli-latest-azurelinux3.0.rpm && \
+    wget -O azure-cli.rpm "${AZURE_CLI_RPM_URL}" \
+    && tdnf install -y ./azure-cli.rpm \
+    && rm azure-cli.rpm && \
     tdnf clean all && \
     rm -rf /var/cache/tdnf/*
 
