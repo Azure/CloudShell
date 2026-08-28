@@ -51,12 +51,13 @@ jobs:
 
       - name: Scan base image with Trivy
         id: trivy-base-scan
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297 # v0.36.0
         with:
           scan-type: 'image'
           image-ref: base_cloudshell
           scanners: 'vuln,config'
           severity: 'HIGH,CRITICAL'
+          timeout: 10m0s
 
       # Build tools dockerfile
       - name: Build the tools.Dockerfile
@@ -65,12 +66,13 @@ jobs:
 
       - name: Scan Tools image with Trivy
         id: trivy-tools-scan
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297 # v0.36.0
         with:
           scan-type: 'image'
           image-ref: tools_cloudshell
           scanners: 'vuln,config'
           severity: 'HIGH,CRITICAL'
+          timeout: 10m0s
 
       # Run the test cases
       - name: Run the test cases
