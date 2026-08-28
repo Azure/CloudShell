@@ -57,6 +57,7 @@ jobs:
           image-ref: base_cloudshell
           scanners: "vuln,config"
           severity: "HIGH,CRITICAL"
+          timeout: 10m0s
 
       # Build tools dockerfile
       - name: Build the tools.Dockerfile
@@ -71,6 +72,7 @@ jobs:
           image-ref: tools_cloudshell
           scanners: "vuln,config"
           severity: "HIGH,CRITICAL"
+          timeout: 10m0s
 
       # Run the test cases
       - name: Run the test cases
