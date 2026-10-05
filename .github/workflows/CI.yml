@@ -51,7 +51,7 @@ jobs:
 
       - name: Scan base image with Trivy
         id: trivy-base-scan
-        uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297 # v0.36.0
+        uses: aquasecurity/trivy-action@c03d123cb480c08c69b054af418ea5e69fe6e57e # v0.36.0
         with:
           scan-type: 'image'
           image-ref: base_cloudshell
@@ -66,7 +66,7 @@ jobs:
 
       - name: Scan Tools image with Trivy
         id: trivy-tools-scan
-        uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297 # v0.36.0
+        uses: aquasecurity/trivy-action@c03d123cb480c08c69b054af418ea5e69fe6e57e # v0.36.0
         with:
           scan-type: 'image'
           image-ref: tools_cloudshell
