@@ -14,6 +14,10 @@ LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 RUN tdnf clean all && \
     tdnf repolist --refresh && \
     ACCEPT_EULA=Y tdnf update -y && \
+    ACCEPT_EULA=Y tdnf install -y \
+    'nodejs >= 24.22.1-1.azl3' \
+    'nodejs-npm >= 24.22.1-1.azl3' \
+    'brotli >= 1.2.1-1.azl3' && \
     # Install latest Azure CLI package. CLI team drops latest (pre-release) package here prior to public release
     # We don't support using this location elsewhere - it may be removed or updated without notice
     wget https://azurecliprod.blob.core.windows.net/cloudshell-release/azure-cli-latest-azurelinux3.0.rpm \

@@ -24,9 +24,11 @@ RUN tdnf update -y --refresh && \
   azurelinux-repos-extended \
   azurelinux-repos-ms-non-oss-3.0 && \
   tdnf repolist --refresh && \
+  ACCEPT_EULA=Y tdnf install -y \
+  'nodejs >= 24.22.1-1.azl3' \
+  'nodejs-npm >= 24.22.1-1.azl3' \
+  'brotli >= 1.2.1-1.azl3' && \
   bash ./tdnfinstall.sh \
-  nodejs24 \
-  nodejs24-npm \
   xz \
   git \
   gpgme \

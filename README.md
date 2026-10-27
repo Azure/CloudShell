@@ -78,6 +78,16 @@ changes to the tools.
 | Base  | Contains large, infrequently changing packages. Changes every 3-4 months. |
 | Tools | Contains frequently changing packages. Changes every 2-3 weeks            |
 
+Both image builds require Node.js `24.22.1-1.azl3`, its matching npm package, and
+system Brotli `1.2.1-1.azl3` or newer from the Azure Linux repositories. The tools
+build enforces these minimums even when it starts from an older cached base image.
+The image tests check the installed RPM versions and a native Node.js Brotli round trip.
+
+For a security refresh, build with `--pull --no-cache` so an older image or
+package-install layer is not reused. Rebuild dependent images using the new tools
+image, redeploy through the normal safe deployment process, and rerun vulnerability
+scanning against the replacement digests. Rebuilding does not update running containers.
+
 
 ## Building and Testing the image
 

@@ -1,3 +1,23 @@
+Describe "Node.js and Brotli security updates" -Tag "CloudShellUser" {
+    It "Node.js and system Brotli include the security fixes" {
+        foreach ($package in @(
+            @{ Name = "nodejs"; Minimum = "24.22.1-1.azl3" },
+            @{ Name = "brotli"; Minimum = "1.2.1-1.azl3" }
+        )) {
+            $actual = & rpm -q --queryformat '%{VERSION}-%{RELEASE}' $package.Name
+            $LASTEXITCODE | Should-Be 0 -Because "$($package.Name) must be installed"
+            $comparison = & rpm --eval "%{lua:print(rpm.vercmp('$actual', '$($package.Minimum)'))}"
+            $LASTEXITCODE | Should-Be 0
+            ([int]$comparison -ge 0) | Should-BeTrue -Because "$($package.Name) must be at least $($package.Minimum), found $actual"
+        }
+    }
+
+    It "Node.js can compress and decompress Brotli content" {
+        & node -e 'const z = require("node:zlib"); const a = require("node:assert/strict"); const input = Buffer.from("Cloud Shell Brotli smoke test"); a.deepEqual(z.brotliDecompressSync(z.brotliCompressSync(input)), input);'
+        $LASTEXITCODE | Should-Be 0
+    }
+}
+
 Describe "Various programs installed with expected versions" -Tag "CloudShellUser" {
 
     BeforeAll {
