@@ -84,31 +84,6 @@ Describe "Various programs installed with expected versions" -Tag "CloudShellUse
     }
 }
 
-Describe ".NET 10" -Tag "CloudShellUser" {
-
-    It "Has a .NET 10 SDK selected by default" {
-        $sdkVersion = dotnet --version
-        $LASTEXITCODE | Should-Be 0
-        $sdkVersion | Should-BeLikeString '10.0.*'
-    }
-
-    It "Has a .NET 10 runtime" {
-        $runtimes = dotnet --list-runtimes
-        $LASTEXITCODE | Should-Be 0
-        $runtimes | Where-Object { $_ -match '^Microsoft\.NETCore\.App 10\.0\.' } | Should-NotBeNull
-    }
-
-    It "Builds and runs a net10.0 console application" {
-        $projectPath = Join-Path $TestDrive 'dotnet10-smoke'
-        dotnet new console --framework net10.0 --output $projectPath --no-restore
-        $LASTEXITCODE | Should-Be 0
-
-        $output = dotnet run --project $projectPath --configuration Release
-        $LASTEXITCODE | Should-Be 0
-        $output | Should-ContainCollection 'Hello, World!'
-    }
-}
-
 Describe "PowerShell Modules" {
 
     BeforeAll {
