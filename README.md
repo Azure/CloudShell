@@ -78,12 +78,6 @@ changes to the tools.
 | Base  | Contains large, infrequently changing packages. Changes every 3-4 months. |
 | Tools | Contains frequently changing packages. Changes every 2-3 weeks            |
 
-The .NET 10 SDK and runtime are installed in the base layer. Releasing this upgrade requires
-rebuilding and promoting the cached base image through the normal release process, then updating
-the `IMAGE_LOCATION` used by the tools image to that published base. Changing the base Dockerfile
-alone does not update the deployed service. For local builds, use `IMAGE_LOCATION=base_cloudshell`
-as shown below to test the rebuilt base rather than the previously published image.
-
 
 ## Building and Testing the image
 
