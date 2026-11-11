@@ -40,6 +40,7 @@ Microsoft.PowerShell.Core\Import-Module Az.Tools.Predictor -Force
 
 # Using the new set of az cmdlets
 Microsoft.PowerShell.Core\Import-Module Az.Accounts
+Az.Accounts\Update-AzConfig -CheckForUpgrade $false -Scope Process | Microsoft.PowerShell.Core\Out-Null
 Az.Accounts\Enable-AzureRmAlias
 
 # On Linux, we are not loading the profile from the clouddrive since we are already mounted on the Linux OS image: \clouddrive\.cloudconsole\acc_<user>.img 
