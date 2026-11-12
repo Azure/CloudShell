@@ -242,6 +242,7 @@ disown
 dltest
 dmesg
 dnsdomainname
+dnx
 do
 docker
 dockerd
