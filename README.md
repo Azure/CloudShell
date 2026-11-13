@@ -132,6 +132,32 @@ For more information about bind mounts, please see the
 [Docker documentation](https://docs.docker.com/storage/bind-mounts/). We do expect all test cases
 to pass if you want your changes to be merged.
 
+## GitHub Copilot CLI
+
+The tools image installs the latest stable
+[`@github/copilot`](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)
+package globally, making `copilot` available to regular Cloud Shell users in Bash and PowerShell.
+Users authenticate with their own GitHub account and need a Copilot entitlement and any required
+organization policy approval. Azure sign-in does not sign users into GitHub Copilot.
+
+On headless Linux, Copilot may ask to save its authentication token in plaintext when a system
+keychain is unavailable. This is credential-storage consent, not a prompt to save ordinary settings.
+The image leaves this prompt and all directory-trust and tool-permission prompts unchanged, in both
+ephemeral and persistent Cloud Shell sessions. The documented CLI options do not provide a
+session-only OAuth login that skips credential storage. Relocating configuration does not remove
+that consent requirement. The `storeTokenPlaintext` setting opts into plaintext storage, not
+session-only authentication, and is not set by the image.
+
+For users who already have a supported token, GitHub documents environment-variable authentication
+with `COPILOT_GITHUB_TOKEN`, `GH_TOKEN`, or `GITHUB_TOKEN` as an alternative to OAuth login. Supply
+tokens only at runtime; do not put them in the image, shell history, or shared scripts. See
+[Authenticating GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli).
+
+Copilot's license and notices are retained in the globally installed npm package. Inclusion still
+requires the maintainer review described in the [Package Inclusion Guide](./docs/package-inclusion-guide.md),
+including exceptions for the upstream npm source and package size. Image source changes are not a
+deployment to the Cloud Shell service.
+
 ## Contribution Guidelines
 
 ### Types of issues
