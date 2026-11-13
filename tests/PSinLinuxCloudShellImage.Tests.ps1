@@ -84,6 +84,18 @@ Describe "Various programs installed with expected versions" -Tag "CloudShellUse
     }
 }
 
+Describe "GitHub Copilot CLI" -Tag "CloudShellUser" {
+    It "Runs without authentication" {
+        $version = copilot --version
+        $LASTEXITCODE | Should-Be 0
+        ($version -join "`n") | Should-MatchString 'GitHub Copilot CLI'
+
+        $helpText = copilot --help
+        $LASTEXITCODE | Should-Be 0
+        ($helpText -join "`n") | Should-MatchString 'Usage: copilot'
+    }
+}
+
 Describe "PowerShell Modules" {
 
     BeforeAll {
