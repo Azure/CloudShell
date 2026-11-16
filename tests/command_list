@@ -182,6 +182,7 @@ containerd
 containerd-shim-runc-v2
 containerd-stress
 continue
+copilot
 coproc
 corepack
 cp
