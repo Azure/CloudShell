@@ -82,6 +82,13 @@ Describe "Various programs installed with expected versions" -Tag "CloudShellUse
     It "Has various environment vars" {
         $env:AZUREPS_HOST_ENVIRONMENT | Should-Be "cloud-shell/1.0"
     }
+
+    It "Disables update checks for managed PowerShell components" {
+        $env:POWERSHELL_UPDATECHECK | Should-Be "Off"
+        $config = Az.Accounts\Get-AzConfig -CheckForUpgrade
+        $config.Value | Should-BeFalse
+        $config.Scope | Should-Be "Process"
+    }
 }
 
 Describe "PowerShell Modules" {

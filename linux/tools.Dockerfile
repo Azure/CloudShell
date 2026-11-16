@@ -98,9 +98,19 @@ RUN mkdir -p /usr/cloudshell
 WORKDIR /usr/cloudshell
 
 # Powershell telemetry
-ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell \
-    # don't tell users to upgrade, they can't
-    POWERSHELL_UPDATECHECK=Off
+ENV POWERSHELL_DISTRIBUTION_CHANNEL=CloudShell
+
+# Disable update checks for tools managed by Cloud Shell.
+# CHECKPOINT_DISABLE is for Terraform.
+ENV CHECKPOINT_DISABLE=1 \
+    POWERSHELL_UPDATECHECK=Off \
+    GH_NO_UPDATE_NOTIFIER=1 \
+    GH_NO_EXTENSION_UPDATE_NOTIFIER=1 \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    CLIMICROSOFT365_NOUPDATE=1 \
+    DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=true \
+    AZURE_BICEP_CHECK_VERSION=false
 
 # Copy and run script to install Powershell modules and setup Powershell machine profile
 COPY ./linux/powershell/ powershell
