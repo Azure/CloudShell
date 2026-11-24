@@ -11,6 +11,10 @@ FROM ${IMAGE_LOCATION}
 
 LABEL org.opencontainers.image.source="https://github.com/Azure/CloudShell"
 
+# Install the latest stable GitHub Copilot CLI for all users.
+RUN npm install -q -g @github/copilot \
+    && npm cache clean --force
+
 RUN tdnf clean all && \
     tdnf repolist --refresh && \
     ACCEPT_EULA=Y tdnf update -y && \
